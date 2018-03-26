@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block script %}
+            <script src="../vendor/components/jquery/jquery.min.js"></script>
+            <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+        {% endblock %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+        {% block style %}
+            <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+            <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/bootstrap-theme.min.css">
+        {% endblock %}
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <div class="container"> 
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row"> 
+                        <div id="logo" class="col-md-6">
+                            <a href="{{host}}"><img id="logoheader" src="../../images/logotipo.jpg" alt="UnAventon"></a>            
+                        </div> 
+                    </div>
+                {% block menu %}{% endblock %}
+                <div id="row"> <!-- main site content-->
+                    <div id="col-md-12">
+                        {% if encabezado %}
+                            <h2>{{encabezado}}</h2>
+                        {% endif %}
+                        {% block contenido %}
+                            {% block error %}
+                            {% endblock %}
+                        {% endblock %}
+                    </div> 
+                </div> 
+                {% include 'template/footer.html.twig'%}
+            </div>
+        </div>
+    </div>
+
+</body>    
+</html>

@@ -1,0 +1,38 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Un Aventon - {{titulo}}{% endblock %} 
+{% block menu %}            
+    {% include 'template/menu.html.twig' with {'session': session, 'host': host} %}
+{% endblock %}
+{% block contenido %}  
+     <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Quiénes somos</div>
+                        <div class="panel-body">
+                            texto de relleo texto de relleo texto de relleo texto de relleo texto de relleo texto de relleo 
+                            texto de relleo texto de relleo texto de relleo texto de relleo 
+                            texto de relleo texto de relleo texto de relleo texto de relleo 
+                            texto de relleo texto de relleo texto de relleo 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Quiénes somos</div>
+                        <div class="panel-body">
+                            texto de relleo texto de relleo texto de relleo texto de relleo texto de relleo texto de relleo 
+                            texto de relleo texto de relleo texto de relleo texto de relleo 
+                            texto de relleo texto de relleo texto de relleo texto de relleo 
+                            texto de relleo texto de relleo texto de relleo 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}            

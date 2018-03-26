@@ -1,0 +1,86 @@
+{% extends '/layout.html.twig' %}
+
+
+{% block style %}   
+    {{ parent() }}
+    <link rel="stylesheet" href="../../styles/elementos.css" type="text/css">
+{% endblock %}
+{% block title %}Banco de Alimentos de La Plata{% endblock %} 
+{% block login %}        
+    {% include 'elementos/login.html.twig' with {'session': session, 'host': host}  %}
+{% endblock %} 
+{% block menu %}            
+    {% include 'elementos/menu.html.twig' 
+                    with {'session': session, 'host': host} %}
+
+{% endblock %}
+{% block error %}{% endblock %}
+{% block contenido %}  
+    <div class="row">
+        {% if session.accesoViewDos('consultor') == 'true' %}
+            <div class="col-md-6 col-md-offset-3">
+                <p><h1>Usted es consultor<h1></p>
+            </div>
+        {% else %}
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h3>Unidades por vencerse dentro de {{dias}} dias</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <table class="table table-responsive table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Codigo</th>
+                                <th class="text-center">Fecha</th>
+                                <th class="text-center">Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detalle in detalles %}
+                                <tr>
+                                    <td>{{detalle.alimento_codigo}}</td>
+                                    <td>{{detalle.fecha_vencimiento}}</td>
+                                    <td>{{detalle.stock}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h3>Pedidos a entregar</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <table class="table table-responsive table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Numero pedido</th>
+                                <th class="text-center">Estado</th>
+                                <th class="text-center">Hora estimada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pedido in pendientes %}
+                                <tr>
+                                    <td>{{pedido.numero}}</td>
+                                    <td>{{pedido.tarde}}</td>
+                                    <td>{{pedido.hora}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+{% endblock %}            

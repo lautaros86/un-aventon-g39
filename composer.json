@@ -1,0 +1,14 @@
+{
+    "name": "lautaro/unaventon",
+    "authors": [
+        {
+            "name": "Lautaro",
+            "email": "lautarosilva9500@gmail.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "~2.0",
+        "components/jquery": "^3.3",
+        "twbs/bootstrap": "^3"
+    }
+}

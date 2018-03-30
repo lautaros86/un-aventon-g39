@@ -1,1 +1,1 @@
-Sistema para compartir viajes.
+Sistema para compartir viajes y divir gastos.

@@ -1,0 +1,23 @@
+{
+  "name": "un-aventon-g39",
+  "homepage": "http://unaventon.local",
+  "directory": "bower_components",
+  "authors": [
+    ""
+  ],  
+  "description": "Un portar para compartir viajes.",
+  "license": "MIT",
+  "ignore": [
+    "/.*",
+    "node_modules",
+    "bower_components",
+    "composer.json",
+    "documentation"
+  ],
+  "dependencies": {
+    "admin-lte": "^2.4.*"
+  },
+  "resolutions": {
+    "jquery": "^3.2.1"
+  }
+}

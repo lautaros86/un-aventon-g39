@@ -7,12 +7,6 @@
         }
     ],
     "require": {
-        "twig/twig": "~2.0",
-        "components/jquery": "^3.3",
-        "twbs/bootstrap": "^3",
-        "components/font-awesome": "^5.0",
-        "driftyco/ionicons": "^2.0",
-        "almasaeed2010/adminlte": "~2.4",
-        "grimmlink/jquery-slimscroll": "^1.3"
+        "twig/twig": "~2.0"
     }
 }

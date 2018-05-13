@@ -1,4 +1,4 @@
-**Hacer un gir clone del repositorio**
+**Hacer un git clone del repositorio**
 
 `git clone https://github.com/lautaros86/un-aventon-g39.git`
 

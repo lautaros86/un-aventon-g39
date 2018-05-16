@@ -1,0 +1,27 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Un Aventon - {{titulo}}{% endblock %} 
+
+{% block menu %}            
+    {% include 'template/menu.html.twig' with {'session': session, 'host': host} %}
+{% endblock %}
+
+{% block contenido %}  
+
+    <div class="error-page">
+        <h2 class="headline text-light-blue"> 404</h2>
+
+        <div class="error-content">
+            <h3><i class="fa fa-warning text-yellow"></i> Uups! Pagina no encontrada.</h3>
+
+            <p>
+                No encontramos la pagina que estas buscando.
+                Podrias ir a la  <a href="/">pagina princilar</a>.
+            </p>
+
+        </div>
+        <!-- /.error-content -->
+        <img src="../../img/travolta.gif" />
+
+    </div>
+{% endblock %}            

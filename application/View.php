@@ -16,7 +16,7 @@ class View {
         $this->_js = array();
     }
 
-    public function renderizar($vista, $item = false, $args = array()) {
+    public function renderizar($vista, $dir = "", $args = array()) {
         $menu = array(
             array(
                 'id' => 'inicio',
@@ -68,8 +68,11 @@ class View {
         //var_dump($template);
         //print $template;
 
-
-        $rutaView = $this->controlador . DS . $vista . '.html.twig';
+        if ($dir == "") {
+            $rutaView = $this->controlador . DS . $vista . '.html.twig';
+        } else {
+            $rutaView = $dir . DS . $vista . '.html.twig';
+        }
         if (sizeof($args) > 0) {
             echo $this->twig->render($rutaView, $args);
         } else {

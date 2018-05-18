@@ -57,6 +57,18 @@ abstract class Controller {
         return 0;
     }
 
+    protected function getSql($clave) {
+        if (isset($_POST[$clave]) && !empty($_POST[$clave])) {
+            $_POST[$clave] = strip_tags($_POST[$clave]);
+
+            if (!get_magic_quotes_gpc()) {
+                $con = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+                $_POST[$clave] = mysqli_real_escape_string($con, $_POST[$clave]);
+            }
+            return trim($_POST[$clave]);
+        }
+    }
+
     /* Redirecciona a la ruta especificada. */
 
     protected function redireccionar($ruta = FALSE) {
@@ -69,7 +81,7 @@ abstract class Controller {
         }
     }
 
-    /* 
+    /*
      * Recibe un string e ingenta castearlo a un intiger para devolverlo.
      * Caso contrario retorna 0. 
      */

@@ -4,8 +4,8 @@ class View {
 
     private $controlador;
     private $twig;
-    private $_js;
-
+    private $_message;
+    
     public function __construct(Router $router) {
         $this->_controlador = $router->getControlador();
         $this->controlador = strtolower($router->getControlador());
@@ -17,62 +17,12 @@ class View {
     }
 
     public function renderizar($vista, $dir = "", $args = array()) {
-        $menu = array(
-            array(
-                'id' => 'inicio',
-                'titulo' => 'inicio',
-                'enlace' => BASE_URL
-            ),
-            array(
-                'id' => 'post',
-                'titulo' => 'Post',
-                'enlace' => BASE_URL . 'post'
-            )
-        );
-
-        if (Session::get('autenticado')) {
-            $menu[] = array(
-                'id' => 'login',
-                'titulo' => 'Cerrar Sesion',
-                'enlace' => BASE_URL . 'login/cerrar'
-            );
-        } else {
-            $menu[] = array(
-                'id' => 'login',
-                'titulo' => 'Iniciar Sesion',
-                'enlace' => BASE_URL . 'login'
-            );
-            $menu[] = array(
-                'id' => 'registro',
-                'titulo' => 'Registrar Usuario',
-                'enlace' => BASE_URL . 'registro'
-            );
-        }
-
-        $js = array();
-
-        if (count($this->_js)) {
-            $js = $this->_js;
-        }
-
-        $_layoutParams = array(
-            'ruta_css' => BASE_URL . 'views/layout/' . DEFAULT_LAYOUT . '/css/',
-            'ruta_img' => BASE_URL . 'views/layout/' . DEFAULT_LAYOUT . '/img/',
-            'ruta_js' => BASE_URL . 'views/layout/' . DEFAULT_LAYOUT . '/js/',
-            'menu' => $menu,
-            'js' => $js
-        );
-
-        //para luego probar
-        //$template = file_get_contents($rutaView);
-        //var_dump($template);
-        //print $template;
-
         if ($dir == "") {
             $rutaView = $this->controlador . DS . $vista . '.html.twig';
         } else {
             $rutaView = $dir . DS . $vista . '.html.twig';
         }
+        $args['messages'] = $this->_message;
         if (sizeof($args) > 0) {
             echo $this->twig->render($rutaView, $args);
         } else {
@@ -90,6 +40,14 @@ class View {
         }
     }
 
+    public function setMessage($msg){
+        $this->_message[] = $msg;
+    }
+    
+    public function getMessage($msg){
+        return $this->_message;
+    }
+    
 }
 
 ?>

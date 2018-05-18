@@ -6,7 +6,9 @@ class usuarioController extends Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->_registro = $this->loadModel('registro');
+        require_once ROOT . 'models' . DS . 'registroModel.php';
+        $this->_registro = new registroModel();
+//        $this->_registro = $this->loadModel('registro');
     }
 
     public function index() {
@@ -24,58 +26,66 @@ class usuarioController extends Controller {
         if (Session::get('autenticado')) {
             $this->redireccionar();
         }
-
+        $errors = false;
         $data = $_POST;
-        if (!$this->getSql('nombre')) {
-            $this->_view->_error = "Debe introducir su nombre";
-            exit;
+        if ($this->verifRequire($this->getAlphaNum('nombre'))) {
+            $this->_view->setMessage(array("type" => "danger", "message" => "El nombre es obligatorio."));
+            $errors = true;
         }
 
-        if ($this->_registro->verificarUsuario($this->getAlphaNum('nombre'))) {
-            $this->_view->_error = "El usuario " . $this->getAlphaNum('nombre') . " ya existe";
-            exit;
+        if ($this->verifRequire($this->getAlphaNum('apellido'))) {
+            $this->_view->setMessage(array("type" => "danger", "message" => "El apellido es obligatorio."));
+            $errors = true;
         }
 
-        if ($this->_registro->verificarUsuario($this->getAlphaNum('apellido'))) {
-            $this->_view->_error = "El usuario " . $this->getAlphaNum('apellido') . " ya existe";
-            exit;
-        }
-
+        // TODO: Validar fecha.
+        // Valido que sea un email con formato correcto.
         if (!$this->validarEmail($this->getPostParam('email'))) {
-            $this->_view->_error = "La direccion de email es inv&aacute;ida";
-            exit;
+            $this->_view->setMessage(array("type" => "danger", "message" => "La direccion de email es inválida"));
+            $errors = true;
         }
 
+        // Verifico que el email no exista en el sistema.
         if ($this->_registro->verificarEmail($this->getPostParam('email'))) {
-            $this->_view->_error = "Esta direccion de correo ya esta registrada";
-            exit;
+            $this->_view->setMessage(array("type" => "danger", "message" => "La direccion de email es inválida"));
+            $errors = true;
         }
 
-        if (!$this->getSql('pass')) {
-            $this->_view->_error = "Debe introducir un password";
-            exit;
+        if (!$this->verifRequire('pass')) {
+            $this->_view->setMessage(array("type" => "danger", "message" => "Contraseña incorrecta"));
+            $errors = true;
         }
 
-        if ($this->getPostParam('pass') != $this->getPostParam('confirmar')) {
-            $this->_view->_error = "Los passwords no coinciden";
-            exit;
+        if (!$this->verifRequire('repass')) {
+            $this->_view->setMessage(array("type" => "danger", "message" => "La contraseña de confirmacion incorrectaa"));
+            $errors = true;
         }
 
-        $this->_view->setMessage(array("type"=>"danger", "message"=>"Esto es un mensaje de error"));
-        $this->_view->setMessage(array("type"=>"info","message"=>"Registro Completado"));
-        $this->_view->setMessage(array("type"=>"success","message"=>"Registro Completado"));
-        $this->_view->setMessage(array("type"=>"warning","message"=>"Registro Completado"));
+        if ($this->getPostParam('pass') != $this->getPostParam('repass')) {
+            $this->_view->setMessage(array("type" => "danger", "message" => "Los passwords no coinciden"));
+            $errors = true;
+        }
 
-//        $this->_registro->registrarUsuario(
-//                $this->getSql('nombre'), $this->getAlphaNum('apellido'), $this->getAlphaNum('email'), $this->getSql('pass'), $this->getPostParam('email')
-//        );
-//
-//        if (!$this->_registro->verificarUsuario($this->getAlphaNum('usuario'))) {
-//            $this->_view->_error = "Error al registrar el usuario";
-//            exit;
-//        }
-        var_dump($data);
-        $this->_view->renderizar('registro', 'usuario');
+        $this->_registro->registrarUsuario(
+                $this->getAlphaNum('nombre'), 
+                $this->getAlphaNum('apellido'), 
+                $this->getPostParam('email'), 
+                $this->getPostParam('fecha_nac'), 
+                $this->getPostParam('pass'), 
+                $this->getPostParam('email')
+        );
+
+        if (!$errors) {
+            if (!$this->_registro->verificarUsuario($this->getAlphaNum('usuario'))) {
+                $this->_view->setMessage(array("type" => "danger", "message" => "Error al registrar el usuario"));
+                exit;
+            } else {
+                $this->_view->setMessage(array("type" => "success", "message" => "Registro Completado"));
+                $this->_view->renderizar('registro', 'usuario');
+            }
+        } else {
+            $this->_view->renderizar('registro', 'usuario');
+        }
     }
 
     public function test($param1, $param2) {

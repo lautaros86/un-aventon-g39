@@ -13,7 +13,6 @@ abstract class Controller {
     protected function loadModel($modelo) {
         $modelo = $modelo . 'Model';
         $rutaModelo = ROOT . 'models' . DS . $modelo . '.php';
-
         if (is_readable($rutaModelo)) {
             require_once $rutaModelo;
             $modelo = new $modelo;
@@ -27,7 +26,6 @@ abstract class Controller {
 
     protected function getLibrary($libreria) {
         $rutaLibreria = ROOT . 'libs' . DS . $libreria . '.php';
-
         if (is_readable($rutaLibreria)) {
             require_once $rutaLibreria;
         } else {
@@ -42,25 +40,22 @@ abstract class Controller {
             $_POST[$clave] = htmlspecialchars($_POST[$clave], ENT_QUOTES);
             return $_POST[$clave];
         }
-
         return '';
     }
 
     /* Obtiene un numero del parametro $_POST. */
 
-    protected function getInt($clave) {
+    protected function verifInt($clave) {
         if (isset($_POST[$clave]) && !empty($_POST[$clave])) {
             $_POST[$clave] = filter_input(INPUT_POST, $clave, FILTER_VALIDATE_INT);
             return $_POST[$clave];
         }
-
         return 0;
     }
 
-    protected function getSql($clave) {
+    protected function verifRequire($clave) {
         if (isset($_POST[$clave]) && !empty($_POST[$clave])) {
             $_POST[$clave] = strip_tags($_POST[$clave]);
-
             if (!get_magic_quotes_gpc()) {
                 $con = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
                 $_POST[$clave] = mysqli_real_escape_string($con, $_POST[$clave]);

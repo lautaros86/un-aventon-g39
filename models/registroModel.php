@@ -7,39 +7,34 @@ class registroModel extends Model {
     }
 
     public function verificarUsuario($usuario) {
-        $id = $this->_db->query(
-                "select id from usuarios where usuario = '$usuario'"
-        );
-
-        if ($id->fetch()) {
+        $sql = "select id from usuarios where usuario = :usuario";
+        $params = array(":usuario" => $usuario);
+        $this->_db->execute($sql, $params);
+        if ($this->_db->fetchAll(PDO::FETCH_ASSOC)) {
             return true;
         }
-
         return false;
     }
 
     public function verificarEmail($email) {
-        $id = $this->_db->query(
-                "select id from usuarios where email = '$email'"
-        );
-
-        if ($id->fetch()) {
+        $sql = "select id from usuarios where email = :email";
+        $params = array(":email" => $email);
+        $this->_db->execute($sql, $params);
+        if (sizeof($this->_db->fetchAll(PDO::FETCH_ASSOC)) > 0) {
             return true;
         }
-
         return false;
     }
 
-    public function registrarUsuario($nombre, $usuario, $password, $email) {
-        $this->_db->prepare(
-                        "insert into usuarios values" .
-                        "(null, :nombre, :usuario, :pass, :email, 'usuario', 1, now())"
-                )
-                ->execute(array(
+    public function registrarUsuario($nombre, $apellido, $email, $fecha_nac, $password) {
+        $sql ="insert into usuarios values (null, :nombre, :apellido, :email, :fecha_nac, :password, NOW(), NOW())";
+        $date = date($fecha_nac);
+        $this->_db->execute($sql, array(
                     ':nombre' => $nombre,
-                    ':usuario' => $usuario,
-                    ':pass' => Hash::getHash('sha1', $password, HASH_KEY),
-                    ':email' => $email
+                    ':apellido' => $apellido,
+                    ':email' => $email,
+                    ':fecha_nac' => $date,
+                    ':password' => Hash::getHash('sha256', $password, HASH_KEY)
         ));
     }
 

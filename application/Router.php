@@ -9,9 +9,9 @@ class Router {
 
     public function __construct() {
         $this->_routes = json_decode(ROUTES, true);
-        
-        $uri = $_GET['url'];
-        
+
+        $uri = isset($_GET['url']) ? $_GET['url'] : '/';
+
 // Evaluar si es util o no.
 //        if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0) {
 //            $uri = substr($uri, strlen($_SERVER['SCRIPT_NAME']));
@@ -44,22 +44,11 @@ class Router {
 
         $this->parse_routes();
 
-        if (isset($this->URI[0])) {
-            $this->_controlador = strtolower(array_shift($this->URI));
-        } else {
-            $this->_controlador = DEFAULT_CONTROLLER;
-        }
+        $this->_controlador = strtolower(array_shift($this->URI));
 
-        if (isset($this->URI[1])) {
-            $this->_metodo = strtolower(array_shift($this->URI));
-        } else {
-            $this->_metodo = DEFAULT_METHOD;
-        }
-        if (sizeof($this->URI) > 0) {
-            $this->_argumentos = $this->URI;
-        } else {            
-            $this->_argumentos = array();
-        }
+        $this->_metodo = strtolower(array_shift($this->URI));
+
+        $this->_argumentos = $this->URI;
     }
 
     private function parse_routes() {
@@ -100,11 +89,19 @@ class Router {
     }
 
     public function getControlador() {
-        return $this->_controlador;
+        if ($this->_controlador != null) {
+            return $this->_controlador;
+        } else {
+            return DEFAULT_CONTROLLER;
+        }
     }
 
     public function getMetodo() {
-        return $this->_metodo;
+        if ($this->_metodo != null) {
+            return $this->_metodo;
+        } else {
+            return DEFAULT_METHOD;
+        }
     }
 
     public function getArgs() {

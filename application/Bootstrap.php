@@ -15,7 +15,7 @@ class Bootstrap {
             if (is_callable(array($controller, $metodo))) {
                 $metodo = $router->getMetodo();
             } else {
-                $metodo = 'index';
+                $metodo = DEFAULT_METHOD;
             }
 
             if (isset($args) && sizeof($args) > 0) {

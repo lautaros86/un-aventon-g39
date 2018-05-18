@@ -21,11 +21,13 @@ try {
     require_once APP_PATH . 'Database.php';
     require_once APP_PATH . 'Session.php';
     require_once APP_PATH . 'Hash.php';
+    require_once APP_PATH . 'Router.php';
+    require_once APP_PATH . 'Routes.php';
     require_once VEN_PATH . 'autoload.php';
 
     Session::init();
 
-    Bootstrap::run(new Request);
+    Bootstrap::run(new Router);
 } catch (Exception $e) {
     echo $e->getMessage();
 }

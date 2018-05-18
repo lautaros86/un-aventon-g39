@@ -2,18 +2,18 @@
 
 class Bootstrap {
 
-    public static function run(Request $peticion) {
-        $controller = $peticion->getControlador() . 'Controller';
+    public static function run(Router $router) {
+        $controller = $router->getControlador() . 'Controller';
         $rutaControlador = ROOT . 'controllers' . DS . $controller . '.php';
-        $metodo = $peticion->getMetodo();
-        $args = $peticion->getArgs();
+        $metodo = $router->getMetodo();
+        $args = $router->getArgs();
 
         if (is_readable($rutaControlador)) {
             require_once $rutaControlador;
             $controller = new $controller;
 
             if (is_callable(array($controller, $metodo))) {
-                $metodo = $peticion->getMetodo();
+                $metodo = $router->getMetodo();
             } else {
                 $metodo = 'index';
             }

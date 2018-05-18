@@ -27,7 +27,7 @@ try {
 
     Session::init();
 
-    Bootstrap::run(new Router);
+    Bootstrap::run(Router::getInstance());
 } catch (Exception $e) {
     echo $e->getMessage();
 }

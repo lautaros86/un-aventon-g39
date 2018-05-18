@@ -25,7 +25,7 @@ class Bootstrap {
             }
         } else {
             require_once ROOT . "controllers/notFoundController.php";
-            call_user_func(array(new notFoundController(), "index"));
+            call_user_func(array(new notFoundController($router), "index"));
         }
     }
 

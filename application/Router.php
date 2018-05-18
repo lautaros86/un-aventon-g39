@@ -6,29 +6,41 @@ class Router {
     private $_metodo;
     private $_argumentos;
     private $_routes;
+    private static $instancia;
 
-    public function __construct() {
+    private function __construct() {
+        $this->processURI();
+    }
+
+    public static function getInstance() {
+        if (!self::$instancia instanceof self) {
+            self::$instancia = new self;
+        }
+        return self::$instancia;
+    }
+
+    private function processURI() {
         $this->_routes = json_decode(ROUTES, true);
 
         $uri = isset($_GET['url']) ? $_GET['url'] : '/';
 
-// Evaluar si es util o no.
-//        if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0) {
-//            $uri = substr($uri, strlen($_SERVER['SCRIPT_NAME']));
-//        } elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0) {
-//            $uri = substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
-//        }
-//        $parts = preg_split('#\?#i', $uri, 2);
-//
-//        $uri = $parts[0];
-//        if (isset($parts[1])) {
-//            $_SERVER['QUERY_STRING'] = $parts[1];
-//            parse_str($_SERVER['QUERY_STRING'], $_GET);
-//        } else {
-//            $_SERVER['QUERY_STRING'] = '';
-//            $_GET = array();
-//        }
-//-------
+        // Evaluar si es util o no.
+        //        if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0) {
+        //            $uri = substr($uri, strlen($_SERVER['SCRIPT_NAME']));
+        //        } elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0) {
+        //            $uri = substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
+        //        }
+        //        $parts = preg_split('#\?#i', $uri, 2);
+        //
+        //        $uri = $parts[0];
+        //        if (isset($parts[1])) {
+        //            $_SERVER['QUERY_STRING'] = $parts[1];
+        //            parse_str($_SERVER['QUERY_STRING'], $_GET);
+        //        } else {
+        //            $_SERVER['QUERY_STRING'] = '';
+        //            $_GET = array();
+        //        }
+        //-------
         if ($uri == '')
             $uri = '/';
         $uri = parse_url($uri, PHP_URL_PATH);

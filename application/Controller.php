@@ -5,7 +5,7 @@ abstract class Controller {
     protected $_view;
 
     public function __construct() {
-        $this->_view = new View(new Request());
+        $this->_view = new View(Router::getInstance());
     }
 
     abstract public function index();

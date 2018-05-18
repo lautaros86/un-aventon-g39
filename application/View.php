@@ -6,9 +6,9 @@ class View {
     private $twig;
     private $_js;
 
-    public function __construct(Request $peticion) {
-        $this->_controlador = $peticion->getControlador();
-        $this->controlador = strtolower($peticion->getControlador());
+    public function __construct(Router $router) {
+        $this->_controlador = $router->getControlador();
+        $this->controlador = strtolower($router->getControlador());
         $loader = new Twig_Loader_Filesystem(VIE_PATH);
         $this->twig = new Twig_Environment($loader, array('debug' => true));
         $this->twig->addExtension(new Twig_Extension_Debug());

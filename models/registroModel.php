@@ -27,13 +27,12 @@ class registroModel extends Model {
     }
 
     public function registrarUsuario($nombre, $apellido, $email, $fecha_nac, $password) {
-        $sql ="insert into usuarios values (null, :nombre, :apellido, :email, :fecha_nac, :password, NOW(), NOW())";
-        $date = date($fecha_nac);
+        $sql ="insert into usuarios values (null, :nombre, :apellido, :email, STR_TO_DATE(:fecha_nac, '%d/%m/%Y'), :password, NOW(), NOW())";
         $this->_db->execute($sql, array(
                     ':nombre' => $nombre,
                     ':apellido' => $apellido,
                     ':email' => $email,
-                    ':fecha_nac' => $date,
+                    ':fecha_nac' => $fecha_nac,
                     ':password' => Hash::getHash('sha256', $password, HASH_KEY)
         ));
     }

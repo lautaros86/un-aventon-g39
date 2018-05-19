@@ -28,12 +28,12 @@ class usuarioController extends Controller {
         }
         $errors = false;
         $data = $_POST;
-        if ($this->verifRequire($this->getAlphaNum('nombre'))) {
+        if ($this->getAlphaNum('nombre') == "") {
             $this->_view->setMessage(array("type" => "danger", "message" => "El nombre es obligatorio."));
             $errors = true;
         }
 
-        if ($this->verifRequire($this->getAlphaNum('apellido'))) {
+        if ($this->getAlphaNum('apellido') == "") {
             $this->_view->setMessage(array("type" => "danger", "message" => "El apellido es obligatorio."));
             $errors = true;
         }
@@ -45,18 +45,23 @@ class usuarioController extends Controller {
             $errors = true;
         }
 
-        // Verifico que el email no exista en el sistema.
-        if ($this->_registro->verificarEmail($this->getPostParam('email'))) {
-            $this->_view->setMessage(array("type" => "danger", "message" => "La direccion de email es inválida"));
+        if ($this->getPostParam('email') == "") {
+            $this->_view->setMessage(array("type" => "danger", "message" => "La direccion de email es obligatoria"));
             $errors = true;
         }
 
-        if (!$this->verifRequire('pass')) {
+        // Verifico que el email no exista en el sistema.
+        if ($this->_registro->verificarEmail($this->getPostParam('email'))) {
+            $this->_view->setMessage(array("type" => "danger", "message" => "La direccion de email ya existe"));
+            $errors = true;
+        }
+
+        if ($this->getPostParam('pass') == "") {
             $this->_view->setMessage(array("type" => "danger", "message" => "Contraseña incorrecta"));
             $errors = true;
         }
 
-        if (!$this->verifRequire('repass')) {
+        if ($this->getPostParam('repass') == "") {
             $this->_view->setMessage(array("type" => "danger", "message" => "La contraseña de confirmacion incorrectaa"));
             $errors = true;
         }
@@ -66,26 +71,17 @@ class usuarioController extends Controller {
             $errors = true;
         }
 
-        $this->_registro->registrarUsuario(
-                $this->getAlphaNum('nombre'), 
-                $this->getAlphaNum('apellido'), 
-                $this->getPostParam('email'), 
-                $this->getPostParam('fecha_nac'), 
-                $this->getPostParam('pass'), 
-                $this->getPostParam('email')
-        );
-
         if (!$errors) {
-            if (!$this->_registro->verificarUsuario($this->getAlphaNum('usuario'))) {
-                $this->_view->setMessage(array("type" => "danger", "message" => "Error al registrar el usuario"));
-                exit;
-            } else {
+            try {
+                $this->_registro->registrarUsuario(
+                        $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
+                );
                 $this->_view->setMessage(array("type" => "success", "message" => "Registro Completado"));
-                $this->_view->renderizar('registro', 'usuario');
+            } catch (PDOException $e) {
+                $this->_view->setMessage(array("type" => "danger", "message" => "Error al registrar el usuario"));
             }
-        } else {
-            $this->_view->renderizar('registro', 'usuario');
         }
+        $this->_view->renderizar('registro', 'usuario');
     }
 
     public function test($param1, $param2) {

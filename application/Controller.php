@@ -62,6 +62,7 @@ abstract class Controller {
             }
             return trim($_POST[$clave]);
         }
+        return false;
     }
 
     /* Redirecciona a la ruta especificada. */

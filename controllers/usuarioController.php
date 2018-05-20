@@ -26,51 +26,9 @@ class usuarioController extends Controller {
         if (Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $errors = false;
-        $data = $_POST;
-        if ($this->getAlphaNum('nombre') == "") {
-            $this->_view->setMessage(array("type" => "danger", "message" => "El nombre es obligatorio."));
-            $errors = true;
-        }
 
-        if ($this->getAlphaNum('apellido') == "") {
-            $this->_view->setMessage(array("type" => "danger", "message" => "El apellido es obligatorio."));
-            $errors = true;
-        }
-
-        // TODO: Validar fecha.
-        // Valido que sea un email con formato correcto.
-        if (!$this->validarEmail($this->getPostParam('email'))) {
-            $this->_view->setMessage(array("type" => "danger", "message" => "La direccion de email es inválida"));
-            $errors = true;
-        }
-
-        if ($this->getPostParam('email') == "") {
-            $this->_view->setMessage(array("type" => "danger", "message" => "La direccion de email es obligatoria"));
-            $errors = true;
-        }
-
-        // Verifico que el email no exista en el sistema.
-        if ($this->_registro->verificarEmail($this->getPostParam('email'))) {
-            $this->_view->setMessage(array("type" => "danger", "message" => "La direccion de email ya existe"));
-            $errors = true;
-        }
-
-        if ($this->getPostParam('pass') == "") {
-            $this->_view->setMessage(array("type" => "danger", "message" => "Contraseña incorrecta"));
-            $errors = true;
-        }
-
-        if ($this->getPostParam('repass') == "") {
-            $this->_view->setMessage(array("type" => "danger", "message" => "La contraseña de confirmacion incorrectaa"));
-            $errors = true;
-        }
-
-        if ($this->getPostParam('pass') != $this->getPostParam('repass')) {
-            $this->_view->setMessage(array("type" => "danger", "message" => "Los passwords no coinciden"));
-            $errors = true;
-        }
-
+        $errors = $this->validarRegistro();
+        
         if (!$errors) {
             try {
                 $this->_registro->registrarUsuario(
@@ -80,16 +38,78 @@ class usuarioController extends Controller {
             } catch (PDOException $e) {
                 $this->_view->setMessage(array("type" => "danger", "message" => "Error al registrar el usuario"));
             }
+        } else {
+            $form['nombre'] = $this->getAlphaNum('nombre');
+            $form['apellido'] = $this->getAlphaNum('apellido');
+            $form['fecha_nac'] = $this->getPostParam('fecha_nac');
+            $form['email'] = $this->getPostParam('email');
+            $this->_view->setMessage(array("type" => "danger", "message" => "Por favor corriga los errores del formulario que estan resaltados en rojo"));
         }
-        $this->_view->renderizar('registro', 'usuario');
+        $this->_view->renderizar('registro', 'usuario', array("form" => $form) );
     }
 
-    public function test($param1, $param2) {
-        echo "lalalla";
-        var_dump($param1);
-        var_dump($param2);
-        die;
-        $this->_view->renderizar('registro', 'usuario');
+    public function validarRegistro() {
+        $errors = false;
+        if ($this->getAlphaNum('nombre') == "") {
+            $this->_view->setFormError("nombre", "El nombre es obligatorio.");
+            $errors = true;
+        }
+
+        if ($this->getAlphaNum('apellido') == "") {
+            $this->_view->setFormError("apellido", "El apellido es obligatorio.");
+            $errors = true;
+        }
+
+        // TODO: Validar fecha.
+        if ($this->getPostParam('fecha_nac') == "") {
+            $this->_view->setFormError("fecha_nac", "La fecha de nacimiento es obligatoria");
+            $errors = true;
+        }
+
+        $fecha_nac = new DateTime($this->getPostParam('fecha_nac'));
+        $fechaLimite = new DateTime('-18 years');
+        if (!($fecha_nac < $fechaLimite)) {
+            $this->_view->setFormError("fecha_nac", "Debe ser mayor de edad para registrarse");
+        }
+
+        // Valido que sea un email con formato correcto.
+        if (!$this->validarEmail($this->getPostParam('email'))) {
+            $this->_view->setFormError("email", "La direccion de email es inválida");
+            $errors = true;
+        }
+
+        if ($this->getPostParam('email') == "") {
+            $this->_view->setFormError("email", "La direccion de email es obligatoria");
+            $errors = true;
+        }
+
+        // Verifico que el email no exista en el sistema.
+        if ($this->_registro->verificarEmail($this->getPostParam('email'))) {
+            $this->_view->setFormError("email", "La direccion de email ya existe");
+            $errors = true;
+        }
+
+        if ($this->getPostParam('pass') == "") {
+            $this->_view->setFormError("pass", "Contraseña incorrecta");
+            $errors = true;
+        }
+
+        if ($this->getPostParam('repass') == "") {
+            $this->_view->setFormError("repass", "La contraseña de confirmacion incorrectaa");
+            $errors = true;
+        }
+
+        if ($this->getPostParam('terminos') != true) {
+            $this->_view->setFormError("terminos", "Debe aceptar los terminos y condiciones del sitio.");
+            $errors = true;
+        }
+
+        if ($this->getPostParam('pass') != $this->getPostParam('repass')) {
+            $this->_view->setFormError("pass", "Los passwords no coinciden");
+            $errors = true;
+        }
+
+        return $errors;
     }
 
 }

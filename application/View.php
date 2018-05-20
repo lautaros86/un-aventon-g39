@@ -5,6 +5,7 @@ class View {
     private $controlador;
     private $twig;
     private $_message;
+    private $_errors;
     
     public function __construct(Router $router) {
         $this->_controlador = $router->getControlador();
@@ -23,6 +24,7 @@ class View {
             $rutaView = $dir . DS . $vista . '.html.twig';
         }
         $args['messages'] = $this->_message;
+        $args['errors'] = $this->_errors;
         if (sizeof($args) > 0) {
             echo $this->twig->render($rutaView, $args);
         } else {
@@ -44,8 +46,15 @@ class View {
         $this->_message[] = $msg;
     }
     
-    public function getMessage($msg){
+    public function getMessage(){
         return $this->_message;
+    }
+    public function setFormError($elem, $msg){
+        $this->_errors[$elem][] = $msg;
+    }
+    
+    public function getFormError(){
+        return $this->_errors;
     }
     
 }

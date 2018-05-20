@@ -36,6 +36,21 @@ class Session {
         }
     }
 
+    public static function setMessage($message, $type) {
+        $_SESSION["messages"][] = array(
+            "message" => $message,
+            "type" => $type
+        );
+    }
+
+    public static function getMessages() {
+        if (isset($_SESSION["messages"])) {
+            $tempMsgs = $_SESSION["messages"];
+            self::destroy("messages");
+            return $tempMsgs;
+        }
+    }
+
     public static function acceso($level) {
         if (!Session::get('autenticado')) {
             header('location:' . BASE_URL . 'error/access/5050');

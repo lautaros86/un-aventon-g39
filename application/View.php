@@ -23,8 +23,11 @@ class View {
         } else {
             $rutaView = $dir . DS . $vista . '.html.twig';
         }
-        $args['messages'] = $this->_message;
         $args['errors'] = $this->_errors;
+        
+        $args['messages'] = $this->_message;
+        $args['messages'] = Session::getMessages();
+        
         if (sizeof($args) > 0) {
             echo $this->twig->render($rutaView, $args);
         } else {
@@ -42,13 +45,6 @@ class View {
         }
     }
 
-    public function setMessage($msg){
-        $this->_message[] = $msg;
-    }
-    
-    public function getMessage(){
-        return $this->_message;
-    }
     public function setFormError($elem, $msg){
         $this->_errors[$elem][] = $msg;
     }

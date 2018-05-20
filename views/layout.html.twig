@@ -55,7 +55,11 @@
                     <!-- Main content -->
                     <section class="content">
                         {% block messages %}
-
+                            {% for msg in messages %}
+                                <div class="callout callout-{{msg['type']}}">
+                                    <p>{{msg['message']}}</p>
+                                </div>
+                            {% endfor %}
                         {% endblock %}
                         {% block contenido %}
 

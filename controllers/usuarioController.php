@@ -34,18 +34,19 @@ class usuarioController extends Controller {
                 $this->_registro->registrarUsuario(
                         $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
                 );
-                $this->_view->setMessage(array("type" => "success", "message" => "Registro Completado"));
+                Session::setMessage("Registro Completado", SessionMessageType::Success);
+                exit(header('Location: /'));
             } catch (PDOException $e) {
-                $this->_view->setMessage(array("type" => "danger", "message" => "Error al registrar el usuario"));
+                Session::setMessage("Error al registrar el usuario", SessionMessageType::Error);
             }
         } else {
             $form['nombre'] = $this->getAlphaNum('nombre');
             $form['apellido'] = $this->getAlphaNum('apellido');
             $form['fecha_nac'] = $this->getPostParam('fecha_nac');
             $form['email'] = $this->getPostParam('email');
-            $this->_view->setMessage(array("type" => "danger", "message" => "Por favor corriga los errores del formulario que estan resaltados en rojo"));
+            Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
         }
-        $this->_view->renderizar('registro', 'usuario', array("form" => $form) );
+        $this->_view->renderizar('registro', 'usuario', array("form" => $form));
     }
 
     public function validarRegistro() {
@@ -66,7 +67,7 @@ class usuarioController extends Controller {
             $errors = true;
         }
 
-        $fecha_nac = new DateTime($this->getPostParam('fecha_nac'));
+        $fecha_nac = DateTime::createFromFormat('d/m/Y', $this->getPostParam('fecha_nac'));
         $fechaLimite = new DateTime('-18 years');
         if (!($fecha_nac < $fechaLimite)) {
             $this->_view->setFormError("fecha_nac", "Debe ser mayor de edad para registrarse");

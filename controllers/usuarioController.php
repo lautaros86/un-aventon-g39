@@ -28,7 +28,7 @@ class usuarioController extends Controller {
         }
 
         $errors = $this->validarRegistro();
-        
+        $form = array();
         if (!$errors) {
             try {
                 $this->_registro->registrarUsuario(

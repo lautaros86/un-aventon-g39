@@ -45,10 +45,8 @@ class usuarioController extends Controller {
     }
 
     public function crear() {
-        if (Session::get('autenticado')) {
-            $this->redireccionar();
-        }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("registro");
         }
 

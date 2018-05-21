@@ -52,7 +52,7 @@ class usuarioController extends Controller {
 
         $errors = $this->validarRegistro();
         $form = array();
-        if (!$errors) {
+        if ($errors) {
             try {
                 $this->_registro->registrarUsuario(
                         $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')

@@ -6,14 +6,13 @@ class View {
     private $twig;
     private $_message;
     private $_errors;
-    
+
     public function __construct(Router $router) {
         $this->_controlador = $router->getControlador();
         $this->controlador = strtolower($router->getControlador());
         $loader = new Twig_Loader_Filesystem(VIE_PATH);
         $this->twig = new Twig_Environment($loader, array('debug' => true));
         $this->twig->addExtension(new Twig_Extension_Debug());
-        // $this->session = new Session();
         $this->_js = array();
     }
 
@@ -24,10 +23,11 @@ class View {
             $rutaView = $dir . DS . $vista . '.html.twig';
         }
         $args['errors'] = $this->_errors;
-        
+
         $args['messages'] = $this->_message;
         $args['messages'] = Session::getMessages();
-        
+        $args['session'] = new Session();
+
         if (sizeof($args) > 0) {
             echo $this->twig->render($rutaView, $args);
         } else {
@@ -45,14 +45,14 @@ class View {
         }
     }
 
-    public function setFormError($elem, $msg){
+    public function setFormError($elem, $msg) {
         $this->_errors[$elem][] = $msg;
     }
-    
-    public function getFormError(){
+
+    public function getFormError() {
         return $this->_errors;
     }
-    
+
 }
 
 ?>

@@ -4,6 +4,9 @@ class Session {
 
     public static function init() {
         session_start();
+        if(!isset($_SESSION['autenticado'])){
+            $_SESSION['autenticado'] = false;
+        }
     }
 
     public static function destroy($clave = FALSE) {

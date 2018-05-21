@@ -18,14 +18,6 @@ class usuarioController extends Controller {
         
     }
 
-    public function cerrarSesion() {
-        if (Session::get('autenticado')) {
-            $this->redireccionar();
-        }
-        Session::destroy();
-        $this->redireccionar();
-    }
-
     public function eliminarCuenta() {
         if (Session::get('autenticado')) {
             $this->redireccionar();
@@ -43,7 +35,8 @@ class usuarioController extends Controller {
     }
 
     public function registro() {
-        if (Session::get('autenticado')) {
+        Session::set('autenticado', true);
+        if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
         $form = Session::get("form");
@@ -77,6 +70,7 @@ class usuarioController extends Controller {
             $form['fecha_nac'] = $this->getPostParam('fecha_nac');
             $form['email'] = $this->getPostParam('email');
             Session::set("form", $form);
+            Session::set("autenticado", true);
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
             $this->redireccionar("registro");
         }

@@ -40,10 +40,9 @@
         <div class="wrapper">
 
             <header class="main-header">
-                {% block menu %}
-
-                {% endblock %} 
-
+                {% block menu %}            
+                    {% include 'template/menu.html.twig' with {'session': session, 'host': host} %}
+                {% endblock %}
             </header>
 
             <!-- Full Width Column -->

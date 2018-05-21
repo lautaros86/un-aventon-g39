@@ -3,23 +3,52 @@
 class usuarioController extends Controller {
 
     private $_registro;
+    private $_usuario;
 
     public function __construct() {
         parent::__construct();
         require_once ROOT . 'models' . DS . 'registroModel.php';
+        require_once ROOT . 'models' . DS . 'usuarioModel.php';
         $this->_registro = new registroModel();
-//        $this->_registro = $this->loadModel('registro');
+        $this->_usuario = new usuarioModel();
+//      $this->_registro = $this->loadModel('registro');
     }
 
     public function index() {
         
     }
 
+    public function cerrarSesion() {
+        if (Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        Session::destroy();
+        $this->redireccionar();
+    }
+
+    public function eliminarCuenta() {
+        if (Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $id = 7;
+        try {
+            $this->_usuario->eliminarUsuario($id);
+            Session::setMessage("La cuenta se elimino exitosamente.", SessionMessageType::Success);
+            $this->redireccionar();
+        } catch (PDOException $e) {
+            Session::setMessage("La cuenta no pudo eliminarse, por favor comuniquese con un administrador.", SessionMessageType::Error);
+        } catch (ErrorException $e) {
+            Session::setMessage("Error.", SessionMessageType::Error);
+        }
+    }
+
     public function registro() {
         if (Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $this->_view->renderizar('registro', 'usuario');
+        $form = Session::get("form");
+        Session::destroy("form");
+        $this->_view->renderizar('registro', 'usuario', array("form" => $form));
     }
 
     public function crear() {
@@ -47,7 +76,9 @@ class usuarioController extends Controller {
             $form['apellido'] = $this->getAlphaNum('apellido');
             $form['fecha_nac'] = $this->getPostParam('fecha_nac');
             $form['email'] = $this->getPostParam('email');
+            Session::set("form", $form);
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
+            $this->redireccionar("registro");
         }
         $this->_view->renderizar('registro', 'usuario', array("form" => $form));
     }

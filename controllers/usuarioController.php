@@ -3,11 +3,14 @@
 class usuarioController extends Controller {
 
     private $_registro;
+    private $_generarsesion;
 
     public function __construct() {
         parent::__construct();
         require_once ROOT . 'models' . DS . 'registroModel.php';
+        require_once ROOT . 'models' . DS . 'generarSesionModel.php';
         $this->_registro = new registroModel();
+        $this->_generarsesion = new generarSesionModel();
 //        $this->_registro = $this->loadModel('registro');
     }
 
@@ -82,6 +85,39 @@ class usuarioController extends Controller {
             }
         }
         $this->_view->renderizar('registro', 'usuario');
+    }
+
+    public function iniciarsesion()
+    {
+        # code...
+        //primer parametro es el archivo segundo es la carpeta
+    
+        $this->_view->renderizar('iniciarsesion', 'usuario');
+    }
+
+    
+    public function obtenersesion (){
+        $errors = false;
+        $data = $_POST;
+
+        if ($this->getAlphaNum('nombreDeUsuario') == "") {
+            $this->_view->setMessage(array("type" => "danger", "message" => "Debe ingresar un nombre de usuario."));
+            $errors = true;
+        }
+        if ($this->getPostParam('pass') == "") {
+            $this->_view->setMessage(array("type" => "danger", "message" => "Ingrese una contraseña incorrecta"));
+            $errors = true;
+        }   
+        if (!$errors) {
+            try {
+                $this->_generarsesion->obtenerUsuario(
+                        $this->getAlphaNum('nombreDeUsuario'), $this->getPostParam('pass') );
+              
+            } catch (PDOException $e) {
+                $this->_view->setMessage(array("type" => "danger", "message" => "Error al comprobar los datos, intente nuevamente"));
+            }
+        }         
+
     }
 
     public function test($param1, $param2) {

@@ -1,0 +1,83 @@
+{% extends 'layout.html.twig' %}
+
+{% block style %}
+    {{ parent() }}
+    <!-- iCheck -->
+    <link rel="stylesheet" href="../../bower_components/admin-lte/plugins/iCheck/square/blue.css">
+{% endblock %} 
+
+{% block title %}Un Aventon - Registro{% endblock %} 
+
+{#{% block menu %}            
+    {% include 'template/menu.html.twig' with {'session': session, 'host': host} %}
+{% endblock %}#}
+
+{% block messages %}
+    {% for msg in messages %}
+        <div class="callout callout-{{msg['type']}}">
+            <p>{{msg['message']}}</p>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block contenido %}  
+    <div class="register-box">
+        <div class="register-logo">
+            <a href="/">Un<b>Aventon</b></a>
+        </div>
+
+        <div class="register-box-body">
+            <p class="login-box-msg">Iniciar Sesión</p>
+
+            <form action="/usuario/obtenersesion" method="post">
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control" name="nombreDeUsuario" placeholder="Nombre De Usuario" required>
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                </div>
+ 
+
+ 
+                <div class="form-group has-feedback">
+                    <input type="password" class="form-control" name="pass" placeholder="Contraseña" required>
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">    
+                    <!-- /.col -->
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Ingresar</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+            {#
+                        <div class="social-auth-links text-center">
+                            <p>- OR -</p>
+                            <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign up using
+                                Facebook</a>
+                            <a href="#" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google-plus"></i> Sign up using
+                                Google+</a>
+                        </div>
+            #}
+            <a href="login.html" class="text-center">No recordas tu contraseña?</a>
+        </div>
+        <!-- /.form-box -->
+    </div>
+    <!-- /.register-box -->
+
+    {% block script %}
+        {{ parent() }}
+        <!-- iCheck -->
+        <script src="../../bower_components/admin-lte/plugins/iCheck/icheck.min.js"></script>
+
+        <script>
+            $(function () {
+                $('input').iCheck({
+                    checkboxClass: 'icheckbox_square-blue',
+                    radioClass: 'iradio_square-blue',
+                    increaseArea: '20%' /* optional */
+                });
+            });
+        </script>
+    {% endblock %}            
+
+{% endblock %}                

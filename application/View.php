@@ -23,6 +23,7 @@ class View {
             $rutaView = $dir . DS . $vista . '.html.twig';
         }
         $args['errors'] = $this->_errors;
+        $args['errors'] = Session::getFormErrors();
 
         $args['messages'] = $this->_message;
         $args['messages'] = Session::getMessages();

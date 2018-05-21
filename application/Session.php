@@ -54,6 +54,18 @@ class Session {
         }
     }
 
+    public static function setFormErrors( $elem, $message) {
+        $_SESSION["formErrors"][$elem][] = $message;
+    }
+
+    public static function getFormErrors() {
+        if (isset($_SESSION["formErrors"])) {
+            $tempMsgs = $_SESSION["formErrors"];
+            self::destroy("formErrors");
+            return $tempMsgs;
+        }
+    }
+
     public static function acceso($level) {
         if (!Session::get('autenticado')) {
             header('location:' . BASE_URL . 'error/access/5050');

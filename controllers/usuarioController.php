@@ -26,6 +26,9 @@ class usuarioController extends Controller {
         if (Session::get('autenticado')) {
             $this->redireccionar();
         }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redireccionar("registro");
+        }
 
         $errors = $this->validarRegistro();
         $form = array();
@@ -35,7 +38,7 @@ class usuarioController extends Controller {
                         $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
                 );
                 Session::setMessage("Registro Completado", SessionMessageType::Success);
-                exit(header('Location: /'));
+                $this->redireccionar("/");
             } catch (PDOException $e) {
                 Session::setMessage("Error al registrar el usuario", SessionMessageType::Error);
             }

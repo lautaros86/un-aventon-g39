@@ -35,13 +35,13 @@ class loginController extends Controller {
                     );
             
             if(!$row){
-                // TODO
-                $this->_view->_error = 'Usuario y/o password incorrectos';
+                Session::setMessage('Usuario y/o password incorrectos', SessionMessageType::Error);
                 $this->_view->renderizar('index', 'login');
                 exit;
             }
 
-            if ($row['estado'] != 1) {
+            if ($row['estado'] == 2 ) {
+                //cambiar
                 $this->_view->_error = 'Este usuario no esta habilitado';
                 $this->_view->renderizar('index', 'login');
                 exit;

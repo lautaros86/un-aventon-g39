@@ -4,6 +4,9 @@ class Session {
 
     public static function init() {
         session_start();
+        if(!isset($_SESSION['autenticado'])){
+            $_SESSION['autenticado'] = false;
+        }
     }
 
     public static function destroy($clave = FALSE) {
@@ -33,6 +36,33 @@ class Session {
     public static function get($clave) {
         if (isset($_SESSION[$clave])) {
             return $_SESSION[$clave];
+        }
+    }
+
+    public static function setMessage($message, $type) {
+        $_SESSION["messages"][] = array(
+            "message" => $message,
+            "type" => $type
+        );
+    }
+
+    public static function getMessages() {
+        if (isset($_SESSION["messages"])) {
+            $tempMsgs = $_SESSION["messages"];
+            self::destroy("messages");
+            return $tempMsgs;
+        }
+    }
+
+    public static function setFormErrors( $elem, $message) {
+        $_SESSION["formErrors"][$elem][] = $message;
+    }
+
+    public static function getFormErrors() {
+        if (isset($_SESSION["formErrors"])) {
+            $tempMsgs = $_SESSION["formErrors"];
+            self::destroy("formErrors");
+            return $tempMsgs;
         }
     }
 

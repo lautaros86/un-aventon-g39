@@ -20,6 +20,7 @@ try {
     require_once APP_PATH . 'Registro.php';
     require_once APP_PATH . 'DatabasePDO.php';
     require_once APP_PATH . 'Session.php';
+    require_once APP_PATH . 'SessionMessageType.php';
     require_once APP_PATH . 'Hash.php';
     require_once APP_PATH . 'Router.php';
     require_once APP_PATH . 'Routes.php';

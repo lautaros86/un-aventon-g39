@@ -8,8 +8,7 @@
 {% endblock %} 
 
 {% block title %}Un Aventon - Registro{% endblock %} 
-{% block menu %}            
-{% endblock %}
+
 {% block contenido %}  
     <div class="register-box">
         <div class="register-logo">
@@ -58,7 +57,7 @@
                     {% endif %}
                 </div>
                 <div class="form-group {% if errors.pass is defined  %}has-error{% endif %}">
-                    <input type="password" class="form-control" name="pass" placeholder="Contraseña" {% if form is defined  %}value="{{form.pass}}"{% endif %}>
+                    <input type="password" class="form-control" name="pass" placeholder="Contraseña">
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                     {% if errors.pass is defined %}
                         {% for err_msg in errors.pass %}
@@ -77,7 +76,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
-                        <div class="form-group {% if errors.terminos is defined  %}has-error{% endif %}">
+                        <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
 
                             <div class="checkbox icheck ">
                                 <label>
@@ -99,7 +98,6 @@
                 </div>
             </form>
             <a href="/login" class="text-center">Ya tengo una cuenta</a>
-            <a href="/" class="text-center pull-right">Volver a la pagina Principal</a>
         </div>
         <!-- /.form-box -->
     </div>

@@ -15,7 +15,10 @@ class Bootstrap {
             if (is_callable(array($controller, $metodo))) {
                 $metodo = $router->getMetodo();
             } else {
-                $metodo = DEFAULT_METHOD;
+//                $metodo = DEFAULT_METHOD;
+                require_once ROOT . "controllers/notFoundController.php";
+                call_user_func(array(new notFoundController($router), "index"));
+                exit();
             }
 
             if (isset($args) && sizeof($args) > 0) {

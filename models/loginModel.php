@@ -6,13 +6,11 @@ class loginModel extends Model {
         parent::__construct();
     }
 
-    public function getUsuario($usuario, $password) {
-        $datos = $this->_db->query(
-                "select * from usuarios " .
-                "where usuario = '$usuario' " .
-                "and pass = '" . Hash::getHash('sha1', $password, HASH_KEY) . "'"
-        );
-        return $datos->fetch();
+    public function getUsuario($mail, $password) {
+        $sql =  "select * from usuarios where email = :email and pass = :password and estado in (1, 3)";
+        $params = array(":email" => $email, ':password' => Hash::getHash('sha256', $password, HASH_KEY));
+        $this->_db->execute($sql, $params);
+        return  $this->_db->fetch(PDO::FETCH_ASSOC);
     }
 
 }

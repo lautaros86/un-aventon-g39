@@ -39,10 +39,11 @@ class loginController extends Controller {
                 $this->_view->renderizar('index', 'login');
                 exit;
             }
-
+            
             if ($row['estado'] == 2 ) {
                 //cambiar
-                $this->_view->_error = 'Este usuario no esta habilitado';
+                Session::setMessage('Este usuario no esta habilitado', SessionMessageType::Error);
+                //$this->_view->_error = 'Este usuario no esta habilitado';
                 $this->_view->renderizar('index', 'login');
                 exit;
             }

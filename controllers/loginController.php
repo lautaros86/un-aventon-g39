@@ -18,13 +18,13 @@ class loginController extends Controller {
         $this->_view->titulo = 'Iniciar Sesion';
             
             if(!$this->getPostParam('email')){
-                $this->_view->_error = 'Debe introducir su mail de usuario';
+                Session::setMessage('Debe introducir su mail de usuario', SessionMessageType::Error);
                 $this->_view->renderizar('index','login');
                 exit;
             }
             
             if(!$this->getPostParam('pass')){
-                $this->_view->_error = 'Debe introducir su password';
+                Session::setMessage('Debe introducir su password', SessionMessageType::Error); 
                 $this->_view->renderizar('index', 'login');
                 exit;
             }
@@ -41,9 +41,7 @@ class loginController extends Controller {
             }
             
             if ($row['estado'] == 2 ) {
-                //cambiar
                 Session::setMessage('Este usuario no esta habilitado', SessionMessageType::Error);
-                //$this->_view->_error = 'Este usuario no esta habilitado';
                 $this->_view->renderizar('index', 'login');
                 exit;
             }

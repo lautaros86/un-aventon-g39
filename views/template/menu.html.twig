@@ -145,7 +145,7 @@
                             <!-- The user image in the navbar-->
                             <img src="/img/anonimo.png" class="user-image" alt="User Image">
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                            <span class="hidden-xs">Armando Esteban Quito</span>
+                            <span class="hidden-xs">{{session.get('usuario').nombre}} {{session.get('usuario').apellido}}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- The user image in the menu -->
@@ -193,11 +193,21 @@
                 {% else %}
                     <li class="dropdown user user-menu">
                         <!-- Menu Toggle Button -->
-                        <a href="/registro" class="dropdown-toggle">
+                        <a href="/login" class="dropdown-toggle">
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
                             <span class="hidden-xs">Ingresar</span>
                         </a>
                     </li>
+                    
+                    <li class="dropdown user user-menu">
+                    
+                        <!-- Menu Toggle Button -->
+                        <a href="/registro" class="dropdown-toggle">
+                            <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                            <span class="hidden-xs">Registrarse</span>
+                        </a>
+                    </li>
+                    
                 {% endif %}
             </ul>
         </div>

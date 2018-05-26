@@ -43,6 +43,14 @@ class usuarioController extends Controller {
         Session::destroy("form");
         $this->_view->renderizar('registro', 'usuario', array("form" => $form));
     }
+    public function editarPerfil() {
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $form = Session::get("form");
+        Session::destroy("form");
+        $this->_view->renderizar('editar', 'usuario', array("form" => $form));
+    }
 
     public function crear() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -140,17 +148,48 @@ class usuarioController extends Controller {
 
         return $errors;
     }
-
+    
+    public function editar() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar("editar");
+        }
+        $errors = $this->validarRegistro();
+        $form = array();
+        $form['nombre'] = $this->getAlphaNum('nombre');
+        $form['apellido'] = $this->getAlphaNum('apellido');
+        $form['fecha_nac'] = $this->getPostParam('fecha_nac');
+        //esto no va el mail no se envia
+        //$form['email'] = $this->getPostParam('email');
+        $form['pass'] = $this->getAlphaNum('pass');
+        Session::set("form", $form);
+        if (!$errors) {
+            try {
+//cambiar esta parte para que llame editarUsuario de usuarioModel
+//                $this->_registro->registrarUsuario(
+//                        $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
+//                );
+                Session::setMessage("Tus datos fueron editados correctamente :)", SessionMessageType::Success);
+                $this->redireccionar();
+            } catch (PDOException $e) {
+                Session::setMessage("Error al editar tus datos :(", SessionMessageType::Error);
+            }
+        } else {
+            Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
+            $this->redireccionar("editar");
+        }
+        $this->_view->renderizar('editar', 'usuario' /*, array("form" => $form) */);        
+    }
     
     public function verUsuario() {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $usuario = Session::get("usuario");
+        /* $usuario = Session::get("usuario");
         $usuario['nombre']="pedro";
         $usuario['apellido']="pppppp";
-        $usuario['email']="emaildepedro@mail.com";
-        $this->_view->renderizar('verUsuario', 'usuario',array('usuario'=>$usuario));
+        $usuario['email']="emaildepedro@mail.com"; */
+        $this->_view->renderizar('verUsuario', 'usuario' /* ,array('usuario'=>$usuario) */);
     }
 }
 

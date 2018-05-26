@@ -147,9 +147,6 @@ class usuarioController extends Controller {
             $this->redireccionar();
         }
         $usuario = Session::get("usuario");
-        $usuario['nombre']="pedro";
-        $usuario['apellido']="pppppp";
-        $usuario['email']="emaildepedro@mail.com";
         $this->_view->renderizar('verUsuario', 'usuario',array('usuario'=>$usuario));
     }
 }

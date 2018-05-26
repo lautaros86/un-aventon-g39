@@ -1,5 +1,7 @@
 {% extends 'layout.html.twig' %}
-
+{% block title %}
+    UnAventon - Perfil
+{% endblock %}
 
 {% block contenido %}
     <div class="row">
@@ -43,13 +45,11 @@
                     <li><a href="#timeline" data-toggle="tab">Historial</a></li>
                     <li ><a href="#misVehiculos" data-toggle="tab">Mis Vehiculos</a></li>
                     <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas de credito</a></li>
-                        {#      <li><a href="#settings" data-toggle="tab">Editar Datos</a></li>#}
                 </ul>
                 <div class="tab-content">
                     <div class="active tab-pane" id="activity">
                         {% include 'usuario/tabs/activity.html.twig' %}
                     </div>
-
                     <!-- /.tab-pane viajes publicados -->
                     <div class="tab-pane" id="postulados">
                         {% include 'usuario/tabs/postulados.html.twig' %}

@@ -185,11 +185,8 @@ class usuarioController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        /* $usuario = Session::get("usuario");
-        $usuario['nombre']="pedro";
-        $usuario['apellido']="pppppp";
-        $usuario['email']="emaildepedro@mail.com"; */
-        $this->_view->renderizar('verUsuario', 'usuario' /* ,array('usuario'=>$usuario) */);
+        $usuario = Session::get("usuario");
+        $this->_view->renderizar('verUsuario', 'usuario',array('usuario'=>$usuario));
     }
 }
 

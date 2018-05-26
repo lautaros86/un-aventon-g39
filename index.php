@@ -9,6 +9,7 @@ define('CNT_PATH', ROOT . 'controllers' . DS);
 define('MOD_PATH', ROOT . 'models' . DS);
 define('VIE_PATH', ROOT . 'views' . DS);
 define('VEN_PATH', ROOT . 'vendor' . DS);
+define('LIBS_PATH', ROOT . 'libs' . DS);
 
 try {
     require_once APP_PATH . 'Config.php';

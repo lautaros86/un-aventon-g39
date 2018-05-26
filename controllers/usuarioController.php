@@ -16,6 +16,7 @@ class usuarioController extends Controller {
 
     public function index() {
         
+        
     }
 
     public function eliminarCuenta() {
@@ -62,8 +63,7 @@ class usuarioController extends Controller {
                         $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
                 );
                 Session::setMessage("Registro Completado", SessionMessageType::Success);
-                Session::set("autenticado", true);
-                $this->redireccionar("/");
+                $this->redireccionar();
             } catch (PDOException $e) {
                 Session::setMessage("Error al registrar el usuario", SessionMessageType::Error);
             }
@@ -141,6 +141,17 @@ class usuarioController extends Controller {
         return $errors;
     }
 
+    
+    public function verUsuario() {
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $usuario = Session::get("usuario");
+        $usuario['nombre']="pedro";
+        $usuario['apellido']="pppppp";
+        $usuario['email']="emaildepedro@mail.com";
+        $this->_view->renderizar('verUsuario', 'usuario',array('usuario'=>$usuario));
+    }
 }
 
 ?>

@@ -18,6 +18,14 @@ if ($_SERVER['HTTP_HOST'] == 'unaventon.local') {
     define('DB_NAME', 'grupo_39');
     define('DB_CHAR', 'utf8');
 }
+if ($_SERVER['HTTP_HOST'] == 'unaventon.local:8080') {
+    define('BASE_URL', 'http://unaventon.local:8080/');
+    define('DB_HOST', 'localhost');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_NAME', 'grupo_39');
+    define('DB_CHAR', 'utf8');
+}
 
 if ($_SERVER['HTTP_HOST'] == 'grupo39.lsilva.com.ar') {
     define('BASE_URL', 'http://grupo39.lsilva.com.ar/');

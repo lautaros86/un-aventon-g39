@@ -1,31 +1,401 @@
-{% extends 'layout.html.twig' %}
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Luxehotel Template</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="" />
 
-{% block title %}Un Aventon - {{titulo}}{% endblock %} 
+        <!-- Facebook and Twitter integration -->
+        <meta property="og:title" content=""/>
+        <meta property="og:image" content=""/>
+        <meta property="og:url" content=""/>
+        <meta property="og:site_name" content=""/>
+        <meta property="og:description" content=""/>
+        <meta name="twitter:title" content="" />
+        <meta name="twitter:image" content="" />
+        <meta name="twitter:url" content="" />
+        <meta name="twitter:card" content="" />
 
-{% block contentheader %}
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            Index Landing Page
-            <small>Ejemplo</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Layout</a></li>
-            <li class="active">Top Navigation</li>
-        </ol>
-    </section>
-{% endblock %}
+        <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700" rel="stylesheet">
 
-{% block contenido %}  
-    <div class="box box-default">
-        <div class="box-header with-border">
-            <h3 class="box-title">Blank Box</h3>
+        <!-- Animate.css -->
+        <link rel="stylesheet" href="libs/landing/css/animate.css">
+        <!-- Icomoon Icon Fonts-->
+        <link rel="stylesheet" href="libs/landing/css/icomoon.css">
+        <!-- Bootstrap  -->
+        <link rel="stylesheet" href="libs/landing/css/bootstrap.css">
+
+        <!-- Magnific Popup -->
+        <link rel="stylesheet" href="libs/landing/css/magnific-popup.css">
+
+        <!-- Flexslider  -->
+        <link rel="stylesheet" href="libs/landing/css/flexslider.css">
+
+        <!-- Owl Carousel -->
+        <link rel="stylesheet" href="libs/landing/css/owl.carousel.min.css">
+        <link rel="stylesheet" href="libs/landing/css/owl.theme.default.min.css">
+
+        <!-- Date Picker -->
+        <link rel="stylesheet" href="libs/landing/css/bootstrap-datepicker.css">
+        <!-- Flaticons  -->
+        <link rel="stylesheet" href="libs/landing/fonts/flaticon/font/flaticon.css">
+
+        <!-- Theme style  -->
+        <link rel="stylesheet" href="libs/landing/css/style.css">
+
+        <!-- Modernizr JS -->
+        <script src="libs/landing/js/modernizr-2.6.2.min.js"></script>
+        <!-- FOR IE9 below -->
+        <!--[if lt IE 9]>
+        <script src="libs/landing/js/respond.min.js"></script>
+        <![endif]-->
+        <!-- Bootstrap 3.3.7 -->
+        <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="../../bower_components/font-awesome/css/font-awesome.min.css">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="../../bower_components/Ionicons/css/ionicons.min.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="../../bower_components/admin-lte/dist/css/AdminLTELangind.css">
+
+        <!-- AdminLTE Skins. Choose a skin from the css/skins
+             folder instead of downloading all of them to reduce the load. -->
+        <link rel="stylesheet" href="../../bower_components/admin-lte/dist/css/skins/_all-skins.min.css">
+
+
+    </head>
+    <body class="hold-transition skin-blue layout-top-nav">
+
+        <div class="colorlib-loader"></div>
+
+        <div id="page">
+            <div class="wrapper">
+
+                <header class="main-header">
+                    <nav class="navbar navbar-static-top" style="margin-bottom: 0px;">
+                        <div class="container">
+                            <div class="navbar-header">
+                                <a href="../../index2.html" class="navbar-brand">
+                                    <p  style="color: #fff">
+                                        <img width="25" height="25" src="../../img/Logo.jpg" class="img-circle" class="img-responsive" alt="logo">
+                                        Un<b>Aventon</b>
+                                    </p>
+                                </a>
+
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                                    <i class="fa fa-bars"></i>
+                                </button>
+                            </div>
+                            <!-- /.navbar-collapse -->
+                            <!-- Navbar Right Menu -->
+                            <div class="navbar-custom-menu  pull-right">
+                                <ul class="nav navbar-nav">
+                                    <!-- User Account Menu -->
+                                    {% if session.get('autenticado') %}
+                                        <li class="dropdown user user-menu">
+                                            <!-- Menu Toggle Button -->
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                <!-- The user image in the navbar-->
+                                                <img src="/img/anonimo.png" class="user-image" alt="User Image">
+                                                <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                                                <span class="hidden-xs">Armando Esteban Quito</span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <!-- The user image in the menu -->
+                                                <li class="user-header">
+                                                    <img src="/img/anonimo.png" class="img-circle" alt="User Image">
+
+                                                    <p>
+                                                        Armando Esteban Quito
+                                                        <small>Miembro desde desde Nov. 2012</small>
+                                                    </p>
+                                                </li>
+                                                <!-- Menu Body -->
+                                                <li class="user-body">
+                                                    <div class="row">
+                                                        <div class="col-xs-3 text-center">
+                                                            <a href="#">Viajes Pasajero</a>
+                                                            <label>15</label>
+                                                        </div>
+                                                        <div class="col-xs-3 text-center">
+                                                            <a href="#">Rep. Pasajero</a>
+                                                            <label>150</label>              
+                                                        </div>
+                                                        <div class="col-xs-3 text-center">
+                                                            <a href="#" class>Viajes Chofer</a>
+                                                            <label>2</label>                        
+                                                        </div>
+                                                        <div class="col-xs-3 text-center">
+                                                            <a href="#">Rep. Chofer</a>
+                                                            <label>8</label>                
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.row -->
+                                                </li>
+                                                <!-- Menu Footer-->
+                                                <li class="user-footer">
+                                                    <div class="pull-left">
+                                                        <a href="/usuario/perfil" class="btn btn-default btn-flat">Perfil</a>
+                                                    </div>
+                                                    <div class="pull-right">
+                                                        <a href="/login/cerrar" class="btn btn-default btn-flat">Cerrar Sesión</a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    {% else %}
+                                        <li class="dropdown user user-menu  pull-right">
+                                            <!-- Menu Toggle Button -->
+                                            <a href="/registro" class="dropdown-toggle">
+                                                <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                                                <span class="hidden-xs">Ingresar</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <!-- /.navbar-custom-menu -->
+                        </div>
+                        <!-- /.container-fluid -->
+                    </nav>
+                </header>
+
+            </div>
+            <aside id="colorlib-hero">
+                <div class="flexslider">
+                    <ul class="slides">
+                        <li style="background-image: url(img/1.jpg);">
+                            <div class="overlay"></div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12 col-md-offset-3 slider-text">
+                                        <div class="slider-text-inner text-center">
+                                            <h2>Busca un viaje</h2>
+                                            <h1>Un Aventon</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li style="background-image: url(img/2.jpg);">
+                            <div class="overlay"></div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12 col-md-offset-3 slider-text">
+                                        <div class="slider-text-inner text-center">
+                                            <h2>Postulate a un viaje</h2>
+                                            <h1>El que mas te guste</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li style="background-image: url(img/3.jpg);">
+                            <div class="overlay"></div>
+                            <div class="container-fluids">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12 col-md-offset-3 slider-text">
+                                        <div class="slider-text-inner text-center">
+                                            <h2>El dia acordado viaja</h2>
+                                            <h1>Ahorra y gana viajando con amigos.</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+            <div id="colorlib-reservation">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12 search-wrap">
+                            <form method="post" class="colorlib-form">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="date">Origen:</label>
+                                            <div class="form-field">
+                                                <i class="icon icon-map3"></i>
+                                                <input type="text" id="origen" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="date">Destino:</label>
+                                            <div class="form-field">
+                                                <i class="icon icon-map3"></i>
+                                                <input type="text" id="destino" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="date">Fecha:</label>
+                                            <div class="form-field">
+                                                <i class="icon icon-calendar2"></i>
+                                                <input type="text" id="fecha" class="form-control date" placeholder="DD/MM/AAAA">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="submit" name="submit" id="submit" value="Buscar" class="btn btn-primary btn-block">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="colorlib-services">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4 animate-box text-center">
+                            <div class="services">
+                                <span class="icon">
+                                    <i class="flaticon-reception"></i>
+                                </span>
+                                <h3>Busca un viaje</h3>
+                                <p>Elegis una destino y una fecha y te mostramos las opciones</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 animate-box text-center">
+                            <div class="services">
+                                <span class="icon">
+                                    <i class="flaticon-car"></i>
+                                </span>
+                                <h3>Postulate a un viaje</h3>
+                                <p>Cuando encuentres un viaje que te guste, solo hace click en postulate para que el chofer te acepte.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 animate-box text-center">
+                            <div class="services">
+                                <span class="icon">
+                                    <i class="flaticon-cheers"></i>
+                                </span>
+                                <h3>Viaja</h3>
+                                <p>El dia publicado espera al chofer en el punto de partida y listo!!! ya estas viajando!!!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+     
+
+            
+            <div id="colorlib-testimony" class="colorlib-light-grey">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3 text-center colorlib-heading animate-box">
+                            <span><i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-full"></i></span>
+                            <h2>Nuestro Staff</h2>
+                            <p>Buscamos mejorar la forma de viajar y ayudar a generar ingresos a los choferes.</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 animate-box">
+                            <div class="testimony text-center">
+                                <span class="img-user" style="background-image: url(img/lautaro.jpeg);"></span>
+                                <span class="user">Lautaro Silva</span>
+                                <small>Analisis y Desarrollo</small>
+{#                                <blockquote>
+                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
+                                </blockquote>#}
+                            </div>
+                        </div>
+                        <div class="col-md-4 animate-box">
+                            <div class="testimony text-center">
+                                <span class="img-user" style="background-image: url(img/pedro.jpeg);"></span>
+                                <span class="user">Pedro Gonzales Chavez</span>
+                                <small>Desarrollo y Diseño</small>
+{#                                <blockquote>
+                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
+                                </blockquote>#}
+                            </div>
+                        </div>
+                        <div class="col-md-4 animate-box">
+                            <div class="testimony text-center">
+                                <span class="img-user" style="background-image: url(img/nacho.jpeg);"></span>
+                                <span class="user">Ignacio Sanchez</span>
+                                <small>Desarrollo y Base de Datos</small>
+{#                                <blockquote>
+                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
+                                </blockquote>#}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer id="colorlib-footer" role="contentinfo">
+                <div class="container">
+                    <div class="row row-pb-md">
+                        <div class="col-md-6 colorlib-widget">
+                            <h4>Un Aventon</h4>
+                            <p>La manera mas facil y efectiva de compartir un viaje.</p>
+                            <p>
+                            <ul class="colorlib-social-icons">
+                                <li><a href="#"><i class="icon-twitter"></i></a></li>
+                                <li><a href="#"><i class="icon-facebook"></i></a></li>
+                                <li><a href="#"><i class="icon-linkedin"></i></a></li>
+                                <li><a href="#"><i class="icon-dribbble"></i></a></li>
+                            </ul>
+                            </p>
+                        </div>
+                        <div class="col-md-6 col-md-push-1">
+                            <h4>Informacion de contacto</h4>
+                            <ul class="colorlib-footer-links">
+                                <li>Facultad de Informatica, <br> calle 50 Nº 1234</li>
+                                <li><a href="tel://1234567920">+ 1235 2355 98</a></li>
+                                <li><a href="mailto:info@yoursite.com">info@unaventon.com</a></li>
+                                <li><a href="http://unaventon.com">unaventon.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <p>
+                                <small class="block"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> Todos los derechos reservados.</small> 
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
-        <div class="box-body">
-            The great content goes here
+
+        <div class="gototop js-top">
+            <a href="#" class="js-gotop" style="background: #337ab7;"><i class="icon-arrow-up2"></i></a>
         </div>
-        <!-- /.box-body -->
-    </div>
-    <!-- /.box -->
-{% endblock %}            
+
+        <!-- jQuery -->
+        <script src="libs/landing/js/jquery.min.js"></script>
+        <!-- jQuery Easing -->
+        <script src="libs/landing/js/jquery.easing.1.3.js"></script>
+        <!-- Bootstrap -->
+        <script src="libs/landing/js/bootstrap.min.js"></script>
+        <!-- Waypoints -->
+        <script src="libs/landing/js/jquery.waypoints.min.js"></script>
+        <!-- Flexslider -->
+        <script src="libs/landing/js/jquery.flexslider-min.js"></script>
+        <!-- Owl carousel -->
+        <script src="libs/landing/js/owl.carousel.min.js"></script>
+        <!-- Magnific Popup -->
+        <script src="libs/landing/js/jquery.magnific-popup.min.js"></script>
+        <script src="libs/landing/js/magnific-popup-options.js"></script>
+        <!-- Date Picker -->
+        <script src="libs/landing/js/bootstrap-datepicker.js"></script>
+        <!-- Main -->
+        <script src="libs/landing/js/main.js"></script>
+
+    </body>
+</html>
+

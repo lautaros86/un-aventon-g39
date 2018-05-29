@@ -9,6 +9,7 @@ define('APP_SLOGAN', 'Mi primer Framework php y mvc.....');
 define('APP_COMPANY', 'www.jcbcsystems.com');
 define('SESSION_TIME', 1);
 define('HASH_KEY', '53bf025929f1f');
+define('ENV_DEV', true);
 
 if ($_SERVER['HTTP_HOST'] == 'unaventon.local') {
     define('BASE_URL', 'http://unaventon.local/');
@@ -34,5 +35,7 @@ if ($_SERVER['HTTP_HOST'] == 'grupo39.lsilva.com.ar') {
     define('DB_PASS', '1Q2w3e4r');
     define('DB_NAME', 'lsilvaco_grupo39');
     define('DB_CHAR', 'utf8');
+    define('ENV_DEV', false);
+
 }
 ?>

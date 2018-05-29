@@ -16,7 +16,6 @@ class usuarioController extends Controller {
 
     public function index() {
         
-        
     }
 
     public function eliminarCuenta() {
@@ -43,6 +42,7 @@ class usuarioController extends Controller {
         Session::destroy("form");
         $this->_view->renderizar('registro', 'usuario', array("form" => $form));
     }
+
     public function editarPerfil() {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
@@ -76,6 +76,10 @@ class usuarioController extends Controller {
                 $this->redireccionar();
             } catch (PDOException $e) {
                 Session::setMessage("Error al registrar el usuario", SessionMessageType::Error);
+                if (ENV_DEV) {
+                    Session::setMessage("Error de desarrollo: " . $e->getMessage(), SessionMessageType::Error);
+                }
+                $this->redireccionar("registro");
             }
         } else {
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
@@ -150,7 +154,7 @@ class usuarioController extends Controller {
 
         return $errors;
     }
-    
+
     public function editar() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
@@ -180,16 +184,17 @@ class usuarioController extends Controller {
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
             $this->redireccionar("editar");
         }
-        $this->_view->renderizar('editar', 'usuario' /*, array("form" => $form) */);        
+        $this->_view->renderizar('editar', 'usuario' /* , array("form" => $form) */);
     }
-    
+
     public function verUsuario() {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
         $usuario = Session::get("usuario");
-        $this->_view->renderizar('verUsuario', 'usuario',array('usuario'=>$usuario));
+        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario));
     }
+
 }
 
 ?>

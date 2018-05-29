@@ -189,8 +189,11 @@ class usuarioController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
+        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
+        $vehiculoModel = new vehiculoModel();
         $usuario = Session::get("usuario");
-        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario));
+        $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
+        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos));
     }
 
 }

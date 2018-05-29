@@ -44,8 +44,15 @@ class vehiculoModel extends Model {
     }
   
 
-}
+    public function getVehiculosByUserId($idusuairo) {
+        $idusuairo = (int) $idusuairo;
+        $sql = "select * from vehiculo where id_usuario = :idusuario";
+        $params = array(':idusuario' => $idusuairo);
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchall(PDO::FETCH_ASSOC);
+    }
 
+}
 ?>
 
 

@@ -22,7 +22,7 @@
                         <!-- Menu Toggle Button -->
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <!-- The user image in the navbar-->
-                            <img src="/img/anonimo.png" class="user-image" alt="User Image">
+                            <img src="{% if session.get('usuario').foto %}{{session.get('usuario').foto}}{% else %}/img/anonimo.png{% endif %}" class="user-image" alt="User Image">
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
                             <span class="hidden-xs">{{session.get('usuario').nombre}} {{session.get('usuario').apellido}}</span>
                         </a>

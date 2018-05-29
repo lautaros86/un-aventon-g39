@@ -27,7 +27,7 @@ class registroModel extends Model {
     }
 
     public function registrarUsuario($nombre, $apellido, $email, $fecha_nac, $password) {
-        $sql ="insert into usuarios values (null, :nombre, :apellido, :email, STR_TO_DATE(:fecha_nac, '%d/%m/%Y'), :password, NOW(), NOW(), 1)";
+        $sql ="insert into usuarios values (null, :nombre, :apellido, :email, STR_TO_DATE(:fecha_nac, '%d/%m/%Y'), :password, null, NOW(), NOW(), 1)";
         $this->_db->execute($sql, array(
                     ':nombre' => $nombre,
                     ':apellido' => $apellido,

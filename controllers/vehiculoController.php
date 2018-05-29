@@ -29,30 +29,34 @@ class vehiculoController extends Controller {
     }
 
     public function crear() {
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("registro");
         }
+
         $form = array();
         $form['marca'] = $this->getAlphaNum('marca');
         $form['modelo'] = $this->getAlphaNum('modelo');
         $form['patente'] = $this->getAlphaNum('patente');
         $form['asientos'] = $this->getAlphaNum('asientos');
         $form['baul'] = $this->getAlphaNum('baul');
+        $form["baul"] = $form["baul"] == "on" ? 1 : 0;
         Session::set("form", $form);
         $errors = $this->validarAltaVehiculo();
 
         if (!$errors) {
             try {
 
+
                 require_once ROOT . 'models' . DS . 'vehiculoModel.php';
                 $vehiculoModel = new vehiculoModel();
                 $vehiculoModel->insertarVehiculo($form, Session::get("usuario")["id"]);
 
                 Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
+                  Session::destroy("form");
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
+                var_dump($e->getMessage()); die;
                 Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
                 $this->redireccionar("vehiculo/alta");
             }
@@ -62,12 +66,15 @@ class vehiculoController extends Controller {
             $form['patente'] = $this->getPostParam('patente');
             $form['asientos'] = $this->getPostParam('asientos');
             $form['baul'] = $this->getAlphaNum('baul');
+            $form["baul"] = $form["baul"] == "on" ? 1 : 0;
             Session::set("form", $form);
-            Session::set("autenticado", true);
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
-            $this->redireccionar("registro");
+
+            $this->redireccionar("vehiculo/alta");
         }
         $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
+        
+        
     }
 
     public function lista() {
@@ -96,8 +103,13 @@ class vehiculoController extends Controller {
         }
 
         if ($this->getPostParam('asientos') == "") {
-            Session::setFormErrors("asientos", "La cantidad de asientos es obligatorio.");
+            Session::setFormErrors("asientos", "La cantidad de asientos es obligatorio, se debe cargar un dato numerico");
             $errors = true;
+        } else {
+            if (!is_int($this->verifInt('asientos'))) {
+                Session::setFormErrors("asientos", "se debe cargar un dato numerico.");
+                $errors = true;
+            }
         }
 
         return $errors;

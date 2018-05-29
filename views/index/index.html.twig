@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Luxehotel Template</title>
+        <title>Un Aventon</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="" />
         <meta name="keywords" content="" />
@@ -54,19 +54,19 @@
         <!--[if lt IE 9]>
         <script src="libs/landing/js/respond.min.js"></script>
         <![endif]-->
+
         <!-- Bootstrap 3.3.7 -->
-        <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css">
+        {#        <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css">#}
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="../../bower_components/font-awesome/css/font-awesome.min.css">
+        {#        <link rel="stylesheet" href="../../bower_components/font-awesome/css/font-awesome.min.css">#}
         <!-- Ionicons -->
-        <link rel="stylesheet" href="../../bower_components/Ionicons/css/ionicons.min.css">
+        {#        <link rel="stylesheet" href="../../bower_components/Ionicons/css/ionicons.min.css">#}
         <!-- Theme style -->
-        <link rel="stylesheet" href="../../bower_components/admin-lte/dist/css/AdminLTELangind.css">
+        <link rel="stylesheet" href="../../libs/custom/AdminLTE.css">
 
         <!-- AdminLTE Skins. Choose a skin from the css/skins
              folder instead of downloading all of them to reduce the load. -->
         <link rel="stylesheet" href="../../bower_components/admin-lte/dist/css/skins/_all-skins.min.css">
-
 
     </head>
     <body class="hold-transition skin-blue layout-top-nav">
@@ -74,98 +74,11 @@
         <div class="colorlib-loader"></div>
 
         <div id="page">
-            <div class="wrapper">
 
-                <header class="main-header">
-                    <nav class="navbar navbar-static-top" style="margin-bottom: 0px;">
-                        <div class="container">
-                            <div class="navbar-header">
-                                <a href="../../index2.html" class="navbar-brand">
-                                    <p  style="color: #fff">
-                                        <img width="25" height="25" src="../../img/Logo.jpg" class="img-circle" class="img-responsive" alt="logo">
-                                        Un<b>Aventon</b>
-                                    </p>
-                                </a>
+            <header class="main-header">
+                {% include 'template/menu.html.twig' with {'session': session, 'host': host} %}
+            </header>
 
-                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-                                    <i class="fa fa-bars"></i>
-                                </button>
-                            </div>
-                            <!-- /.navbar-collapse -->
-                            <!-- Navbar Right Menu -->
-                            <div class="navbar-custom-menu  pull-right">
-                                <ul class="nav navbar-nav">
-                                    <!-- User Account Menu -->
-                                    {% if session.get('autenticado') %}
-                                        <li class="dropdown user user-menu">
-                                            <!-- Menu Toggle Button -->
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                                <!-- The user image in the navbar-->
-                                                <img src="/img/anonimo.png" class="user-image" alt="User Image">
-                                                <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                                                <span class="hidden-xs">Armando Esteban Quito</span>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <!-- The user image in the menu -->
-                                                <li class="user-header">
-                                                    <img src="/img/anonimo.png" class="img-circle" alt="User Image">
-
-                                                    <p>
-                                                        Armando Esteban Quito
-                                                        <small>Miembro desde desde Nov. 2012</small>
-                                                    </p>
-                                                </li>
-                                                <!-- Menu Body -->
-                                                <li class="user-body">
-                                                    <div class="row">
-                                                        <div class="col-xs-3 text-center">
-                                                            <a href="#">Viajes Pasajero</a>
-                                                            <label>15</label>
-                                                        </div>
-                                                        <div class="col-xs-3 text-center">
-                                                            <a href="#">Rep. Pasajero</a>
-                                                            <label>150</label>              
-                                                        </div>
-                                                        <div class="col-xs-3 text-center">
-                                                            <a href="#" class>Viajes Chofer</a>
-                                                            <label>2</label>                        
-                                                        </div>
-                                                        <div class="col-xs-3 text-center">
-                                                            <a href="#">Rep. Chofer</a>
-                                                            <label>8</label>                
-                                                        </div>
-                                                    </div>
-                                                    <!-- /.row -->
-                                                </li>
-                                                <!-- Menu Footer-->
-                                                <li class="user-footer">
-                                                    <div class="pull-left">
-                                                        <a href="/usuario/perfil" class="btn btn-default btn-flat">Perfil</a>
-                                                    </div>
-                                                    <div class="pull-right">
-                                                        <a href="/login/cerrar" class="btn btn-default btn-flat">Cerrar Sesión</a>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    {% else %}
-                                        <li class="dropdown user user-menu  pull-right">
-                                            <!-- Menu Toggle Button -->
-                                            <a href="/registro" class="dropdown-toggle">
-                                                <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                                                <span class="hidden-xs">Ingresar</span>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                </ul>
-                            </div>
-                            <!-- /.navbar-custom-menu -->
-                        </div>
-                        <!-- /.container-fluid -->
-                    </nav>
-                </header>
-
-            </div>
             <aside id="colorlib-hero">
                 <div class="flexslider">
                     <ul class="slides">
@@ -288,9 +201,9 @@
                 </div>
             </div>
 
-     
 
-            
+
+
             <div id="colorlib-testimony" class="colorlib-light-grey">
                 <div class="container">
                     <div class="row">
@@ -306,9 +219,9 @@
                                 <span class="img-user" style="background-image: url(img/lautaro.jpeg);"></span>
                                 <span class="user">Lautaro Silva</span>
                                 <small>Analisis y Desarrollo</small>
-{#                                <blockquote>
-                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
-                                </blockquote>#}
+                                {#                                <blockquote>
+                                                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
+                                                                </blockquote>#}
                             </div>
                         </div>
                         <div class="col-md-4 animate-box">
@@ -316,9 +229,9 @@
                                 <span class="img-user" style="background-image: url(img/pedro.jpeg);"></span>
                                 <span class="user">Pedro Gonzales Chavez</span>
                                 <small>Desarrollo y Diseño</small>
-{#                                <blockquote>
-                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
-                                </blockquote>#}
+                                {#                                <blockquote>
+                                                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
+                                                                </blockquote>#}
                             </div>
                         </div>
                         <div class="col-md-4 animate-box">
@@ -326,9 +239,9 @@
                                 <span class="img-user" style="background-image: url(img/nacho.jpeg);"></span>
                                 <span class="user">Ignacio Sanchez</span>
                                 <small>Desarrollo y Base de Datos</small>
-{#                                <blockquote>
-                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
-                                </blockquote>#}
+                                {#                                <blockquote>
+                                                                    <p></i> Dignissimos asperiores vitae velit veniam totam fuga molestias accusamus alias autem provident. Odit ab aliquam dolor eius.</p>
+                                                                </blockquote>#}
                             </div>
                         </div>
                     </div>

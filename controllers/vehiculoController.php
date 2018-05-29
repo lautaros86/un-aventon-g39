@@ -9,7 +9,9 @@ class vehiculoController extends Controller {
         parent::__construct();
         require_once ROOT . 'models' . DS . 'registroModel.php';
         require_once ROOT . 'models' . DS . 'usuarioModel.php';
+        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $this->_usuario = new usuarioModel();
+        $this->_registro = new vehiculoModel();
     }
 
     public function index() {
@@ -23,104 +25,78 @@ class vehiculoController extends Controller {
         }
         $form = Session::get("form");
         Session::destroy("form");
-        $this->_view->renderizar('registro', 'usuario', array("form" => $form));
+        $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
     }
 
     public function crear() {
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("registro");
         }
-
-        $errors = $this->validarRegistro();
         $form = array();
+        $form['marca'] = $this->getAlphaNum('marca');
+        $form['modelo'] = $this->getAlphaNum('modelo');
+        $form['patente'] = $this->getAlphaNum('patente');
+        $form['asientos'] = $this->getAlphaNum('asientos');
+        $form['baul'] = $this->getAlphaNum('baul');
+        Session::set("form", $form);
+        $errors = $this->validarAltaVehiculo();
+
         if (!$errors) {
             try {
-                $this->_registro->registrarUsuario(
-                        $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
-                );
-                Session::setMessage("Registro Completado", SessionMessageType::Success);
-                $this->redireccionar("/");
+
+                require_once ROOT . 'models' . DS . 'vehiculoModel.php';
+                $vehiculoModel = new vehiculoModel();
+                $vehiculoModel->insertarVehiculo($form, Session::get("usuario")["id"]);
+
+                Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
+                $this->redireccionar("perfil");
             } catch (PDOException $e) {
-                Session::setMessage("Error al registrar el usuario", SessionMessageType::Error);
+                Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
+                $this->redireccionar("vehiculo/alta");
             }
         } else {
-            $form['nombre'] = $this->getAlphaNum('nombre');
-            $form['apellido'] = $this->getAlphaNum('apellido');
-            $form['fecha_nac'] = $this->getPostParam('fecha_nac');
-            $form['email'] = $this->getPostParam('email');
+            $form['marca'] = $this->getAlphaNum('marca');
+            $form['modelo'] = $this->getAlphaNum('modelo');
+            $form['patente'] = $this->getPostParam('patente');
+            $form['asientos'] = $this->getPostParam('asientos');
+            $form['baul'] = $this->getAlphaNum('baul');
             Session::set("form", $form);
             Session::set("autenticado", true);
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
             $this->redireccionar("registro");
         }
-        $this->_view->renderizar('registro', 'usuario', array("form" => $form));
+        $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
     }
 
-    public function lista(){
+    public function lista() {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
         $this->_view->renderizar('lista', 'vehiculo');
     }
+
     public function validarAltaVehiculo() {
         $errors = false;
-        if ($this->getAlphaNum('nombre') == "") {
-            $this->_view->setFormError("nombre", "El nombre es obligatorio.");
+        if ($this->getAlphaNum('marca') == "") {
+            Session::setFormErrors("marca", "La marca es obligatoria.");
             $errors = true;
         }
 
-        if ($this->getAlphaNum('apellido') == "") {
-            $this->_view->setFormError("apellido", "El apellido es obligatorio.");
+        if ($this->getAlphaNum('modelo') == "") {
+            Session::setFormErrors("modelo", "El modelo es obligatorio.");
             $errors = true;
         }
 
         // TODO: Validar fecha.
-        if ($this->getPostParam('fecha_nac') == "") {
-            $this->_view->setFormError("fecha_nac", "La fecha de nacimiento es obligatoria");
+        if ($this->getPostParam('patente') == "") {
+            Session::setFormErrors("patente", "La patente es obligatoria.");
             $errors = true;
         }
 
-        $fecha_nac = DateTime::createFromFormat('d/m/Y', $this->getPostParam('fecha_nac'));
-        $fechaLimite = new DateTime('-18 years');
-        if (!($fecha_nac < $fechaLimite)) {
-            $this->_view->setFormError("fecha_nac", "Debe ser mayor de edad para registrarse");
-        }
-
-        // Valido que sea un email con formato correcto.
-        if (!$this->validarEmail($this->getPostParam('email'))) {
-            $this->_view->setFormError("email", "La direccion de email es inválida");
-            $errors = true;
-        }
-
-        if ($this->getPostParam('email') == "") {
-            $this->_view->setFormError("email", "La direccion de email es obligatoria");
-            $errors = true;
-        }
-
-        // Verifico que el email no exista en el sistema.
-        if ($this->_registro->verificarEmail($this->getPostParam('email'))) {
-            $this->_view->setFormError("email", "La direccion de email ya existe");
-            $errors = true;
-        }
-
-        if ($this->getPostParam('pass') == "") {
-            $this->_view->setFormError("pass", "Contraseña incorrecta");
-            $errors = true;
-        }
-
-        if ($this->getPostParam('repass') == "") {
-            $this->_view->setFormError("repass", "La contraseña de confirmacion incorrectaa");
-            $errors = true;
-        }
-
-        if ($this->getPostParam('terminos') != true) {
-            $this->_view->setFormError("terminos", "Debe aceptar los terminos y condiciones del sitio.");
-            $errors = true;
-        }
-
-        if ($this->getPostParam('pass') != $this->getPostParam('repass')) {
-            $this->_view->setFormError("pass", "Los passwords no coinciden");
+        if ($this->getPostParam('asientos') == "") {
+            Session::setFormErrors("asientos", "La cantidad de asientos es obligatorio.");
             $errors = true;
         }
 

@@ -133,7 +133,7 @@
                     {% endif %}
                 </div>
                 <div class="form-group {% if errors.email is defined  %}has-error{% endif %}">
-                    <input type="email" class="form-control" name="email" placeholder="Email" disabled{% if form is defined  %}value="{{form.email}}"{% endif %}>
+                    <input type="email" class="form-control" name="email" placeholder="Email" disabled {% if form is defined  %}value="{{form.email}}"{% endif %}>
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     {% if errors.email is defined %}
                         {% for err_msg in errors.email %}

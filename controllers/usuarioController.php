@@ -47,9 +47,11 @@ class usuarioController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
+        $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
-        $this->_view->renderizar('editar', 'usuario', array("form" => $form));
+ 
+        $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
     }
 
     public function crear() {

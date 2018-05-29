@@ -18,9 +18,9 @@
         <div class="register-box-body">
             <p class="login-box-msg">Registrar nuevo vehiculo</p>
 
-            <form action="/usuario/crear" method="post">
+            <form action="/vehiculo/crear" method="post">
                 <div class="form-group {% if errors.nombre is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="Marca" placeholder="Marca" {% if form is defined  %}value="{{form.marca}}"{% endif %}>
+                    <input type="text" class="form-control" name="marca" placeholder="Marca" {% if form is defined  %}value="{{form.marca}}"{% endif %}>
                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
                     {% if errors.marca is defined %}
                         {% for err_msg in errors.marca %}
@@ -37,8 +37,17 @@
                         {% endfor %}
                     {% endif %}
                 </div>
+                <div class="form-group {% if errors.email is defined  %}has-error{% endif %}">
+                    <input type="patente" class="form-control" name="patente" placeholder="Patente" {% if form is defined  %}value="{{form.email}}"{% endif %}>
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    {% if errors.email is defined %}
+                        {% for err_msg in errors.email %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
                 <div class="form-group {% if errors.fecha_nac is defined  %}has-error{% endif %}">
-                    <input type="CantAs" class="form-control" name="CantAs" id="CantAs" {% if form is defined  %}value=""{% endif %}
+                    <input type="cantAs" class="form-control" name="asientos" id="asientos" {% if form is defined  %}value=""{% endif %}
                            placeholder="Ingrese cantidad de Asientos">
                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
                     {% if errors.fecha_nac is defined %}
@@ -47,45 +56,20 @@
                         {% endfor %}
                     {% endif %}
                 </div>
-                <div class="form-check">
+         {#       <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
                      <label class="form-check-label" for="exampleCheck1">Cuento con baúl</label>
-                 </div>
-                <div class="form-group {% if errors.email is defined  %}has-error{% endif %}">
-                    <input type="email" class="form-control" name="email" placeholder="Email" {% if form is defined  %}value="{{form.email}}"{% endif %}>
-                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                    {% if errors.email is defined %}
-                        {% for err_msg in errors.email %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.pass is defined  %}has-error{% endif %}">
-                    <input type="password" class="form-control" name="pass" placeholder="Contraseña">
-                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                    {% if errors.pass is defined %}
-                        {% for err_msg in errors.pass %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
-                    <input type="password" class="form-control" name="repass" placeholder="Repetir contraseña">
-                    <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
-                    {% if errors.repass is defined %}
-                        {% for err_msg in errors.repass %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
+                 </div>#}
+             
+                
                 <div class="row">
                     <div class="col-xs-8">
                         <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
 
                             <div class="checkbox icheck ">
                                 <label>
-                                    <input name="terminos" type="checkbox"> <small>Eh leido y acepto los <a href="https://es.lipsum.com/feed/html">terminos y condiciones</a></small>
-                                    {% if errors.terminos is defined %}
+                                    <input name="baul" type="checkbox"> <label>Cuento con baúl </label>
+                                    {% if errors.baul is defined %}
                                         {% for err_msg in errors.terminos %}
                                             <span class="help-block">{{err_msg}}</span>
                                         {% endfor %}
@@ -101,7 +85,6 @@
                     <!-- /.col -->
                 </div>
             </form>
-            <a href="/login" class="text-center">Ya tengo una cuenta</a>
         </div>
         <!-- /.form-box -->
     </div>

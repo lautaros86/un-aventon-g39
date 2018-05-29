@@ -8,7 +8,7 @@ class vehiculoModel extends Model {
 
     public function getVehiculos() {
         $vehiculo = $this->_db->query("select * from vehiculo");
-        return $usuario->fetchall();
+        return $vehiculo->fetchall();
     }
 
     public function getVehiculo($id) {
@@ -17,13 +17,12 @@ class vehiculoModel extends Model {
         return $vehiculo->fetch();
     }
 
-    public function insertarVehiculo($titulo, $cuerpo) {
-        $this->_db->prepare("INSERT INTO usuarios VALUES (null, :titulo, :cuerpo)")
-                ->execute(
-                        array(
-                            ':titulo' => $titulo,
-                            ':cuerpo' => $cuerpo
-        ));
+    public function insertarVehiculo($form, $idUsuario) {
+        $sql = "INSERT INTO vehiculo(patente, modelo, marca, id_usuario, asientos, baul) "
+                . "VALUES (:patente, :modelo, :marca, :id_usuario, :asientos, :baul)";
+        $params = array(":patente"=> $form["patente"], "modelo"=>$form["modelo"], "marca"=>$form["marca"],
+                "id_usuario"=>$idUsuario, "asientos"=>$form["asientos"], "baul"=>$form["baul"]);
+        $this->_db->execute($sql, $params);
     }
 
     public function editarUsuario($id, $titulo, $cuerpo) {
@@ -43,6 +42,7 @@ class vehiculoModel extends Model {
         $sql = "UPDATE usuarios SET estado = 2 WHERE id = :id";
         $this->_db->execute($sql, array(':id' => $id));
     }
+  
 
 }
 

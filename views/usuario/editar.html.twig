@@ -1,21 +1,105 @@
 {% extends 'layout.html.twig' %}
 
-{% block style %}
-    {{ parent() }}
-    <!-- iCheck -->
-    <link rel="stylesheet" href="../../bower_components/admin-lte/plugins/iCheck/square/blue.css">
-    <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{% endblock %} 
 
-{% block title %}Un Aventon - Editar Perfil{% endblock %} 
-{% block menu %}            
-{% endblock %}
-{% block contenido %}  
-    <div class="register-box">
-        <div class="register-logo">
-            <a href="/">Un<b>Aventon</b></a>
+{% block contenido %}
+
+    <div class="row">
+        <div class="col-md-3">
+
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+                    
+                    
+                    <img class="profile-user-img img-responsive img-circle" src="../../img/anonimo.png" alt="User profile picture">
+                    <h3 class="profile-username text-center"> {{usuario.nombre}} {{usuario.apellido}}</h3>
+                    
+                    <p class="text-muted text-center">{{usuario.email}}</p>
+
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <b>Total de Viajes</b> <a class="pull-right">usuario.viajes.count</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Chofer</b> <a class="pull-right">usuario.viaje.chofer</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Pasajero</b> <a class="pull-right">usuario.viaje.pasajero</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Reputacion</b> <a class="pull-right">usuario.reputacion</a>
+                        </li>
+                        <div class ="pull-right">
+                        <a class="btn btn-default btn-sm">
+                            <i class="fa fa-edit"></i>
+                    </a>
+                    </div>
+                    </ul>
+
+                    <!--    <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>-->
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+            <!-- About Me Box -->
+
+            <!--A PARTIR DE ACA TENDRIA QUE COMENTAR TODO EL BOX-->
+            {# <div class="box box-primary">
+                 <div class="box-header with-border">
+                     <h3 class="box-title">About Me</h3>
+                 </div>
+                 <!-- /.box-header -->
+                 <div class="box-body">
+                     <strong><i class="fa fa-book margin-r-5"></i> Education</strong>
+ 
+                     <p class="text-muted">
+                         B.S. in Computer Science from the University of Tennessee at Knoxville
+                     </p>
+ 
+                     <hr>
+ 
+                     <strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
+ 
+                     <p class="text-muted">Malibu, California</p>
+ 
+                     <hr>
+ 
+                     <strong><i class="fa fa-pencil margin-r-5"></i> Skills</strong>
+ 
+                     <p>
+                         <span class="label label-danger">UI Design</span>
+                         <span class="label label-success">Coding</span>
+                         <span class="label label-info">Javascript</span>
+                         <span class="label label-warning">PHP</span>
+                         <span class="label label-primary">Node.js</span>
+                     </p>
+ 
+                     <hr>
+ 
+                     <strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
+ 
+                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p>
+                 </div>
+                 <!-- /.box-body -->
+             </div>#}
+            <!-- /.box -->
+            <!-- HASTA ACA TENGO EL COMENTARIO DE EL BOX--->
+
         </div>
-
+        <!-- /.col -->
+        <div class="col-md-9">
+{#            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#activity" data-toggle="tab">Viajes publicados</a></li>
+                    <li><a href="#postulados" data-toggle="tab">Viajes Postulados</a></li>
+                    <li><a href="#timeline" data-toggle="tab">Historial</a></li>
+                    <li ><a href="#misVehiculos" data-toggle="tab">Mis Vehiculos</a></li>
+                    <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas de credito</a></li>
+                  <!--   <li><a href="#settings" data-toggle="tab">Editar Datos</a></li>  -->s
+                </ul>  
+            </div> #}
+            <!-- /.nav-tabs-custom -->
         <div class="register-box-body">
             <p class="login-box-msg">Edita Tu Perfil</p>
 
@@ -48,59 +132,18 @@
                         {% endfor %}
                     {% endif %}
                 </div>
-                <div class="form-group {% if errors.email is defined  %}has-error{% endif %}">
-                    <input type="email" class="form-control" name="email" placeholder="Email" disabled{% if form is defined  %}value="{{form.email}}"{% endif %}>
-                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                    {% if errors.email is defined %}
-                        {% for err_msg in errors.email %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.pass is defined  %}has-error{% endif %}">
-                    <input type="password" class="form-control" name="pass" placeholder="Contraseña" {% if form is defined  %}value="{{form.pass}}"{% endif %}>
-                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                    {% if errors.pass is defined %}
-                        {% for err_msg in errors.pass %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
-                    <input type="password" class="form-control" name="repass" placeholder="Repetir contraseña">
-                    <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
-                    {% if errors.repass is defined %}
-                        {% for err_msg in errors.repass %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
+
                 <div class="form-group">
-                    <label for="exampleInputFile">Escoje tu foto</label>
+                    <label for="exampleInputFile">Escoge tu foto</label>
                     <div class="input-group">
                       <div class="custom-file">
                         <input type="file" class="custom-file-input" id="exampleInputFile">
-{#                        <label class="custom-file-label" for="exampleInputFile">Escojer</label>#}
                       </div>
-{#                      <div class="input-group-append">
-                        <span class="input-group-text" id="">Subir</span>
-                      </div>#}
                     </div>
                 </div>                
                 <div class="row">
                     <div class="col-xs-4">
                         <div class="form-group {% if errors.terminos is defined  %}has-error{% endif %}">
-
-                            {#<div class="checkbox icheck ">
-                                <label>
-                                    <input name="terminos" type="checkbox"> <small>Eh leido y acepto los <a href="https://es.lipsum.com/feed/html">terminos y condiciones</a></small>
-                                    {% if errors.terminos is defined %}
-                                        {% for err_msg in errors.terminos %}
-                                            <span class="help-block">{{err_msg}}</span>
-                                        {% endfor %}
-                                    {% endif %}
-                                </label>
-                            </div>#}
                         </div>
                     </div>
                     <!-- /.col -->
@@ -114,33 +157,10 @@
                     <!-- /.col -->
                 </div>
             </form>
-{#            <a href="/login" class="text-center">Ya tengo una cuenta</a>
-            <a href="/" class="text-center pull-right">Volver a la pagina Principal</a>#}
         </div>
-        <!-- /.form-box -->
+        <!-- /.form-box -->            
+        </div>
+        <!-- /.col -->
     </div>
-    <!-- /.register-box -->
 
-    {% block script %}
-        {{ parent() }}
-        <!-- iCheck -->
-        <script src="../../bower_components/admin-lte/plugins/iCheck/icheck.min.js"></script>
-        <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-        <script src="../../bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
-
-        <script>
-            $(function () {
-                $('input').iCheck({
-                    checkboxClass: 'icheckbox_square-blue',
-                    radioClass: 'iradio_square-blue',
-                    increaseArea: '20%' /* optional */
-                });
-                $('#fecha_nac').datepicker({
-                    autoclose: true,
-                    language: 'es'
-                });
-            });
-        </script>
-    {% endblock %}            
-
-{% endblock %}                
+{% endblock %}

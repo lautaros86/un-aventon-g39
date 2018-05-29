@@ -47,9 +47,11 @@ class usuarioController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
+        $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
-        $this->_view->renderizar('editar', 'usuario', array("form" => $form));
+ 
+        $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
     }
 
     public function crear() {
@@ -152,37 +154,71 @@ class usuarioController extends Controller {
 
         return $errors;
     }
+   public function validarDatosDeUsuario() {
+        $errors = false;
+        $formErrors = array();
+        if ($this->getAlphaNum('nombre') == "") {
+            Session::setFormErrors("nombre", "El nombre es obligatorio.");
+            $errors = true;
+        }
 
+        if ($this->getAlphaNum('apellido') == "") {
+            Session::setFormErrors("apellido", "El apellido es obligatorio.");
+            $errors = true;
+        }
+
+        // TODO: Validar fecha.
+        if ($this->getPostParam('fecha_nac') == "") {
+            Session::setFormErrors("fecha_nac", "La fecha de nacimiento es obligatoria");
+            $errors = true;
+        }
+
+        $fecha_nac = DateTime::createFromFormat('d/m/Y', $this->getPostParam('fecha_nac'));
+        $fechaLimite = new DateTime('-18 years');
+        if (!($fecha_nac < $fechaLimite)) {
+            Session::setFormErrors("fecha_nac", "Debe ser mayor de edad para registrarse");
+            $errors = true;
+        }
+
+        return $errors;
+    }
     public function editar() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("editar");
         }
-        $errors = $this->validarRegistro();
+        $usuario =  Session::get('usuario');
+        $errors = $this->validarDatosDeUsuario();
         $form = array();
         $form['nombre'] = $this->getAlphaNum('nombre');
         $form['apellido'] = $this->getAlphaNum('apellido');
         $form['fecha_nac'] = $this->getPostParam('fecha_nac');
-        //esto no va el mail no se envia
-        //$form['email'] = $this->getPostParam('email');
-        $form['pass'] = $this->getAlphaNum('pass');
+
         Session::set("form", $form);
         if (!$errors) {
             try {
 //cambiar esta parte para que llame editarUsuario de usuarioModel
-//                $this->_registro->registrarUsuario(
-//                        $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
-//                );
+                $this->_usuario->editarUsuario( 
+                       $usuario["id"],$this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('fecha_nac')
+                );
                 Session::setMessage("Tus datos fueron editados correctamente :)", SessionMessageType::Success);
-                $this->redireccionar();
+
+                //esta parte se esta tocando
+                $newUsuario = Session::get("usuario");
+                $newUsuario['nombre'] = $this->getAlphaNum('nombre');
+                $newUsuario['pedro'] = $this->getAlphaNum('apellido');
+                $newUsuario['fecha_nac'] = $this->getPostParam('fecha_nac');
+                Session::destroy("usuario");
+                Session::set("usuario", $newUsuario);
+                $this->redireccionar("usuario/editarPerfil");
             } catch (PDOException $e) {
-                Session::setMessage("Error al editar tus datos :(", SessionMessageType::Error);
+                Session::setMessage("Error al editar tus datos :/", SessionMessageType::Error);
             }
         } else {
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
-            $this->redireccionar("editar");
+            $this->redireccionar("usuario/editarPerfil");
         }
-        $this->_view->renderizar('editar', 'usuario' /* , array("form" => $form) */);
+        $this->_view->renderizar('editar', 'usuario' , array("form" => $form));
     }
 
     public function verUsuario() {

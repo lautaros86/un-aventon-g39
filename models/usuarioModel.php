@@ -26,10 +26,10 @@ class usuarioModel extends Model {
         ));
     }
 
-    public function editarUsuario($id, $nombre, $apellido, $fecha, $contraseña) {        
+    public function editarUsuario($id, $nombre, $apellido, $fecha) {        
         $id = (int) $id;
-        $sql = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido, fecha_nac = :fecha, password = :contraseña WHERE id = :id";
-        $params = array(':id' => $id, ':nombre' => $nombre, ':apellido' => $apellido, ':fecha' => $fecha, ':contraseña' => Hash::getHash('sha256', $contraseña, HASH_KEY));
+        $sql = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido, fecha_nac = :fecha WHERE id = :id";
+        $params = array(':id' => $id, ':nombre' => $nombre, ':apellido' => $apellido, ':fecha' => $fecha);
         $this->_db->execute($sql, $params);
     }
 

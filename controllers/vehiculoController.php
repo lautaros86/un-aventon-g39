@@ -29,7 +29,7 @@ class vehiculoController extends Controller {
     }
 
     public function crear() {
-  
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("registro");
@@ -41,7 +41,7 @@ class vehiculoController extends Controller {
         $form['asientos'] = $this->getAlphaNum('asientos');
         $form['baul'] = $this->getAlphaNum('baul');
         Session::set("form", $form);
-        $errors=$this->validarAltaVehiculo();
+        $errors = $this->validarAltaVehiculo();
 
         if (!$errors) {
             try {
@@ -49,11 +49,12 @@ class vehiculoController extends Controller {
                 require_once ROOT . 'models' . DS . 'vehiculoModel.php';
                 $vehiculoModel = new vehiculoModel();
                 $vehiculoModel->insertarVehiculo($form, Session::get("usuario")["id"]);
-          
+
                 Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
                 Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
+                $this->redireccionar("vehiculo/alta");
             }
         } else {
             $form['marca'] = $this->getAlphaNum('marca');
@@ -79,26 +80,26 @@ class vehiculoController extends Controller {
     public function validarAltaVehiculo() {
         $errors = false;
         if ($this->getAlphaNum('marca') == "") {
-           Session::setFormErrors("marca", "La marca es obligatoria.");
+            Session::setFormErrors("marca", "La marca es obligatoria.");
             $errors = true;
         }
 
         if ($this->getAlphaNum('modelo') == "") {
-           Session::setFormErrors("modelo", "El modelo es obligatorio.");
+            Session::setFormErrors("modelo", "El modelo es obligatorio.");
             $errors = true;
         }
 
         // TODO: Validar fecha.
         if ($this->getPostParam('patente') == "") {
-          Session::setFormErrors("patente", "La patente es obligatoria.");
+            Session::setFormErrors("patente", "La patente es obligatoria.");
             $errors = true;
         }
-        
-         if ($this->getPostParam('asientos') == "") {
-          Session::setFormErrors("asientos", "La cantidad de asientos es obligatorio.");
+
+        if ($this->getPostParam('asientos') == "") {
+            Session::setFormErrors("asientos", "La cantidad de asientos es obligatorio.");
             $errors = true;
         }
-        
+
         return $errors;
     }
 

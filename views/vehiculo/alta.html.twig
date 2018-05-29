@@ -1,115 +1,141 @@
+
+
+
 {% extends 'layout.html.twig' %}
+{% block title %}
+    UnAventon - Perfil
+{% endblock %}
 
-{% block style %}
-    {{ parent() }}
-    <!-- iCheck -->
-    <link rel="stylesheet" href="../../bower_components/admin-lte/plugins/iCheck/square/blue.css">
-    <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{% endblock %} 
 
-{% block title %}Un Aventon - Registro{% endblock %} 
+{% block contenido %}
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+                    <img class="profile-user-img img-responsive img-circle" src="../../img/anonimo.png" alt="User profile picture">
+                    <h3 class="profile-username text-center"> {{usuario.nombre}} {{usuario.apellido}}</h3>
+                    <p class="text-muted text-center">{{usuario.email}}</p>
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <b>Total de Viajes</b> <a class="pull-right">usuario.viajes.count</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Chofer</b> <a class="pull-right">usuario.viaje.chofer</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Pasajero</b> <a class="pull-right">usuario.viaje.pasajero</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Reputacion</b> <a class="pull-right">usuario.reputacion</a>
+                        </li>
+                    </ul>
 
-{% block contenido %}  
-    <div class="register-box">
-        <div class="register-logo">
-            <a href="/">Un<b>Aventon</b></a>
+                    <div class ="pull-right">
+                        <a class="btn btn-default btn-sm">
+                            <i class="fa fa-edit"></i> Editar
+                        </a>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
         </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+            <div class="box box-default">
+                <p class="login-box-msg">Registrar nuevo vehiculo</p>
 
-        <div class="register-box-body">
-            <p class="login-box-msg">Registrar nuevo vehiculo</p>
+                <form action="/vehiculo/crear" method="post">
+                    <div class="form-group {% if errors.nombre is defined  %}has-error{% endif %}">
+                        <input type="text" class="form-control" name="marca" placeholder="Marca" {% if form is defined  %}value="{{form.marca}}"{% endif %}>
+                        {% if errors.marca is defined %}
+                            {% for err_msg in errors.marca %}
+                                <span class="help-block">{{err_msg}}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if errors.modelo is defined  %}has-error{% endif %}">
+                        <input type="text" class="form-control" name="modelo" placeholder="modelo" {% if form is defined  %}value="{{form.modelo}}"{% endif %}>
+                        {% if errors.apellido is defined %}
+                            {% for err_msg in errors.apellido %}
+                                <span class="help-block">{{err_msg}}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if errors.email is defined  %}has-error{% endif %}">
+                        <input type="patente" class="form-control" name="patente" placeholder="Patente" {% if form is defined  %}value="{{form.email}}"{% endif %}>
+                        {% if errors.email is defined %}
+                            {% for err_msg in errors.email %}
+                                <span class="help-block">{{err_msg}}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if errors.fecha_nac is defined  %}has-error{% endif %}">
+                        <input type="cantAs" class="form-control" name="asientos" id="asientos" {% if form is defined  %}value=""{% endif %}
+                               placeholder="Ingrese cantidad de Asientos">
+                        {% if errors.fecha_nac is defined %}
+                            {% for err_msg in errors.fecha_nac %}
+                                <span class="help-block">{{err_msg}}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
 
-            <form action="/vehiculo/crear" method="post">
-                <div class="form-group {% if errors.nombre is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="marca" placeholder="Marca" {% if form is defined  %}value="{{form.marca}}"{% endif %}>
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
-                    {% if errors.marca is defined %}
-                        {% for err_msg in errors.marca %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.modelo is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="modelo" placeholder="modelo" {% if form is defined  %}value="{{form.modelo}}"{% endif %}>
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
-                    {% if errors.apellido is defined %}
-                        {% for err_msg in errors.apellido %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.email is defined  %}has-error{% endif %}">
-                    <input type="patente" class="form-control" name="patente" placeholder="Patente" {% if form is defined  %}value="{{form.email}}"{% endif %}>
-                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                    {% if errors.email is defined %}
-                        {% for err_msg in errors.email %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.fecha_nac is defined  %}has-error{% endif %}">
-                    <input type="cantAs" class="form-control" name="asientos" id="asientos" {% if form is defined  %}value=""{% endif %}
-                           placeholder="Ingrese cantidad de Asientos">
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
-                    {% if errors.fecha_nac is defined %}
-                        {% for err_msg in errors.fecha_nac %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-         {#       <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                     <label class="form-check-label" for="exampleCheck1">Cuento con baúl</label>
-                 </div>#}
-             
-                
-                <div class="row">
-                    <div class="col-xs-8">
-                        <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
 
-                            <div class="checkbox icheck ">
-                                <label>
-                                    <input name="baul" type="checkbox"> <label>Cuento con baúl </label>
-                                    {% if errors.baul is defined %}
-                                        {% for err_msg in errors.terminos %}
-                                            <span class="help-block">{{err_msg}}</span>
-                                        {% endfor %}
-                                    {% endif %}
-                                </label>
+                                <div class="checkbox icheck ">
+                                    <label>
+                                        <input name="baul" type="checkbox"> <label>Cuento con baúl </label>
+                                        {% if errors.baul is defined %}
+                                            {% for err_msg in errors.terminos %}
+                                                <span class="help-block">{{err_msg}}</span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </label>
+                                </div>
                             </div>
                         </div>
+                        <!-- /.col -->
+                        <div class="col-xs-4">
+                            <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Registrar</button>
+                        </div>
+                        <!-- /.col -->
                     </div>
-                    <!-- /.col -->
-                    <div class="col-xs-4">
-                        <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Registrar</button>
-                    </div>
-                    <!-- /.col -->
-                </div>
-            </form>
+                </form>
+            </div>
+
         </div>
-        <!-- /.form-box -->
     </div>
-    <!-- /.register-box -->
+{% endblock %}
 
-    {% block script %}
-        {{ parent() }}
-        <!-- iCheck -->
-        <script src="../../bower_components/admin-lte/plugins/iCheck/icheck.min.js"></script>
-        <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-        <script src="../../bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
 
-        <script>
-            $(function () {
-                $('input').iCheck({
-                    checkboxClass: 'icheckbox_square-blue',
-                    radioClass: 'iradio_square-blue',
-                    increaseArea: '20%' /* optional */
-                });
-                $('#fecha_nac').datepicker({
-                    autoclose: true,
-                    language: 'es'
-                });
+{% block script %}
+    {{parent()}}
+    <script>
+        $().ready(function () {
+
+            $(".edit").click(function (event) {
+                var elem = $(event.target);
+                if (elem.is("i")) {
+                    elem = $(elem.parent());
+                }
+                console.log(elem.data("id"))
+                alert("Modificar vehiculo con id: " + elem.data("id"));
             });
-        </script>
-    {% endblock %}            
-
-{% endblock %}                
+            $(".remove").click(function (event) {
+                ok = confirm("¿Esta seguro que desea eliminar este vehiculo?");
+                if (ok) {
+                    var elem = $(event.target);
+                    if (elem.is("i")) {
+                        elem = $(elem.parent());
+                    }
+                    alert("Eliminar vehiculo con id: " + elem.data("id"));
+                } else {
+                    alert("Pedido cancelado");
+                }
+            });
+        });
+    </script>
+{% endblock %}

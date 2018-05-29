@@ -23,7 +23,7 @@ class vehiculoController extends Controller {
         }
         $form = Session::get("form");
         Session::destroy("form");
-        $this->_view->renderizar('registro', 'usuario', array("form" => $form));
+        $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
     }
 
     public function crear() {

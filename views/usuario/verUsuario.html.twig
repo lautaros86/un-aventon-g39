@@ -1,46 +1,11 @@
-{% extends 'layout.html.twig' %}
+{% extends 'layoutPerfil.html.twig' %}
 {% block title %}
     UnAventon - Perfil
 {% endblock %}
 
 
-{% block contenido %}
-    <div class="row">
-        <div class="col-md-3">
-            <!-- Profile Image -->
-            <div class="box box-primary">
-                <div class="box-body box-profile">
-                    <img class="profile-user-img img-responsive img-circle" src="../../img/anonimo.png" alt="User profile picture">
-                    <h3 class="profile-username text-center"> {{usuario.nombre}} {{usuario.apellido}}</h3>
-                    <p class="text-muted text-center">{{usuario.email}}</p>
-                    <ul class="list-group list-group-unbordered">
-                        <li class="list-group-item">
-                            <b>Total de Viajes</b> <a class="pull-right">usuario.viajes.count</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Chofer</b> <a class="pull-right">usuario.viaje.chofer</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Pasajero</b> <a class="pull-right">usuario.viaje.pasajero</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Reputacion</b> <a class="pull-right">usuario.reputacion</a>
-                        </li>
-                    </ul>
-
-                    <div class ="pull-right">
-                        <a class="btn btn-default btn-sm" href= "usuario/editarPerfil">
-                            <i class="fa fa-edit"></i> Editar
-                        </a>
-                    </div>
-                </div>
-                <!-- /.box-body -->
-            </div>
-            <!-- /.box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-9">
-            <div class="nav-tabs-custom">
+{% block subContenido %}
+    <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#activity" data-toggle="tab">Viajes publicados</a></li>
                     <li><a href="#postulados" data-toggle="tab">Viajes Postulados</a></li>
@@ -70,9 +35,6 @@
                 </div>
                 <!-- /.nav-tabs-custom -->
             </div>
-            <!-- /.col -->
-        </div>
-    </div>
 {% endblock %}
 
 

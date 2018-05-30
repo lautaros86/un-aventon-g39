@@ -29,7 +29,7 @@
                         <ul class="dropdown-menu">
                             <!-- The user image in the menu -->
                             <li class="user-header">
-                                <img src="/img/anonimo.png" class="img-circle" alt="User Image">
+                                <img src="{% if session.get('usuario').foto %}{{session.get('usuario').foto}}{% else %}/img/anonimo.png{% endif %}" class="img-circle" alt="User Image">
 
                                 <p>
                                     Armando Esteban Quito

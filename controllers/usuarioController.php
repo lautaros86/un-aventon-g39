@@ -50,7 +50,7 @@ class usuarioController extends Controller {
         $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
- 
+
         $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
     }
 
@@ -61,8 +61,8 @@ class usuarioController extends Controller {
         }
         $errors = $this->validarRegistro();
         $form = array();
-        $form['nombre'] = $this->getAlphaNum('nombre');
-        $form['apellido'] = $this->getAlphaNum('apellido');
+        $form['nombre'] = $this->getPostParam('nombre');
+        $form['apellido'] = $this->getPostParam('apellido');
         $form['fecha_nac'] = $this->getPostParam('fecha_nac');
         $form['email'] = $this->getPostParam('email');
         $form['pass'] = $this->getAlphaNum('pass');
@@ -70,7 +70,7 @@ class usuarioController extends Controller {
         if (!$errors) {
             try {
                 $this->_registro->registrarUsuario(
-                        $this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
+                        $this->getPostParam('nombre'), $this->getPostParam('apellido'), $this->getPostParam('email'), $this->getPostParam('fecha_nac'), $this->getPostParam('pass'), $this->getPostParam('email')
                 );
                 Session::setMessage("Registro Completado", SessionMessageType::Success);
                 $this->redireccionar();
@@ -154,7 +154,8 @@ class usuarioController extends Controller {
 
         return $errors;
     }
-   public function validarDatosDeUsuario() {
+
+    public function validarDatosDeUsuario() {
         $errors = false;
         $formErrors = array();
         if ($this->getAlphaNum('nombre') == "") {
@@ -182,32 +183,45 @@ class usuarioController extends Controller {
 
         return $errors;
     }
+
     public function editar() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("editar");
         }
-        $usuario =  Session::get('usuario');
+        $usuario = Session::get('usuario');
         $errors = $this->validarDatosDeUsuario();
         $form = array();
         $form['nombre'] = $this->getAlphaNum('nombre');
-        $form['apellido'] = $this->getAlphaNum('apellido');
+        $form['apellido'] = $this->getPostParam('apellido');
         $form['fecha_nac'] = $this->getPostParam('fecha_nac');
 
         Session::set("form", $form);
         if (!$errors) {
             try {
 //cambiar esta parte para que llame editarUsuario de usuarioModel
-                $this->_usuario->editarUsuario( 
-                       $usuario["id"],$this->getAlphaNum('nombre'), $this->getAlphaNum('apellido'), $this->getPostParam('fecha_nac')
+                $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
+                $file_name = $_FILES['foto']['name'];
+//                $ext = end(explode('.', $file_name));
+//                $file_ext = strtolower($ext);
+                $file_size = $_FILES['foto']['size'];
+                $file_tmp = $_FILES['foto']['tmp_name'];
+              
+                $type = pathinfo($file_tmp, PATHINFO_EXTENSION);
+                $data = file_get_contents($file_tmp);
+                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+
+                
+                $this->_usuario->editarUsuario(
+                        $usuario["id"], $this->getAlphaNum('nombre'), $this->getPostParam('apellido'), $this->getPostParam('fecha_nac'), $base64
                 );
                 Session::setMessage("Tus datos fueron editados correctamente :)", SessionMessageType::Success);
-
                 //esta parte se esta tocando
                 $newUsuario = Session::get("usuario");
                 $newUsuario['nombre'] = $this->getAlphaNum('nombre');
-                $newUsuario['pedro'] = $this->getAlphaNum('apellido');
+                $newUsuario['apellido'] = $this->getPostParam('apellido');
                 $newUsuario['fecha_nac'] = $this->getPostParam('fecha_nac');
+                $newUsuario['foto'] = $base64;
                 Session::destroy("usuario");
                 Session::set("usuario", $newUsuario);
                 $this->redireccionar("usuario/editarPerfil");
@@ -218,7 +232,7 @@ class usuarioController extends Controller {
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
             $this->redireccionar("usuario/editarPerfil");
         }
-        $this->_view->renderizar('editar', 'usuario' , array("form" => $form));
+        $this->_view->renderizar('editar', 'usuario', array("form" => $form));
     }
 
     public function verUsuario() {

@@ -11,7 +11,7 @@
                 <div class="box-body box-profile">
                     
                     
-                    <img class="profile-user-img img-responsive img-circle" src="../../img/anonimo.png" alt="User profile picture">
+                    <img class="profile-user-img img-responsive img-circle" src="{% if session.get('usuario').foto %}{{session.get('usuario').foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
                     <h3 class="profile-username text-center"> {{usuario.nombre}} {{usuario.apellido}}</h3>
                     
                     <p class="text-muted text-center">{{usuario.email}}</p>
@@ -103,7 +103,7 @@
         <div class="register-box-body">
             <p class="login-box-msg">Edita Tu Perfil</p>
 
-            <form action="/usuario/editar" method="post">
+            <form action="/usuario/editar" method="post" enctype="multipart/form-data">
                 <div class="form-group {% if errors.nombre is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="nombre" placeholder="Nombre" {% if form is defined  %}value="{{form.nombre}}"{% endif %}>
                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
@@ -137,7 +137,7 @@
                     <label for="exampleInputFile">Escoge tu foto</label>
                     <div class="input-group">
                       <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                        <input type="file" class="custom-file-input" id="foto" name="foto">
                       </div>
                     </div>
                 </div>                

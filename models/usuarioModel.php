@@ -26,10 +26,10 @@ class usuarioModel extends Model {
         ));
     }
 
-    public function editarUsuario($id, $nombre, $apellido, $fecha) {        
+    public function editarUsuario($id, $nombre, $apellido, $fecha, $foto) {        
         $id = (int) $id;
-        $sql = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido, fecha_nac = :fecha WHERE id = :id";
-        $params = array(':id' => $id, ':nombre' => $nombre, ':apellido' => $apellido, ':fecha' => $fecha);
+        $sql = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido, fecha_nac = :fecha, foto = :foto WHERE id = :id";
+        $params = array(':id' => $id, ':nombre' => $nombre, ':apellido' => $apellido, ':fecha' => $fecha, ':foto' => $foto);
         $this->_db->execute($sql, $params);
     }
 

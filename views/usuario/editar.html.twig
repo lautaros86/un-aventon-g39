@@ -1,112 +1,14 @@
-{% extends 'layout.html.twig' %}
+{% extends 'layoutPerfil.html.twig' %}
 
 
-{% block contenido %}
-
-    <div class="row">
-        <div class="col-md-3">
-
-            <!-- Profile Image -->
-            <div class="box box-primary">
-                <div class="box-body box-profile">
-                    
-                    
-                    <img class="profile-user-img img-responsive img-circle" src="{% if session.get('usuario').foto %}{{session.get('usuario').foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
-                    <h3 class="profile-username text-center"> {{usuario.nombre}} {{usuario.apellido}}</h3>
-                    
-                    <p class="text-muted text-center">{{usuario.email}}</p>
-
-                    <ul class="list-group list-group-unbordered">
-                        <li class="list-group-item">
-                            <b>Total de Viajes</b> <a class="pull-right">usuario.viajes.count</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Chofer</b> <a class="pull-right">usuario.viaje.chofer</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Pasajero</b> <a class="pull-right">usuario.viaje.pasajero</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Reputacion</b> <a class="pull-right">usuario.reputacion</a>
-                        </li>
-                        <div class ="pull-right">
-                        <a class="btn btn-default btn-sm">
-                            <i class="fa fa-edit"></i>
-                    </a>
-                    </div>
-                    </ul>
-
-                    <!--    <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>-->
-                </div>
-                <!-- /.box-body -->
-            </div>
-            <!-- /.box -->
-
-            <!-- About Me Box -->
-
-            <!--A PARTIR DE ACA TENDRIA QUE COMENTAR TODO EL BOX-->
-            {# <div class="box box-primary">
-                 <div class="box-header with-border">
-                     <h3 class="box-title">About Me</h3>
-                 </div>
-                 <!-- /.box-header -->
-                 <div class="box-body">
-                     <strong><i class="fa fa-book margin-r-5"></i> Education</strong>
- 
-                     <p class="text-muted">
-                         B.S. in Computer Science from the University of Tennessee at Knoxville
-                     </p>
- 
-                     <hr>
- 
-                     <strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
- 
-                     <p class="text-muted">Malibu, California</p>
- 
-                     <hr>
- 
-                     <strong><i class="fa fa-pencil margin-r-5"></i> Skills</strong>
- 
-                     <p>
-                         <span class="label label-danger">UI Design</span>
-                         <span class="label label-success">Coding</span>
-                         <span class="label label-info">Javascript</span>
-                         <span class="label label-warning">PHP</span>
-                         <span class="label label-primary">Node.js</span>
-                     </p>
- 
-                     <hr>
- 
-                     <strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
- 
-                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p>
-                 </div>
-                 <!-- /.box-body -->
-             </div>#}
-            <!-- /.box -->
-            <!-- HASTA ACA TENGO EL COMENTARIO DE EL BOX--->
-
-        </div>
-        <!-- /.col -->
-        <div class="col-md-9">
-{#            <div class="nav-tabs-custom">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#activity" data-toggle="tab">Viajes publicados</a></li>
-                    <li><a href="#postulados" data-toggle="tab">Viajes Postulados</a></li>
-                    <li><a href="#timeline" data-toggle="tab">Historial</a></li>
-                    <li ><a href="#misVehiculos" data-toggle="tab">Mis Vehiculos</a></li>
-                    <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas de credito</a></li>
-                  <!--   <li><a href="#settings" data-toggle="tab">Editar Datos</a></li>  -->s
-                </ul>  
-            </div> #}
-            <!-- /.nav-tabs-custom -->
-        <div class="register-box-body">
+{% block subContenido %}
+<div class="register-box-body">
             <p class="login-box-msg">Edita Tu Perfil</p>
 
             <form action="/usuario/editar" method="post" enctype="multipart/form-data">
                 <div class="form-group {% if errors.nombre is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="nombre" placeholder="Nombre" {% if form is defined  %}value="{{form.nombre}}"{% endif %}>
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    
                     {% if errors.nombre is defined %}
                         {% for err_msg in errors.nombre %}
                             <span class="help-block">{{err_msg}}</span>
@@ -115,7 +17,7 @@
                 </div>
                 <div class="form-group {% if errors.apellido is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="apellido" placeholder="Apellido" {% if form is defined  %}value="{{form.apellido}}"{% endif %}>
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    
                     {% if errors.apellido is defined %}
                         {% for err_msg in errors.apellido %}
                             <span class="help-block">{{err_msg}}</span>
@@ -125,7 +27,7 @@
                 <div class="form-group {% if errors.fecha_nac is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="fecha_nac" id="fecha_nac" {% if form is defined  %}value="{{form.fecha_nac}}"{% endif %}
                            placeholder="Fecha de Nacimiento">
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    
                     {% if errors.fecha_nac is defined %}
                         {% for err_msg in errors.fecha_nac %}
                             <span class="help-block">{{err_msg}}</span>
@@ -158,9 +60,4 @@
                 </div>
             </form>
         </div>
-        <!-- /.form-box -->            
-        </div>
-        <!-- /.col -->
-    </div>
-
 {% endblock %}

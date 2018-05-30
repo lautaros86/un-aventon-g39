@@ -22,7 +22,6 @@
             <form action="/usuario/crear" method="post">
                 <div class="form-group {% if errors.nombre is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="nombre" placeholder="Nombre" {% if form is defined  %}value="{{form.nombre}}"{% endif %}>
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
                     {% if errors.nombre is defined %}
                         {% for err_msg in errors.nombre %}
                             <span class="help-block">{{err_msg}}</span>
@@ -31,7 +30,6 @@
                 </div>
                 <div class="form-group {% if errors.apellido is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="apellido" placeholder="Apellido" {% if form is defined  %}value="{{form.apellido}}"{% endif %}>
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
                     {% if errors.apellido is defined %}
                         {% for err_msg in errors.apellido %}
                             <span class="help-block">{{err_msg}}</span>
@@ -41,7 +39,6 @@
                 <div class="form-group {% if errors.fecha_nac is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="fecha_nac" id="fecha_nac" {% if form is defined  %}value="{{form.fecha_nac}}"{% endif %}
                            placeholder="Fecha de Nacimiento">
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
                     {% if errors.fecha_nac is defined %}
                         {% for err_msg in errors.fecha_nac %}
                             <span class="help-block">{{err_msg}}</span>
@@ -50,7 +47,6 @@
                 </div>
                 <div class="form-group {% if errors.email is defined  %}has-error{% endif %}">
                     <input type="email" class="form-control" name="email" placeholder="Email" {% if form is defined  %}value="{{form.email}}"{% endif %}>
-                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     {% if errors.email is defined %}
                         {% for err_msg in errors.email %}
                             <span class="help-block">{{err_msg}}</span>
@@ -59,7 +55,6 @@
                 </div>
                 <div class="form-group {% if errors.pass is defined  %}has-error{% endif %}">
                     <input type="password" class="form-control" name="pass" placeholder="Contraseña" {% if form is defined  %}value="{{form.pass}}"{% endif %}>
-                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                     {% if errors.pass is defined %}
                         {% for err_msg in errors.pass %}
                             <span class="help-block">{{err_msg}}</span>
@@ -68,7 +63,6 @@
                 </div>
                 <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
                     <input type="password" class="form-control" name="repass" placeholder="Repetir contraseña">
-                    <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
                     {% if errors.repass is defined %}
                         {% for err_msg in errors.repass %}
                             <span class="help-block">{{err_msg}}</span>

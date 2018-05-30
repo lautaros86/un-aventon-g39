@@ -224,7 +224,7 @@ class usuarioController extends Controller {
                 $newUsuario['foto'] = $base64;
                 Session::destroy("usuario");
                 Session::set("usuario", $newUsuario);
-                $this->redireccionar("usuario/editarPerfil");
+                $this->redireccionar("perfil");
             } catch (PDOException $e) {
                 Session::setMessage("Error al editar tus datos :/", SessionMessageType::Error);
             }

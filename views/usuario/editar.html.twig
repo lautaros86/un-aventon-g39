@@ -60,4 +60,26 @@
                 </div>
             </form>
         </div>
-{% endblock %}
+    {% block script %}
+        {{ parent() }}
+        <!-- iCheck -->
+        <script src="../../bower_components/admin-lte/plugins/iCheck/icheck.min.js"></script>
+        <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+        <script src="../../bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+
+        <script>
+            $(function () {
+                $('input').iCheck({
+                    checkboxClass: 'icheckbox_square-blue',
+                    radioClass: 'iradio_square-blue',
+                    increaseArea: '20%' /* optional */
+                });
+                $('#fecha_nac').datepicker({
+                    autoclose: true,
+                    language: 'es'
+                });
+            });
+        </script>
+    {% endblock %}            
+
+{% endblock %}                

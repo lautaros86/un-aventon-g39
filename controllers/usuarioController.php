@@ -50,7 +50,9 @@ class usuarioController extends Controller {
         $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
-
+        
+        $date = new DateTime($usuario['fecha_nac']);
+        $usuario['fecha_nac'] = $date->format('d/m/Y');
         $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
     }
 

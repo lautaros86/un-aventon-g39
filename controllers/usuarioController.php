@@ -50,7 +50,6 @@ class usuarioController extends Controller {
         $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
-        
         $date = new DateTime($usuario['fecha_nac']);
         $usuario['fecha_nac'] = $date->format('d/m/Y');
         $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
@@ -65,7 +64,9 @@ class usuarioController extends Controller {
         $form = array();
         $form['nombre'] = $this->getPostParam('nombre');
         $form['apellido'] = $this->getPostParam('apellido');
-        $form['fecha_nac'] = $this->getPostParam('fecha_nac');
+  
+        $date = new DateTime($form['fecha_nac'] = $this->getPostParam('fecha_nac'));
+        $form['fecha_nac'] = $date->format('d-m-Y');
         $form['email'] = $this->getPostParam('email');
         $form['pass'] = $this->getAlphaNum('pass');
         Session::set("form", $form);

@@ -26,10 +26,15 @@ class usuarioModel extends Model {
         ));
     }
 
-    public function editarUsuario($id, $nombre, $apellido, $fecha, $foto) {        
+    public function editarUsuario($datos) {        
         $id = (int) $id;
-        $sql = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido, fecha_nac = :fecha, foto = :foto WHERE id = :id";
-        $params = array(':id' => $id, ':nombre' => $nombre, ':apellido' => $apellido, ':fecha' => $fecha, ':foto' => $foto);
+        $sql = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido, fecha_nac = :fecha";
+        if(isset($foto) && $foto !== ""){
+            $sql .= ", foto = :foto ";
+            $params = array(':foto' => $datos["foto"]);
+        }
+        $sql .= " WHERE id = :id";
+        $params = array(':id' => $datos["id"], ':nombre' => $datos["nombre"], ':apellido' => $datos["apellido"], ':fecha' => $datos["fecha"]);
         $this->_db->execute($sql, $params);
     }
 

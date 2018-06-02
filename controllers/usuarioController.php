@@ -195,21 +195,22 @@ class usuarioController extends Controller {
         $usuario = Session::get('usuario');
         $errors = $this->validarDatosDeUsuario();
         $form = array();
-        $form['nombre'] = $this->getAlphaNum('nombre');
-        $form['apellido'] = $this->getPostParam('apellido');
         $date = new DateTime($this->getPostParam('fecha_nac'));
         $form['fecha_nac'] = $date->format('Y-m-d');
-        //$form['fecha_nac'] = $this->getPostParam('fecha_nac');
+        $form['nombre'] = $this->getAlphaNum('nombre');
+        $form['apellido'] = $this->getPostParam('apellido');
+        
 
         Session::set("form", $form);
         if (!$errors) {
             try {
 //cambiar esta parte para que llame editarUsuario de usuarioModel
-
+                $date = new DateTime($this->getPostParam('fecha_nac'));
+                $fecha = $date->format('Y-m-d');                
                 $params = array("id" => $usuario["id"],
                     "nombre" => $this->getAlphaNum('nombre'),
-                    "apellido" => $this->getPostParam('apellido'),
-                    "fecha" => $this->getPostParam('fecha_nac')
+                    "apellido" => $this->getPostParam('apellido'),                    
+                    "fecha" => $fecha
                 );
                 if ($_FILES['foto']['size'] > 0) {
                     $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');

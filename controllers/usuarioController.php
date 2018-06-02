@@ -64,8 +64,7 @@ class usuarioController extends Controller {
         $errors = $this->validarRegistro();
         $form = array();
         $form['nombre'] = $this->getPostParam('nombre');
-        $form['apellido'] = $this->getPostParam('apellido');
-        
+        $form['apellido'] = $this->getPostParam('apellido');  
         $date = new DateTime($this->getPostParam('fecha_nac'));
         $form['fecha_nac'] = $date->format('d-m-Y');
         $form['email'] = $this->getPostParam('email');
@@ -198,7 +197,9 @@ class usuarioController extends Controller {
         $form = array();
         $form['nombre'] = $this->getAlphaNum('nombre');
         $form['apellido'] = $this->getPostParam('apellido');
-        $form['fecha_nac'] = $this->getPostParam('fecha_nac');
+        $date = new DateTime($this->getPostParam('fecha_nac'));
+        $form['fecha_nac'] = $date->format('Y-m-d');
+        //$form['fecha_nac'] = $this->getPostParam('fecha_nac');
 
         Session::set("form", $form);
         if (!$errors) {

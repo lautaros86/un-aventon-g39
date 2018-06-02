@@ -19,13 +19,14 @@ class usuarioController extends Controller {
     }
 
     public function eliminarCuenta() {
-        if (Session::get('autenticado')) {
+        if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $id = 7;
+        $id = Session::get('usuario')["id"];
         try {
             $this->_usuario->eliminarUsuario($id);
             Session::setMessage("La cuenta se elimino exitosamente.", SessionMessageType::Success);
+            Session::destroy();
             $this->redireccionar();
         } catch (PDOException $e) {
             Session::setMessage("La cuenta no pudo eliminarse, por favor comuniquese con un administrador.", SessionMessageType::Error);

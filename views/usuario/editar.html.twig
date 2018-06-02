@@ -30,7 +30,7 @@
                     {% endif %}
                 </div>
                 <div class="form-group {% if errors.fecha_nac is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="fecha_nac" id="fecha_nac" {% if form is defined  %}value="{{form.fecha_nac}}"{% endif %}
+                    <input type="text" class="form-control" name="fecha_nac" id="fecha_nac" autocomplete="off" {% if form is defined  %}value="{{form.fecha_nac}}"{% endif %}
                            placeholder="Fecha de Nacimiento">
                     
                     {% if errors.fecha_nac is defined %}

@@ -29,8 +29,14 @@
                     </ul>
 
                     <div class ="pull-right">
-                        <a class="btn btn-default btn-sm" href= "/usuario/editarPerfil">
+                        <a class="btn btn-info btn-sm" href= "/usuario/editarPerfil">
                             <i class="fa fa-edit"></i> Editar
+                        </a>
+                    </div>
+
+                    <div class ="pull-left">
+                        <a class="btn btn-danger btn-sm" id="cerrarCuenta" href= "/usuario/eliminarCuenta">
+                            <i class="fa fa-trash-o"></i> Eliminar Cuenta
                         </a>
                     </div>
                 </div>
@@ -40,11 +46,26 @@
         </div>
         <!-- /.col -->
         <div class="col-md-9">
-            
+
             {% block subContenido %}
             {% endblock %}
 
             <!-- /.col -->
         </div>
     </div>
+{% endblock %}
+{% block script %}
+    {{parent()}}
+    <script>
+        $().ready(function () {
+            $("#cerrarCuenta").click(function () {
+                var ok = confirm("Seguro que desea elminar su cuenta?");
+                if (ok) {
+                    alert("Gracias por haber sido parte, esperamos vuelva pronto.");
+                } else {
+                    return false;
+                }
+            })
+        });
+    </script>
 {% endblock %}

@@ -7,13 +7,16 @@
 {% endblock %} 
 
 {% block subContenido %}
-<div class="register-box-body">
-            <p class="login-box-msg">Edita Tu Perfil</p>
+    <div class="box box-primary">
 
-            <form action="/usuario/editar" method="post" enctype="multipart/form-data">
+        <form action="/usuario/editar" method="post" enctype="multipart/form-data" role="form">
+            <div class="box-header">
+                <h3>Edita Tu Perfil</h3>
+            </div>
+            <div class="box-body">
                 <div class="form-group {% if errors.nombre is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="nombre" placeholder="Nombre" {% if form is defined  %}value="{{form.nombre}}"{% endif %}>
-                    
+
                     {% if errors.nombre is defined %}
                         {% for err_msg in errors.nombre %}
                             <span class="help-block">{{err_msg}}</span>
@@ -22,7 +25,7 @@
                 </div>
                 <div class="form-group {% if errors.apellido is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="apellido" placeholder="Apellido" {% if form is defined  %}value="{{form.apellido}}"{% endif %}>
-                    
+
                     {% if errors.apellido is defined %}
                         {% for err_msg in errors.apellido %}
                             <span class="help-block">{{err_msg}}</span>
@@ -32,7 +35,7 @@
                 <div class="form-group {% if errors.fecha_nac is defined  %}has-error{% endif %}">
                     <input type="text" class="form-control" name="fecha_nac" id="fecha_nac" autocomplete="off" {% if form is defined  %}value="{{form.fecha_nac}}"{% endif %}
                            placeholder="Fecha de Nacimiento">
-                    
+
                     {% if errors.fecha_nac is defined %}
                         {% for err_msg in errors.fecha_nac %}
                             <span class="help-block">{{err_msg}}</span>
@@ -43,48 +46,54 @@
                 <div class="form-group">
                     <label for="exampleInputFile">Escoge tu foto</label>
                     <div class="input-group">
-                      <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="foto" name="foto">
-                      </div>
-                    </div>
-                </div>                
-                <div class="row">
-                    <div class="col-xs-4">
-                        <div class="form-group {% if errors.terminos is defined  %}has-error{% endif %}">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="foto" name="foto">
                         </div>
                     </div>
-                    <!-- /.col -->
-                    <div class="col-xs-4">
-                        <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Confirmar</button>
-                    </div>
-                    
-                    <div class="col-xs-4">
-                        <button type="reset" id="resetRegistro" class="btn btn-primary btn-block btn-flat">Cancelar</button>
-                    </div>                    
-                    <!-- /.col -->
-                </div>
-            </form>
-        </div>
-    {% block script %}
-        {{ parent() }}
-        <!-- iCheck -->
-        <script src="../../bower_components/admin-lte/plugins/iCheck/icheck.min.js"></script>
-        <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-        <script src="../../bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+                </div>     
+            </div>
 
-        <script>
-            $(function () {
-                $('input').iCheck({
-                    checkboxClass: 'icheckbox_square-blue',
-                    radioClass: 'iradio_square-blue',
-                    increaseArea: '20%' /* optional */
-                });
-                $('#fecha_nac').datepicker({
-                    autoclose: true,
-                    language: 'es'
-                });
-            });
-        </script>
-    {% endblock %}            
+            <div class="box-footer">
+
+                <div class="col-xs-4">
+                    <div class="form-group {% if errors.terminos is defined  %}has-error{% endif %}">
+                    </div>
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-4">
+                    <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Confirmar</button>
+                </div>
+
+                <div class="col-xs-4">
+                    <button type="reset" id="resetRegistro" class="btn btn-primary btn-block btn-flat">Cancelar</button>
+                </div>                    
+                <!-- /.col -->
+            </div>
+        </form>
+    </div>          
 
 {% endblock %}                
+
+{% block script %}
+    {{ parent() }}
+    <!-- iCheck -->
+    <script src="../../bower_components/admin-lte/plugins/iCheck/icheck.min.js"></script>
+    <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="../../bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+
+    <script>
+        $(function () {
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' /* optional */
+            });
+            $('#fecha_nac').datepicker({
+                autoclose: true,
+                language: 'es',
+                startView: "decade",
+                orientation: 'bottom'
+            });
+        });
+    </script>
+{% endblock %}  

@@ -200,28 +200,32 @@ class usuarioController extends Controller {
         if (!$errors) {
             try {
 //cambiar esta parte para que llame editarUsuario de usuarioModel
-                $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
-                $file_name = $_FILES['foto']['name'];
-//                $ext = end(explode('.', $file_name));
-//                $file_ext = strtolower($ext);
-                $file_size = $_FILES['foto']['size'];
-                $file_tmp = $_FILES['foto']['tmp_name'];
-              
-                $type = pathinfo($file_tmp, PATHINFO_EXTENSION);
-                $data = file_get_contents($file_tmp);
-                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
 
-                
-                $this->_usuario->editarUsuario(
-                        $usuario["id"], $this->getAlphaNum('nombre'), $this->getPostParam('apellido'), $this->getPostParam('fecha_nac'), $base64
+                $params = array("id" => $usuario["id"],
+                    "nombre" => $this->getAlphaNum('nombre'),
+                    "apellido" => $this->getPostParam('apellido'),
+                    "fecha" => $this->getPostParam('fecha_nac')
                 );
+                if ($_FILES['foto']['size'] > 0) {
+                    $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
+                    $file_name = $_FILES['foto']['name'];
+                    $file_size = $_FILES['foto']['size'];
+                    $file_tmp = $_FILES['foto']['tmp_name'];
+                    $type = pathinfo($file_tmp, PATHINFO_EXTENSION);
+                    $data = file_get_contents($file_tmp);
+                    $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                    $params["foto"] = $base64;
+                }
+                $this->_usuario->editarUsuario($params);
                 Session::setMessage("Tus datos fueron editados correctamente :)", SessionMessageType::Success);
                 //esta parte se esta tocando
                 $newUsuario = Session::get("usuario");
                 $newUsuario['nombre'] = $this->getAlphaNum('nombre');
                 $newUsuario['apellido'] = $this->getPostParam('apellido');
                 $newUsuario['fecha_nac'] = $this->getPostParam('fecha_nac');
-                $newUsuario['foto'] = $base64;
+                if (isset($base64)) {
+                    $newUsuario['foto'] = $base64;
+                }
                 Session::destroy("usuario");
                 Session::set("usuario", $newUsuario);
                 $this->redireccionar("perfil");

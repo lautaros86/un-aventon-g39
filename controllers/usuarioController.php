@@ -255,6 +255,72 @@ class usuarioController extends Controller {
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
         $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos));
     }
+    
+    public function editarContrasenia() {
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar("editar");
+        }
+        $usuario = Session::get('usuario');
+        $errors = $this->validarContrasenia($usuario["id"]);
+        $form = array();
+       
+        $form['contraseniaNueva'] = $this->getPostParam('contraseniaNueva');
+        $form['contraseniaVieja'] = $this->getPostParam('contraseniaVieja');
+        $form['repeatPassNuevo'] = $this->getPostParam('repeatPassNuevo');
+        Session::set("form", $form);
+        if (!$errors) {
+            try {                         
+                $this->_usuario->editarUsuarioContrasenia($usuario["id"], $form['contraseniaNueva']);
+                Session::setMessage("Tu contraseña fue editada correctamente :)", SessionMessageType::Success);
+            } catch (PDOException $e) {
+                Session::setMessage("Error al editar tus datos :/", SessionMessageType::Error);
+            }
+        } else {
+            Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
+            $this->redireccionar("usuario/editarPerfil");
+        }
+        $this->_view->renderizar('editar', 'usuario', array("form" => $form));
+    }    
+    public function validarContrasenia($id) {
+        $errors = false;
+        $formErrors = array();
+        $oldPass = Hash::getHash('sha256', $this->getPostParam('contraseniaVieja'), HASH_KEY);
+        //$a = $oldPass -> Hash::getHash('sha256', $oldPasss, HASH_KEY);
+        try {                         
+            $pass = $this->_usuario->getUsuario($id);
+        } catch (PDOException $e) {
+                Session::setMessage("Error al editar tus datos :/", SessionMessageType::Error);
+            }
+        if ($this->getPostParam('contraseniaNueva') == "") {
+            
+            
+            Session::setFormErrors("contraseniaNueva", "este campo no puede estar vacío", SessionMessageType::Error);
+            $errors = true;
+        }
+        if ($this->getPostParam('contraseniaVieja') == "") {
+            Session::setFormErrors("contraseniaVieja", "este campo no puede estar vacío");
+            $errors = true;
+        }else{
+            if ($pass['password'] != $oldPass){
+                Session::setFormErrors("contraseniaVieja", "Lo lamento está no es tu contraseña actual");
+                $errors = true;
+            }
+        }
+        if ($this->getPostParam('repeatPassNuevo') == "") {
+            Session::setFormErrors("repeatPassNuevo", "este campo no puede estar vacío");
+            $errors = true;
+        }
+        if ($this->getPostParam('contraseniaNueva') != $this->getPostParam('repeatPassNuevo')) {
+            Session::setFormErrors("contraseniaNueva", "Las contraseñas no coinciden");
+            Session::setFormErrors("repeatPassNuevo", "Las contraseñas no coinciden");
+            $errors = true;
+        }
+
+        return $errors;
+    }
+    
 
 }
 

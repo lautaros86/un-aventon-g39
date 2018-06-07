@@ -13,8 +13,9 @@ class usuarioModel extends Model {
 
     public function getUsuario($id) {
         $id = (int) $id;
-        $usuario = $this->_db->query("select * from usuarios where id = $id");
-        return $usuario->fetch();
+        $sql = "SELECT * FROM usuarios WHERE id = :id";
+        $user = $this->_db->execute($sql, array(':id' => $id)); 
+        return $this->_db->fetch(PDO::FETCH_ASSOC);
     }
 
     public function insertarUsuario($titulo, $cuerpo) {
@@ -43,7 +44,12 @@ class usuarioModel extends Model {
         $sql = "UPDATE usuarios SET estado = 2 WHERE id = :id";
         $this->_db->execute($sql, array(':id' => $id));
     }
-
+    public function editarUsuarioContrasenia($id, $pass) {        
+        $id = (int) $id;
+        $sql = "UPDATE usuarios SET password = :pass WHERE id = :id";
+        $params = array(':id' => $id, ':pass' => Hash::getHash('sha256', $pass, HASH_KEY));
+        $this->_db->execute($sql, $params);
+    }
 }
 
 ?>

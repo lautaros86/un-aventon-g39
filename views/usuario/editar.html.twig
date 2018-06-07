@@ -70,6 +70,58 @@
                 <!-- /.col -->
             </div>
         </form>
+<form action="/usuario/editarContrasenia" method="post" enctype="multipart/form-data" role="form">
+            <div class="box-header">
+                <h3>Edita Tu Contraseña</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <input type="password" class="form-control" name="contraseniaVieja" placeholder="Ingresa tu contraseña actual">
+
+                    {% if errors.contraseniaVieja is defined %}
+                        {% for err_msg in errors.contraseniaVieja %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="contraseniaNueva" placeholder="Ahora ingresa tu nueva contraseña">
+
+                    {% if errors.contraseniaNueva is defined %}
+                        {% for err_msg in errors.contraseniaNueva %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="repeatPassNuevo" placeholder="Repeti tu contraseña por favor">
+
+                    {% if errors.repeatPassNuevo is defined %}
+                        {% for err_msg in errors.repeatPassNuevo %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>    
+            </div>
+
+            <div class="box-footer">
+
+                <div class="col-xs-4">
+                    <div class="form-group {% if errors.terminos is defined  %}has-error{% endif %}">
+                    </div>
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-4">
+                    <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Confirmar</button>
+                </div>
+
+                <div class="col-xs-4">
+                    <button type="reset" id="resetRegistro" class="btn btn-primary btn-block btn-flat">Cancelar</button>
+                </div>                    
+                <!-- /.col -->
+            </div>
+        </form>                    
+                    
     </div>          
 
 {% endblock %}                

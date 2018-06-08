@@ -51,8 +51,6 @@ class usuarioController extends Controller {
         $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
-        $date = new DateTime($usuario['fecha_nac']);
-        $usuario['fecha_nac'] = $date->format('d/m/Y');
         $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
     }
 
@@ -63,10 +61,11 @@ class usuarioController extends Controller {
         }
         $errors = $this->validarRegistro();
         $form = array();
-        $form['nombre'] = $this->getPostParam('nombre');
-        $form['apellido'] = $this->getPostParam('apellido');  
-        $date = new DateTime($this->getPostParam('fecha_nac'));
-        $form['fecha_nac'] = $date->format('d-m-Y');
+        $form['nombre'] = $this->getAlphaNum('nombre');
+        $form['apellido'] = $this->getPostParam('apellido');
+        $date = $this->getPostParam('fecha_nac');
+        $date = str_replace('/', '-', $date);
+        $form['fecha_nac'] = date('Y-m-d', strtotime($date));
         $form['email'] = $this->getPostParam('email');
         $form['pass'] = $this->getAlphaNum('pass');
         Session::set("form", $form);
@@ -195,8 +194,9 @@ class usuarioController extends Controller {
         $usuario = Session::get('usuario');
         $errors = $this->validarDatosDeUsuario();
         $form = array();
-        $date = new DateTime($this->getPostParam('fecha_nac'));
-        $form['fecha_nac'] = $date->format('Y-m-d');
+        $date = $this->getPostParam('fecha_nac');
+        $date = str_replace('/', '-', $date);
+        $form['fecha_nac'] = date('Y-m-d', strtotime($date));      
         $form['nombre'] = $this->getAlphaNum('nombre');
         $form['apellido'] = $this->getPostParam('apellido');
         
@@ -205,8 +205,9 @@ class usuarioController extends Controller {
         if (!$errors) {
             try {
 //cambiar esta parte para que llame editarUsuario de usuarioModel
-                $date = new DateTime($this->getPostParam('fecha_nac'));
-                $fecha = $date->format('Y-m-d');                
+                $date = $this->getPostParam('fecha_nac');
+                $date = str_replace('/', '-', $date);
+                $form['fecha_nac'] = date('Y-m-d', strtotime($date));
                 $params = array("id" => $usuario["id"],
                     "nombre" => $this->getAlphaNum('nombre'),
                     "apellido" => $this->getPostParam('apellido'),                    

@@ -8,8 +8,8 @@
     <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#activity" data-toggle="tab">Viajes publicados</a></li>
-                    <li><a href="#postulados" data-toggle="tab">Viajes Postulados</a></li>
-                    <li><a href="#timeline" data-toggle="tab">Historial</a></li>
+                    <li><a href="#postulados" data-toggle="tab" >Viajes Postulados</a></li>
+                    <li><a href="#timeline" id="historial"data-toggle="tab" >Historial</a></li>
                     <li ><a href="#misVehiculos" data-toggle="tab">Mis Vehiculos</a></li>
                     <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas de credito</a></li>
                 </ul>
@@ -23,7 +23,8 @@
                     </div>
                     <!-- End of tab viajes postulados -->
                     <div class="tab-pane" id="timeline">
-                        {% include 'usuario/tabs/timeline.html.twig' %}
+                        timeline
+{#                        {% include 'usuario/tabs/timeline.html.twig' %}#}
                     </div>
                     <div class="tab-pane" id="misVehiculos">
                         {% include 'usuario/tabs/misVehiculos.html.twig' %}
@@ -64,5 +65,17 @@
                 }
             });
         });
+        $("#historial").click(function(){
+                $.ajax({
+                    url: "/historial",
+                    success: function (data, textStatus, jqXHR) {
+                        console.log("todo bien")
+                        $("#timeline").append(data);
+                    },
+                    error: function(){
+                        console.log("todo mal");
+                    }
+                });
+            })
     </script>
 {% endblock %}

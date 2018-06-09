@@ -13,7 +13,6 @@ class usuarioController extends Controller {
         $this->_usuario = new usuarioModel();
 //      $this->_registro = $this->loadModel('registro');
     }
-
     public function index() {
         
     }

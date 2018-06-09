@@ -32,8 +32,7 @@
                                 <img src="{% if session.get('usuario').foto %}{{session.get('usuario').foto}}{% else %}/img/anonimo.png{% endif %}" class="img-circle" alt="User Image">
 
                                 <p>
-                                    Armando Esteban Quito
-                                    <small>Miembro desde desde Nov. 2012</small>
+                                    {{session.get('usuario').nombre}} {{session.get('usuario').apellido}}
                                 </p>
                             </li>
                             <!-- Menu Body -->

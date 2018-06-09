@@ -28,6 +28,17 @@ class vehiculoController extends Controller {
         $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
     }
 
+    public function validarPatente($form) {
+        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
+        $vehiculoModel = new vehiculoModel();
+        $err = $vehiculoModel->consultarPatente($form); 
+        if ($err['cantidad'] > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public function crear() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
@@ -35,15 +46,20 @@ class vehiculoController extends Controller {
         }
 
         $form = array();
-        $form['marca'] = $this->getAlphaNum('marca');
-        $form['modelo'] = $this->getAlphaNum('modelo');
         $form['patente'] = $this->getAlphaNum('patente');
-        $form['asientos'] = $this->getAlphaNum('asientos');
-        $form['baul'] = $this->getAlphaNum('baul');
-        $form["baul"] = $form["baul"] == "on" ? 1 : 0;
-        Session::set("form", $form);
-        $errors = $this->validarAltaVehiculo();
+            if ($this->validarPatente($form)) {
+            $form['marca'] = $this->getAlphaNum('marca');
+            $form['modelo'] = $this->getAlphaNum('modelo');
 
+            $form['asientos'] = $this->getAlphaNum('asientos');
+            $form['baul'] = $this->getAlphaNum('baul');
+            $form["baul"] = $form["baul"] == "on" ? 1 : 0;
+             Session::set("form", $form);
+            $errors = $this->validarAltaVehiculo();
+        }
+        else $errors=1;
+        if ($errors==1) {Session::setFormErrors("patente", "Esa patente Ud. la tiene cargada.");}
+        //{ Session::setMessage("Esa patente Ud. la tiene cargada", SessionMessageType::Error);
         if (!$errors) {
             try {
 
@@ -53,10 +69,11 @@ class vehiculoController extends Controller {
                 $vehiculoModel->insertarVehiculo($form, Session::get("usuario")["id"]);
 
                 Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
-                  Session::destroy("form");
+                Session::destroy("form");
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
-                var_dump($e->getMessage()); die;
+                var_dump($e->getMessage());
+                die;
                 Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
                 $this->redireccionar("vehiculo/alta");
             }
@@ -73,8 +90,6 @@ class vehiculoController extends Controller {
             $this->redireccionar("vehiculo/alta");
         }
         $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
-        
-        
     }
 
     public function lista() {

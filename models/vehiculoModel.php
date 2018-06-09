@@ -24,7 +24,15 @@ class vehiculoModel extends Model {
                 "id_usuario"=>$idUsuario, "asientos"=>$form["asientos"], "baul"=>$form["baul"]);
         $this->_db->execute($sql, $params);
     }
-
+    public function consultarPatente ($form){
+        //patente=:patente
+       $sql= "SELECT COUNT(*) as cantidad FROM `vehiculo` WHERE (patente=:patente) and (id_usuario=:idusuario)"; 
+        //id_usuario=:idusuario
+       $params = array(":patente"=> $form["patente"], ":idusuario" =>Session::get("id_usuario"));
+       
+       $this->_db->execute($sql, $params);
+       return $this->_db->fetch();
+    }
     public function editarUsuario($id, $titulo, $cuerpo) {
         $id = (int) $id;
 

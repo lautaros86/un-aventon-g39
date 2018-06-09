@@ -211,7 +211,7 @@ class usuarioController extends Controller {
                 $params = array("id" => $usuario["id"],
                     "nombre" => $this->getAlphaNum('nombre'),
                     "apellido" => $this->getPostParam('apellido'),                    
-                    "fecha" => $fecha
+                    "fecha" => $date
                 );
                 if ($_FILES['foto']['size'] > 0) {
                     $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');

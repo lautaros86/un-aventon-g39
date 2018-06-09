@@ -14,7 +14,7 @@ class usuarioModel extends Model {
     public function getUsuario($id) {
         $id = (int) $id;
         $sql = "SELECT * FROM usuarios WHERE id = :id";
-        $user = $this->_db->execute($sql, array(':id' => $id)); 
+        $user = $this->_db->execute($sql, array(':id' => $id));
         return $this->_db->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -27,15 +27,20 @@ class usuarioModel extends Model {
         ));
     }
 
-    public function editarUsuario($datos) {        
-        $id = (int) $id;
-        $sql = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido, fecha_nac = :fecha";
-        if(isset($foto) && $foto !== ""){
+    public function editarUsuario($datos) {
+        $id = (int) $datos["id"];
+        $params = array();
+        $sql = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido";
+        if (isset($datos["fecha"]) && $datos["fecha"] !== null) {
+            $sql .= ", fecha_nac = :fecha ";
+            $params = array_merge($params, array(':fecha' => $datos["fecha"]));
+        }
+        if (isset($datos["foto"]) && $datos["foto"] !== null) {
             $sql .= ", foto = :foto ";
-            $params = array(':foto' => $datos["foto"]);
+            $params = array_merge($params, array(':foto' => $datos["foto"]));
         }
         $sql .= " WHERE id = :id";
-        $params = array(':id' => $datos["id"], ':nombre' => $datos["nombre"], ':apellido' => $datos["apellido"], ':fecha' => $datos["fecha"]);
+        $params = array_merge($params, array(':id' => $datos["id"], ':nombre' => $datos["nombre"], ':apellido' => $datos["apellido"]));
         $this->_db->execute($sql, $params);
     }
 
@@ -44,12 +49,14 @@ class usuarioModel extends Model {
         $sql = "UPDATE usuarios SET estado = 2 WHERE id = :id";
         $this->_db->execute($sql, array(':id' => $id));
     }
-    public function editarUsuarioContrasenia($id, $pass) {        
+
+    public function editarUsuarioContrasenia($id, $pass) {
         $id = (int) $id;
         $sql = "UPDATE usuarios SET password = :pass WHERE id = :id";
         $params = array(':id' => $id, ':pass' => Hash::getHash('sha256', $pass, HASH_KEY));
         $this->_db->execute($sql, $params);
     }
+
 }
 
 ?>

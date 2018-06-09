@@ -1,0 +1,124 @@
+{% extends 'layoutPerfil.html.twig' %}
+{% block title %}
+    UnAventon - Viaje
+{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <!-- iCheck -->
+    <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <!-- Bootstrap time Picker -->
+    <link rel="stylesheet" href="../../bower_components/admin-lte/plugins/timepicker/bootstrap-timepicker.css">
+{% endblock %} 
+
+{% block subContenido %}
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Publicar nuevo viaje</h3>
+        </div>
+        <div class="box-body">
+
+            <form action="/viaje/crear" method="post">
+                <div class="form-group {% if errors.origen is defined  %}has-error{% endif %}">
+                    <input type="text" class="form-control" name="origen" id="origen" placeholder="Origen" {% if form is defined  %}value="{{form.origen}}"{% endif %}>
+                    {% if errors.origen is defined %}
+                        {% for err_msg in errors.origen %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group {% if errors.destino is defined  %}has-error{% endif %}">
+                    <input type="text" class="form-control" name="destino" 
+                           placeholder="Destino" {% if form is defined  %}value="{{form.destino}}"{% endif %}>
+                    {% if errors.destino is defined %}
+                        {% for err_msg in errors.destino %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group {% if errors.fecha is defined  %}has-error{% endif %}">
+                    <input type="fecha" class="form-control" id="fecha" name="fecha"
+                           placeholder="Fecha" autocomplete="off" 
+                           {% if form is defined  %}value="{{form.fecha}}"{% endif %}>
+                    {% if errors.fecha is defined %}
+                        {% for err_msg in errors.fecha %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>      
+                <div class="bootstrap-timepicker">
+                    <div class="form-group {% if errors.hora is defined  %}has-error{% endif %}">
+                        <input type="text" class="form-control timepicker" 
+                               name="hora" id="hora" placeholder="Hora" {% if form is defined  %}value="{{form.hora}}"{% endif %}
+                               placeholder="Ingrese cantidad de hora">
+                        {% if errors.hora is defined %}
+                            {% for err_msg in errors.hora %}
+                                <span class="help-block">{{err_msg}}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group {% if errors.monto is defined  %}has-error{% endif %}">
+                    <input type="text" class="form-control" name="monto" id="monto" placeholder="monto" {% if form is defined  %}value="{{form.monto}}"{% endif %}>
+                    {% if errors.monto is defined %}
+                        {% for err_msg in errors.monto %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
+                    <input type="text" class="form-control" name="vehiculo" id="vehiculo" placeholder="vehiculo" {% if form is defined  %}value="{{form.vehiculo}}"{% endif %}>
+                    {% if errors.vehiculo is defined %}
+                        {% for err_msg in errors.vehiculo %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group {% if errors.asientos is defined  %}has-error{% endif %}">
+                    <input type="text" class="form-control" name="asientos" id="asientos" placeholder="asientos" {% if form is defined  %}value="{{form.asientos}}"{% endif %}>
+                    {% if errors.asientos is defined %}
+                        {% for err_msg in errors.asientos %}
+                            <span class="help-block">{{err_msg}}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        <div class="box-footer">
+            <button class="btn btn-success pull-right">Publicar</button>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+    {{ parent() }}
+    <!-- iCheck -->
+    <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="../../bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+    <!-- bootstrap time picker -->
+    <script src="../../bower_components/admin-lte/plugins/timepicker/bootstrap-timepicker.js"></script>
+
+
+    <script>
+        $(function () {
+            $('#fecha').datepicker({
+                autoclose: true,
+                language: 'es',
+                orientation: 'bottom',
+                setDate: new Date()
+            });
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false,
+                showMeridian: false,
+                minuteStep: 5
+            });
+        });
+    </script>
+{% endblock %}    

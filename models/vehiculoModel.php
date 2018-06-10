@@ -11,6 +11,13 @@ class vehiculoModel extends Model {
         return $vehiculo->fetchall();
     }
 
+    public function getVehiculosOfUser($iduser) {
+        $sql = "select * from vehiculo where id_usuario = :id_usuario";
+        $params = array(":id_usuario"=> $iduser);
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchall();
+    }
+
     public function getVehiculo($id) {
         $id = (int) $id;
         $vehiculo = $this->_db->query("select * from vehiculo where id = $id");

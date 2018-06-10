@@ -24,9 +24,11 @@ class viajeController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
+        $vehiculoModel = new vehiculoModel();
+        $params["vehiculos"] = $vehiculoModel->getVehiculosOfUser(Session::get("id_usuario"));
         $form = Session::get("form");
         Session::destroy("form");
-        $this->_view->renderizar('alta', 'viaje', array("form" => $form));
+        $this->_view->renderizar('alta', 'viaje', array("form" => $form, "params"=>$params));
     }
 
     public function crear() {

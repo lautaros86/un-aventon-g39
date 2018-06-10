@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
     <!-- Bootstrap time Picker -->
     <link rel="stylesheet" href="../../bower_components/admin-lte/plugins/timepicker/bootstrap-timepicker.css">
+    <style>
+        #map {
+            height: 260px;
+            width: 430px;
+        }
+    </style>
+
 {% endblock %} 
 
 {% block subContenido %}
@@ -17,72 +24,93 @@
             <h3 class="box-title">Publicar nuevo viaje</h3>
         </div>
         <div class="box-body">
+            <div class=" row">
+                <div class=" col-md-6 col-md-offset-3">
+                    <form action="/viaje/crear" method="post">
+                        <div class="form-group {% if errors.origen is defined  %}has-error{% endif %}">
+                            <label for="origen">Origen: </label>
+                            <input type="text" class="form-control" name="origen" id="origen" placeholder="Origen" {% if form is defined  %}value="{{form.origen}}"{% endif %}>
 
-            <form action="/viaje/crear" method="post">
-                <div class="form-group {% if errors.origen is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="origen" id="origen" placeholder="Origen" {% if form is defined  %}value="{{form.origen}}"{% endif %}>
-                    {% if errors.origen is defined %}
-                        {% for err_msg in errors.origen %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
+                            {% if errors.origen is defined %}
+                                {% for err_msg in errors.origen %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group {% if errors.destino is defined  %}has-error{% endif %}">
+                            <label for="origen">Destino: </label>
+                            <input type="text" class="form-control" name="destino" id="destino"
+                                   placeholder="Destino" {% if form is defined  %}value="{{form.destino}}"{% endif %}>
+                            {% if errors.destino is defined %}
+                                {% for err_msg in errors.destino %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="row">
+                            <div id="map"></div>
+                            <div id="directions-panel"></div>
+                        </div>
+                        <div class="form-group {% if errors.fecha is defined  %}has-error{% endif %}">
+                            <label for="origen">Fecha: </label>
+                            <input type="fecha" class="form-control" id="fecha" name="fecha"
+                                   placeholder="Fecha" autocomplete="off" 
+                                   {% if form is defined  %}value="{{form.fecha}}"{% endif %}>
+                            {% if errors.fecha is defined %}
+                                {% for err_msg in errors.fecha %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>      
+                        <div class="bootstrap-timepicker">
+                            <div class="form-group {% if errors.hora is defined  %}has-error{% endif %}">
+                                <label for="origen">Hora: </label>
+                                <input type="text" class="form-control timepicker" 
+                                       name="hora" id="hora" placeholder="Hora" {% if form is defined  %}value="{{form.hora}}"{% endif %}
+                                       placeholder="Ingrese cantidad de hora">
+                                {% if errors.hora is defined %}
+                                    {% for err_msg in errors.hora %}
+                                        <span class="help-block">{{err_msg}}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group {% if errors.monto is defined  %}has-error{% endif %}">
+                            <label for="origen">Monto por asiento: </label>
+                            <input type="text" class="form-control" name="monto" id="monto" placeholder="monto" {% if form is defined  %}value="{{form.monto}}"{% endif %}>
+                            {% if errors.monto is defined %}
+                                {% for err_msg in errors.monto %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
+                            <label for="origen">Vehiculo: </label>
+                            <select class="form-control" name="vehiculo" id="vehiculo" >
+                                {% for vehiculo in params.vehiculos %}
+                                    <option value="{{vehiculo.id}}" {% if (form is defined) and (form.vehiculo.id == vehiculo.id) %}selected="selected"{% endif %}>
+                                        {{vehiculo.marca}} - {{vehiculo.modelo}} - {{vehiculo.patente}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if errors.vehiculo is defined %}
+                                {% for err_msg in errors.vehiculo %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group {% if errors.asientos is defined  %}has-error{% endif %}">
+                            <label for="origen">Cantidad de asientos: </label>
+                            <input type="text" class="form-control" name="asientos" id="asientos" placeholder="asientos" {% if form is defined  %}value="{{form.asientos}}"{% endif %}>
+                            {% if errors.asientos is defined %}
+                                {% for err_msg in errors.asientos %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group {% if errors.destino is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="destino" 
-                           placeholder="Destino" {% if form is defined  %}value="{{form.destino}}"{% endif %}>
-                    {% if errors.destino is defined %}
-                        {% for err_msg in errors.destino %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.fecha is defined  %}has-error{% endif %}">
-                    <input type="fecha" class="form-control" id="fecha" name="fecha"
-                           placeholder="Fecha" autocomplete="off" 
-                           {% if form is defined  %}value="{{form.fecha}}"{% endif %}>
-                    {% if errors.fecha is defined %}
-                        {% for err_msg in errors.fecha %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>      
-                <div class="bootstrap-timepicker">
-                    <div class="form-group {% if errors.hora is defined  %}has-error{% endif %}">
-                        <input type="text" class="form-control timepicker" 
-                               name="hora" id="hora" placeholder="Hora" {% if form is defined  %}value="{{form.hora}}"{% endif %}
-                               placeholder="Ingrese cantidad de hora">
-                        {% if errors.hora is defined %}
-                            {% for err_msg in errors.hora %}
-                                <span class="help-block">{{err_msg}}</span>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="form-group {% if errors.monto is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="monto" id="monto" placeholder="monto" {% if form is defined  %}value="{{form.monto}}"{% endif %}>
-                    {% if errors.monto is defined %}
-                        {% for err_msg in errors.monto %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="vehiculo" id="vehiculo" placeholder="vehiculo" {% if form is defined  %}value="{{form.vehiculo}}"{% endif %}>
-                    {% if errors.vehiculo is defined %}
-                        {% for err_msg in errors.vehiculo %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group {% if errors.asientos is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="asientos" id="asientos" placeholder="asientos" {% if form is defined  %}value="{{form.asientos}}"{% endif %}>
-                    {% if errors.asientos is defined %}
-                        {% for err_msg in errors.asientos %}
-                            <span class="help-block">{{err_msg}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </form>
+            </div>
         </div>
         <div class="box-footer">
             <button class="btn btn-success pull-right">Publicar</button>
@@ -119,6 +147,86 @@
                 showMeridian: false,
                 minuteStep: 5
             });
+
         });
+
+        function initAutocomplete() {
+            // servicios para dibujar la ruta
+            var directionsService = new google.maps.DirectionsService;
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+
+            // inicializacion del mapa
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.920501, lng: -57.953572699999995},
+                zoom: 13,
+                mapTypeId: 'roadmap'
+            });
+            // obtengo los search boxes.
+            var origen = document.getElementById('origen');
+            var destino = document.getElementById('destino');
+
+            // convierte el texto en un lugar
+            searchBoxes = [];
+            searchBoxes.push(new google.maps.places.SearchBox(origen));
+            searchBoxes.push(new google.maps.places.SearchBox(destino));
+
+            // Sesgar los resultados del cuadro de búsqueda a la vista de mapas actuales.
+            $.each(searchBoxes, function (i, sb) {
+                map.addListener('bounds_changed', function () {
+                    sb.setBounds(map.getBounds());
+                });
+            });
+
+            $.each(searchBoxes, function (i, sb) {
+                sb.addListener('places_changed', function () {
+                    if (origen.value == "" || destino.value == "") {
+                        return;
+                    } else {
+                        calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
+                    }
+                });
+            });
+
+            directionsDisplay.setMap(map);
+            if (origen.value == "" || destino.value == "") {
+                return;
+            } else {
+                calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
+            }
+
+        }
+
+        function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
+            directionsService.route({
+                origin: origen.value,
+                destination: destino.value,
+                optimizeWaypoints: true,
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                    var summaryPanel = document.getElementById('directions-panel');
+                    summaryPanel.innerHTML = '';
+                    // For each route, display summary information.
+                    for (var i = 0; i < route.legs.length; i++) {
+                        console.log(route.legs[i])
+                        var routeSegment = i + 1;
+                        summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
+                        summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
+                        summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+                        summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';
+                    }
+                } else {
+                    window.alert('La direccion requerida fallo: ' + status);
+                }
+            });
+        }
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&libraries=places&callback=initAutocomplete"
+    async defer></script>
 {% endblock %}    

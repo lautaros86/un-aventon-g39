@@ -14,7 +14,15 @@ class historialController extends Controller {
         
     }
     public function index() {
-        $this->_view->renderizar('timeline', 'usuario/tabs');
+        if (true){ //si encuentro viajes de un usuario muestro el time line, sino muestro un cartel insitando a que busque un viaje
+            //$this->_view->renderizar('timeline', 'usuario/tabs');
+            $this->_view->renderizar('noTimeline', 'usuario/tabs');
+            //echo "<p>Por el momento no tenes viajes para mostrar :( </p>'";
+                        
+        }
+        
+
+        
     }
 
     

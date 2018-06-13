@@ -50,6 +50,11 @@ class usuarioController extends Controller {
         $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
+        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$usuario['fecha_nac']))
+        {
+           $usuario['fecha_nac'] = date('d/m/Y', strtotime($usuario['fecha_nac']));
+        }
+         
         $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
     }
 
@@ -210,7 +215,7 @@ class usuarioController extends Controller {
                 $params = array("id" => $usuario["id"],
                     "nombre" => $this->getAlphaNum('nombre'),
                     "apellido" => $this->getPostParam('apellido'),                    
-                    "fecha" => $date
+                    "fecha" => $form['fecha_nac']
                 );
                 if ($_FILES['foto']['size'] > 0) {
                     $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');

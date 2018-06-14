@@ -28,7 +28,7 @@ class viajeController extends Controller {
         $params["vehiculos"] = $vehiculoModel->getVehiculosOfUser(Session::get("id_usuario"));
         $form = Session::get("form");
         Session::destroy("form");
-        $this->_view->renderizar('alta', 'viaje', array("form" => $form, "params"=>$params));
+        $this->_view->renderizar('alta', 'viaje', array("form" => $form, "params" => $params));
     }
 
     public function crear() {
@@ -36,74 +36,72 @@ class viajeController extends Controller {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("registro");
         }
-
         $form = array();
-        $form['marca'] = $this->getAlphaNum('marca');
-        $form['modelo'] = $this->getAlphaNum('modelo');
-        $form['patente'] = $this->getAlphaNum('patente');
-        $form['asientos'] = $this->getAlphaNum('asientos');
-        $form['baul'] = $this->getAlphaNum('baul');
-        $form["baul"] = $form["baul"] == "on" ? 1 : 0;
+        $form['monto'] = $this->getPostParam('monto');
+        $form['fecha'] = $this->getPostParam('fecha');
+        $form['hora'] = $this->getPostParam('hora');
+        $form['origen'] = $this->getPostParam('origen');
+        $form['destino'] = $this->getPostParam('destino');
+        $form['idVehiculo'] = $this->getPostParam('idVehiculo');
+        $form["asientos"] = $this->verifInt('asientos');
         Session::set("form", $form);
-        $errors = $this->validarAltaVehiculo();
-
+        $errors = $this->validarAltaViaje($form);
         if (!$errors) {
             try {
-
-
-                require_once ROOT . 'models' . DS . 'vehiculoModel.php';
-                $vehiculoModel = new vehiculoModel();
-                $vehiculoModel->insertarVehiculo($form, Session::get("usuario")["id"]);
-
-                Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
-                  Session::destroy("form");
+                require_once ROOT . 'models' . DS . 'viajeModel.php';
+                $viajeModel = new viajeModel();
+                $viajeModel->insertarViaje($form, Session::get("usuario")["id"]);
+                Session::setMessage("Viaje publicado", SessionMessageType::Success);
+                Session::destroy("form");
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
-                var_dump($e->getMessage()); die;
-                Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
-                $this->redireccionar("vehiculo/alta");
+                Session::setMessage("Error al registrar el viaje", SessionMessageType::Error);
+                $this->redireccionar("viaje/alta");
             }
         } else {
-            $form['marca'] = $this->getAlphaNum('marca');
-            $form['modelo'] = $this->getAlphaNum('modelo');
-            $form['patente'] = $this->getPostParam('patente');
-            $form['asientos'] = $this->getPostParam('asientos');
-            $form['baul'] = $this->getAlphaNum('baul');
-            $form["baul"] = $form["baul"] == "on" ? 1 : 0;
-            Session::set("form", $form);
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
-
-            $this->redireccionar("vehiculo/alta");
+            $this->redireccionar("viaje/alta");
         }
-        $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
-        
-        
+        $this->_view->renderizar('alta', 'viaje', array("form" => $form));
     }
 
-
-    public function validarAltaViaje() {
+    public function validarAltaViaje($form) {
         $errors = false;
-        if ($this->getAlphaNum('marca') == "") {
-            Session::setFormErrors("marca", "La marca es obligatoria.");
+        if ($form['monto'] == "") {
+            Session::setFormErrors("monto", "El monto es obligatorio.");
+            $errors = true;
+        }elseif ($form['monto'] <= 0) {
+            Session::setFormErrors("monto", "El monto debe ser mayor a 0.");
+            $errors = true;
+        }
+        if ($form['origen'] == "") {
+            Session::setFormErrors("origen", "El origen es obligatorio.");
             $errors = true;
         }
 
-        if ($this->getAlphaNum('modelo') == "") {
-            Session::setFormErrors("modelo", "El modelo es obligatorio.");
+        if ($form['destino'] == "") {
+            Session::setFormErrors("destino", "El destino es obligatorio.");
             $errors = true;
         }
-
         // TODO: Validar fecha.
-        if ($this->getPostParam('patente') == "") {
-            Session::setFormErrors("patente", "La patente es obligatoria.");
+        if ($form['fecha'] == "") {
+            Session::setFormErrors("fecha", "La fecha es obligatoria.");
+            $errors = true;
+        }
+        if ($form['hora'] == "") {
+            Session::setFormErrors("hora", "La hora es obligatoria.");
+            $errors = true;
+        }
+        if ($form['idVehiculo'] == "") {
+            Session::setFormErrors("idVehiculo", "El vehiculo es obligatoria.");
             $errors = true;
         }
 
-        if ($this->getPostParam('asientos') == "") {
+        if ($form['asientos'] == "") {
             Session::setFormErrors("asientos", "La cantidad de asientos es obligatorio, se debe cargar un dato numerico");
             $errors = true;
         } else {
-            if (!is_int($this->verifInt('asientos'))) {
+            if (!is_int($form['asientos'])) {
                 Session::setFormErrors("asientos", "se debe cargar un dato numerico.");
                 $errors = true;
             }

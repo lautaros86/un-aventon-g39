@@ -18,19 +18,18 @@ class viajeModel extends Model {
     }
 
     public function insertarViaje($form) {
-        $sql = "INSERT INTO viaje (monto,fecha,hora,dir_origen,dir_destino,id_localidad_origen,id_localidad_destino,id_chofer,id_vehiculo,asientos) 
-                VALUES (:monto,:fecha,:hora,:dir_origen,:dir_destino,:id_localidad_origen,:id_localidad_destino,:id_chofer,:id_vehiculo,:asientos)";
-        $params = array(":monto" => $form["monto"],
-                        ":fecha" => $form["fecha"],
-                        ":hora" => $form["hora"],
-                        ":dir_origen" => $form["dir_origen"],
-                        ":dir_destino" => $form["dir_destino"],
-                        ":id_localidad_origen" => $form["id_localidad_origen"],
-                        ":id_localidad_destino" => $form["id_localidad_destino"],
-                        ":id_chofer" => Session::get("id_usuario"),
-                        ":id_vehiculo" => $form["id_vehiculo"],
-                        ":asientos" => $form["asientos"]
-                    );
+        $sql = "INSERT INTO viaje (monto,fecha,hora,origen,destino,id_chofer,id_vehiculo,asientos,fecha_crea, fecha_modif) 
+                VALUES (:monto,STR_TO_DATE(:fecha, '%d/%m/%Y'),:hora,:origen,:destino,:id_chofer,:id_vehiculo,:asientos, NOW(), NOW())";
+        $params = array(
+            ":monto" => $form["monto"],
+            ":fecha" => $form["fecha"],
+            ":hora" => $form["hora"],
+            ":origen" => $form["origen"],
+            ":destino" => $form["destino"],
+            ":id_chofer" => Session::get("id_usuario"),
+            ":id_vehiculo" => $form["idVehiculo"],
+            ":asientos" => $form["asientos"]
+        );
         $this->_db->execute($sql, $params);
     }
 

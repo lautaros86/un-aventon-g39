@@ -24,9 +24,9 @@
                         <td>{{vehiculo.asientos}}</td>
                         <td>{% if vehiculo.baul %}SI{% else %}NO{% endif %}</td>
                         <td>
-                            <button type="button" class="btn btn-warning btn-xs edit" data-id="{{vehiculo.id}}" data-widget="edit" data-toggle="tooltip" title="" data-original-title="Editar">
+                            <button type="button" class="btn btn-warning btn-xs edit" data-idvehiculo="{{vehiculo.id}}" data-widget="edit" data-toggle="tooltip" title="" data-original-title="Editar">
                                 <i class="fa fa-pencil"></i></button>
-                            <button type="button" class="btn btn-danger btn-xs remove" data-id="{{vehiculo.id}}" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
+                            <button type="button" class="btn btn-danger btn-xs remove" id="bajaAuto" data-idvehiculo="{{vehiculo.id}}" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
                                 <i class="fa fa-times"></i></button>
                         </td>
                     </tr>

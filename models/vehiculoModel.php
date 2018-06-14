@@ -7,7 +7,7 @@ class vehiculoModel extends Model {
     }
 
     public function getVehiculos() {
-        $vehiculo = $this->_db->query("select * from vehiculo");
+        $vehiculo = $this->_db->query("select * from vehiculo ");
         return $vehiculo->fetchall();
     }
 
@@ -31,6 +31,13 @@ class vehiculoModel extends Model {
                 "id_usuario"=>$idUsuario, "asientos"=>$form["asientos"], "baul"=>$form["baul"]);
         $this->_db->execute($sql, $params);
     }
+    public function darDeBaja ($id){
+        $sql="UPDATE `vehiculo` SET `estado`= 1 WHERE id=:idvehiculo";
+        $params= array (":idvehiculo"=>$id);
+        $this->_db->execute($sql, $params);
+        //return $this->db->fetch();
+    }
+    
     public function consultarPatente ($form){
         //patente=:patente
        $sql= "SELECT COUNT(*) as cantidad FROM `vehiculo` WHERE (patente=:patente) and (id_usuario=:idusuario)"; 
@@ -61,7 +68,7 @@ class vehiculoModel extends Model {
 
     public function getVehiculosByUserId($idusuairo) {
         $idusuairo = (int) $idusuairo;
-        $sql = "select * from vehiculo where id_usuario = :idusuario";
+        $sql = "select * from vehiculo where (id_usuario = :idusuario) and (estado=0)";
         $params = array(':idusuario' => $idusuairo);
         $this->_db->execute($sql, $params);
         return $this->_db->fetchall(PDO::FETCH_ASSOC);

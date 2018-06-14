@@ -59,7 +59,7 @@
                     if (elem.is("i")) {
                         elem = $(elem.parent());
                     }
-                    alert("Eliminar vehiculo con id: " + elem.data("id"));
+                    $(location).attr('href', 'vehiculo/eliminarVehiculo/'+elem.data('idvehiculo'));
                 } else {
                     alert("Pedido cancelado");
                 }

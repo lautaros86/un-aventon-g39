@@ -113,7 +113,7 @@
                 </div>
             </div>
             <div class="box-footer">
-                <button class="btn btn-success pull-right">Publicar</button>
+                <button class="btn btn-success pull-right" type="button" id="submitform">Publicar</button>
             </div>
         </form>
 
@@ -158,30 +158,23 @@
 
             });
 
-            $(document).on('submit', 'form', function (form) {
+            $("#submitform").click(function () {
                 var origen = document.getElementById('origen');
                 var destino = document.getElementById('destino');
-                if (origen.value == "" || destino.value == "") {
-                    form.preventDefault();
+               if (origen.value == "" || destino.value == "") {
                     alert("Las dos direcciones son requeridas.");
                 } else {
-                    debugger
-                    geocodeAddress(geocoder, map, origen.value, function (response) {
-                        if (response) {
-                            geocodeAddress(geocoder, map, destino.value, function (response) {
-                                if (response) {
-                                    if (!verifRuta) {
-                                        form.preventDefault();
-                                        alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor elija destinos mas cercanos.");
-                                    }
-                                } else {
-                                    form.preventDefault();
-                                    alert("Por favor verifique la direccion de destino.");
-                                }
-                            });
+                    var d1 = $.Deferred();
+                    var d2 = $.Deferred();
+                    $.when(geocodeAddress(geocoder, map, origen.value, d1), geocodeAddress(geocoder, map, destino.value, d2)).done(function (isOrigenValid, isDestinoValid) {
+                        if (!isOrigenValid || !isDestinoValid) {
+                            alert("Disculpe, una de las direcciones no se puede validar. Por favor verifique los campos.");
                         } else {
-                            form.preventDefault();
-                            alert("Por favor verifique la direccion de origen");
+                            if (!verifRuta) {
+                                alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor elija destinos mas cercanos.");
+                            } else {
+                                $("#altaviaje").submit();
+                            }
                         }
                     });
                 }
@@ -240,14 +233,15 @@
 
         }
 
-        function geocodeAddress(geocoder, resultsMap, address, cb) {
+        function geocodeAddress(geocoder, resultsMap, address, res) {
             geocoder.geocode({'address': address}, function (results, status) {
                 if (status === 'OK') {
-                    return cb(true);
+                    res.resolve(true);
                 } else {
-                    return cb(false);
+                    res.resolve(false);
                 }
             });
+            return res;
         }
 
         function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
@@ -278,7 +272,7 @@
                     }
                 } else {
                     verifRuta = false;
-                    alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor elija destinos mas cercanos.");
+                    alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor verifique los campos.");
                 }
             });
         }

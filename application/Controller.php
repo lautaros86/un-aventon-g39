@@ -6,6 +6,7 @@ abstract class Controller {
 
     public function __construct() {
         $this->_view = new View(Router::getInstance());
+        $this->_view->setNotificacion(Notificacion::getNotificaciones());
     }
 
     abstract public function index();

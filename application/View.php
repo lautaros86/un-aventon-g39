@@ -6,6 +6,7 @@ class View {
     private $twig;
     private $_message;
     private $_errors;
+    private $_notificaciones;
 
     public function __construct(Router $router) {
         $this->_controlador = $router->getControlador();
@@ -14,6 +15,7 @@ class View {
         $this->twig = new Twig_Environment($loader, array('debug' => true));
         $this->twig->addExtension(new Twig_Extension_Debug());
         $this->_js = array();
+        $this->_notificaciones = array();
     }
 
     public function renderizar($vista, $dir = "", $args = array()) {
@@ -24,6 +26,7 @@ class View {
         }
         $args['errors'] = $this->_errors;
         $args['errors'] = Session::getFormErrors();
+        $args['notificaciones'] = $this->_notificaciones;
 
         $args['messages'] = $this->_message;
         $args['messages'] = Session::getMessages();
@@ -52,6 +55,14 @@ class View {
 
     public function getFormError() {
         return $this->_errors;
+    }
+
+    public function setNotificacion($notificaciones) {
+        $this->_notificaciones = $notificaciones;
+    }
+
+    public function getNotificacion() {
+        return $this->_notificaciones;
     }
 
 }

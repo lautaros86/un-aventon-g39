@@ -4,6 +4,7 @@ class DatabasePDO extends PDO {
 
     private $PDO;
     private $query;
+    private $transactionCounter;
 
     public function __construct() {
         try {
@@ -28,7 +29,7 @@ class DatabasePDO extends PDO {
         $this->query = $this->PDO->prepare($sql, $options);
     }
 
-    public function bind($param, $value, $type = null) {
+    public function bindValue($param, $value, $type = null) {
         if (is_null($type)) {
             switch (true) {
                 case is_int($value):
@@ -47,6 +48,32 @@ class DatabasePDO extends PDO {
         $this->query->bindValue($param, $value, $type);
     }
 
+    public function bindParam($param, $value, $type = null) {
+        if (is_null($type)) {
+            switch (true) {
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
+                case is_null($value):
+                    $type = PDO::PARAM_NULL;
+                    break;
+                default:
+                    $type = PDO::PARAM_STR;
+            }
+        }
+        $this->query->bindParam($param, $value, $type);
+    }
+
+    public function bindExecute() {
+        if (!$this->query->execute()) {
+            return false;
+        }
+        return true;
+    }
+
     public function execute($sql, $params = null) {
         $this->prepare($sql);
         if (!$this->query->execute($params)) {
@@ -55,7 +82,7 @@ class DatabasePDO extends PDO {
         return true;
     }
 
-    public function fetchall($conf = PDO::FETCH_ASSOC) {
+    public function fetchAll($conf = PDO::FETCH_ASSOC) {
         //OJO
         //Si acepta el parametro cuando devuelve los resultados los va a devolver como un array que los titulos seran los campos
         //Si no le paso ningun parametro devolvera los resultados en un array con los titulos y a su vez con indices
@@ -77,15 +104,26 @@ class DatabasePDO extends PDO {
     }
 
     public function beginTransaction() {
-        return $this->PDO->beginTransaction();
+        if (!$this->transactionCounter++) {
+            return $this->PDO->beginTransaction();
+        }
+        $this->PDO->exec('SAVEPOINT trans' . $this->transactionCounter);
+        return $this->transactionCounter >= 0;
     }
 
-    public function commitTransaction() {
-        return $this->PDO->commit();
+    public function commit() {
+        if (!--$this->transactionCounter) {
+            return $this->PDO->commit();
+        }
+        return $this->transactionCounter >= 0;
     }
 
-    public function rollBackTransaction() {
-        return $this->PDO->rollBack();
+    public function rollback() {
+        if (--$this->transactionCounter) {
+            $this->PDO->exec('ROLLBACK TO trans' . $this->transactionCounter + 1);
+            return true;
+        }
+        return $this->PDO->rollback();
     }
 
 }

@@ -8,7 +8,7 @@ class usuarioModel extends Model {
 
     public function getUsuarios() {
         $usuario = $this->_db->query("select * from usuarios");
-        return $usuario->fetchall();
+        return $usuario->fetchAll();
     }
 
     public function getUsuario($id) {

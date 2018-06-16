@@ -25,6 +25,7 @@ try {
     require_once APP_PATH . 'Hash.php';
     require_once APP_PATH . 'Router.php';
     require_once APP_PATH . 'Routes.php';
+    require_once APP_PATH . 'Notificacion.php';
     require_once VEN_PATH . 'autoload.php';
 
     Session::init();

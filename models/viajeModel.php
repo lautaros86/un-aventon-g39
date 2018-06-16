@@ -8,7 +8,7 @@ class viajeModel extends Model {
 
     public function getViajes() {
         $vehiculo = $this->_db->query("select * from viajes");
-        return $vehiculo->fetchall();
+        return $vehiculo->fetchAll();
     }
 
     public function getViaje($id) {

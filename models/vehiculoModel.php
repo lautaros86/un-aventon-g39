@@ -8,14 +8,14 @@ class vehiculoModel extends Model {
 
     public function getVehiculos() {
         $vehiculo = $this->_db->query("select * from vehiculo ");
-        return $vehiculo->fetchall();
+        return $vehiculo->fetchAll();
     }
 
     public function getVehiculosOfUser($iduser) {
         $sql = "select * from vehiculo where id_usuario = :id_usuario";
         $params = array(":id_usuario"=> $iduser);
         $this->_db->execute($sql, $params);
-        return $this->_db->fetchall();
+        return $this->_db->fetchAll();
     }
 
     public function getVehiculo($id) {
@@ -71,7 +71,7 @@ class vehiculoModel extends Model {
         $sql = "select * from vehiculo where (id_usuario = :idusuario) and (estado=0)";
         $params = array(':idusuario' => $idusuairo);
         $this->_db->execute($sql, $params);
-        return $this->_db->fetchall(PDO::FETCH_ASSOC);
+        return $this->_db->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

@@ -40,7 +40,6 @@ class viajeController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $vehiculoModel = new vehiculoModel();
         $params["viaje"] = $this->_viaje->getViaje($idviaje);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }

@@ -1,7 +1,6 @@
 $().ready(function () {
-
     $.ajax({
-        url: "notificacion/getNotificaciones",
+        url: "/notificacion/getNotificaciones",
         dataType: 'json',
         success: function (data) {
             if (data.length > 0) {
@@ -47,7 +46,7 @@ $().ready(function () {
         });
         if (data.length > 0) {
             $.ajax({
-                url: "notificacion/limpiarNotificaciones",
+                url: "/notificacion/limpiarNotificaciones",
                 dataType: 'json',
                 type: "post",
                 data: {data: data}

@@ -18,6 +18,13 @@ class vehiculoModel extends Model {
         return $this->_db->fetchAll();
     }
 
+    public function cantVehiculos($iduser) {
+        $sql = "select * from vehiculo where id_usuario = :id_usuario and estado = 0";
+        $params = array(":id_usuario"=> $iduser);
+        $this->_db->execute($sql, $params);
+        return $this->_db->rowCount();
+    }
+
     public function getVehiculo($id) {
         $id = (int) $id;
         $vehiculo = $this->_db->query("select * from vehiculo where id = $id");

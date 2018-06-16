@@ -27,20 +27,22 @@ class usuarioController extends Controller {
         }
         $id = Session::get('usuario')["id"];
         $pass = $this->getPostParam("data");
-//        if (Hash::getHash('sha256', $pass, HASH_KEY) == Session::get("usuario")["password"]) {
-//            try {
-//                $this->_usuario->eliminarUsuario($id);
-//                Session::setMessage("La cuenta se elimino exitosamente.", SessionMessageType::Success);
-//                Session::destroy();
-//                echo json_encode(array("mensaje" => "Su cuenta se elimino con exito. Gracias por haber sido parte del sistema."));
-//            } catch (PDOException $e) {
-//                Session::setMessage("La cuenta no pudo eliminarse, por favor comuniquese con un administrador.", SessionMessageType::Error);
-//            } catch (ErrorException $e) {
-//                Session::setMessage("Error.", SessionMessageType::Error);
-//            }
-//        } else {
-//            echo json_encode(array("mensaje" => "La contraseña no es correcta."));
-//        }
+        $requestHasPass = Hash::getHash('sha256', $pass, HASH_KEY);
+        $userPass = Session::get("usuario")["password"];
+        if ($requestHasPass == $userPass) {
+            try {
+                $this->_usuario->eliminarUsuario($id);
+                Session::setMessage("La cuenta se elimino exitosamente.", SessionMessageType::Success);
+                Session::destroy();
+                echo json_encode(array("ok"=>true,"titulo" => "Cuenta eliminada", "mensaje" => "Su cuenta se elimino con exito. Gracias por haber sido parte del sistema."));
+            } catch (PDOException $e) {
+                Session::setMessage("La cuenta no pudo eliminarse, por favor comuniquese con un administrador.", SessionMessageType::Error);
+            } catch (ErrorException $e) {
+                Session::setMessage("Error.", SessionMessageType::Error);
+            }
+        } else {
+            echo json_encode(array("ok"=>false,"titulo" => "Oh! Parace que hubo un problema", "mensaje" => "La contraseña no es correcta."));
+        }
     }
 
     public function registro() {

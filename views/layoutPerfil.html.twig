@@ -33,7 +33,7 @@
                         <i class="fa fa-edit"></i> Editar
                     </a>
                     <br/>
-                    <a href="/viaje/alta" class="btn btn-success btn-block"><b>PUBLICAR VIAJE </b></a>
+                    <button href="/viaje/alta" class="btn btn-success btn-block" {% if not session.get('chofer') %}disabled=""{% endif %} ><b>PUBLICAR VIAJE </b></button>
                 </div>
                 <!-- /.box-body -->
             </div>

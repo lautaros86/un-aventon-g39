@@ -191,26 +191,42 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <form>
-                        <input type="password" name="confirmPassword" id="confirmPassword"  autocomplete="off"/>
-                    </form>
-
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Por favor, ingrese su contraseña.</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>
+                    <form>
+                        <div class="form-group">
+                            <input type="password" name="confirmPassword" id="confirmPassword"  class="form-control" autocomplete="off"/>
+                        </div>   
+                    </form>            
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="cancelar">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmEliminar">Confirmar</button>  
                 </div>
             </div>
         </div>
     </div>
-
+    <div class="modal" id="mensajeModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="titulo"></h4>
+                </div>
+                <div class="modal-body" id="mensaje">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="loadingModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Cargando... Por favor espere.</h4>
-                    <button class="btn btn-danger" id="confirmEliminar">
-                        <i class="fa fa-trash-o"></i> Confirmar
-                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>
@@ -245,23 +261,48 @@
             $("#cerrarCuenta").click(function () {
                 $('#confirmModal').show();
             });
-            $("confirmEliminar").on("click", "input", function () {
+            $(".close").click(function () {
+                $('#confirmModal').show();
+                $('#mensajeModal').hide();
+            });
+            $("#confirmEliminar").click(function () {
                 $('#confirmModal').hide();
                 $('#loadingModal').show();
                 $.ajax({
                     url: "/usuario/eliminarCuenta",
                     dataType: 'json',
                     type: "post",
-                    data: {data: $("passConfirm").val()},
+                    data: {data: $("#confirmPassword").val()},
                     success: function (data) {
+                        $("#titulo").empty()
+                        $("#titulo").append($('<h4>').text(data.titulo))
+                        $("#mensaje").empty()
+                        $("#mensaje").append($('<p>').text(data.mensaje))
                         $('#loadingModal').hide();
-                        alert(data.mensaje);
+                        $('#mensajeModal').show();
+                        $("#confirmPassword").val("");
+                        if (data.ok) {
+                            $("#mensaje").append($('<p>').text("La pagina se recargara en 10 segundos."))
+                            setTimeout(
+                                    function ()
+                                    {
+                                        location.reload();
+                                    }, 10000);
+                        }
                     },
                     error: function (data) {
                         $('#loadingModal').hide();
+                        $("#confirmPassword").val("");
                     },
                 });
             });
+            $(window).click(function (event) {
+                if (event.target == $('#confirmModal')[0] || event.target == $('#mensajeModal')[0]) {
+                    $('#confirmModal').hide();
+                    $('#mensajeModal').hide();
+                }
+            });
+
         });
     </script>
 {% endblock %}  

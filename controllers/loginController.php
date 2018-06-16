@@ -3,10 +3,12 @@
 class loginController extends Controller {
 
     private $_login;
+    private $_vehiculo;
 
     public function __construct() {
         parent::__construct();
         $this->_login = $this->loadModel('login');
+        $this->_vehiculo = $this->loadModel('vehiculo');
     }
 
     public function index() {
@@ -50,11 +52,18 @@ class loginController extends Controller {
             exit;
         }
 
+        $cant = $this->_vehiculo->cantVehiculos($row['id']);
+        if ( $cant > 0) {
+            Session::set('chofer', true);
+        }else{
+            Session::set('chofer', false);
+        }
+        
         Session::set('autenticado', true);
         Session::set('usuario', $row);
         Session::set('id_usuario', $row['id']);
         $this->redireccionar('usuario/verUsuario');
-        }
+    }
 
     public function cerrar() {
         if (!Session::get('autenticado')) {

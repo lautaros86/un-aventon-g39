@@ -32,8 +32,8 @@ class vehiculoModel extends Model {
     }
 
     public function insertarVehiculo($form, $idUsuario) {
-        $sql = "INSERT INTO vehiculo(patente, modelo, marca, id_usuario, asientos, baul) "
-                . "VALUES (:patente, :modelo, :marca, :id_usuario, :asientos, :baul)";
+        $sql = "INSERT INTO vehiculo(patente, modelo, marca, id_usuario, asientos, baul, fecha_crea, fecha_modi) "
+                . "VALUES (:patente, :modelo, :marca, :id_usuario, :asientos, :baul, NOW(), NOW())";
         $params = array(":patente"=> $form["patente"], "modelo"=>$form["modelo"], "marca"=>$form["marca"],
                 "id_usuario"=>$idUsuario, "asientos"=>$form["asientos"], "baul"=>$form["baul"]);
         $this->_db->execute($sql, $params);

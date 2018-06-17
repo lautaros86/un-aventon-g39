@@ -7,14 +7,14 @@ class notificacionModel extends Model {
     }
 
     public function getNotificaciones($idPersona) {
-        $sql = "select * from notificacion where idusuario = :idusuario limit 10";
+        $sql = "select * from notificacion where idusuario = :idusuario order by estado, fecha limit 11";
         $params = array(":idusuario" => $idPersona);
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll();
     }
 
     public function crearNotificacion($mensaje, $destinatarios, $color) {
-        $this->_db->prepare("INSERT INTO notificacion(mensaje, color, idusuario) VALUES (:mensaje, :color, :idusuario)");
+        $this->_db->prepare("INSERT INTO notificacion(mensaje, color, idusuario, fecha) VALUES (:mensaje, :color, :idusuario, now())");
         $fallo = false;
         $this->_db->bindValue(':mensaje', $mensaje);
         $this->_db->bindValue(':color', $color);
@@ -27,7 +27,7 @@ class notificacionModel extends Model {
     }
 
     public function limpiarNotificaciones($idPersona, $idsNotificaciones) {
-        $this->_db->prepare("update notificacion set estado = 0 where idusuario = :idusuario and id=:id");
+        $this->_db->prepare("update notificacion set estado = 2 where idusuario = :idusuario and id=:id");
         $fallo = false;
         foreach ($idsNotificaciones as $id) {
             $this->_db->bindValue(':idusuario', $idPersona);

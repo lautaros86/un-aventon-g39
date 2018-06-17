@@ -7,35 +7,37 @@
 {% block contenido %}
     <div class="row">
         <div class="col-md-3">
-            <!-- Profile Image -->
-            <div class="box box-primary">
-                <div class="box-body box-profile">
-                    <img class="profile-user-img img-responsive img-circle" src="{% if session.get('usuario').foto %}{{session.get('usuario').foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
-                    <h3 class="profile-username text-center"> {{session.get('usuario').nombre}} {{session.get('usuario').apellido}}</h3>
-                    <p class="text-muted text-center">{{session.get('usuario').email}}</p>
-                    <ul class="list-group list-group-unbordered">
-                        <li class="list-group-item">
-                            <b>Total de Viajes</b> <a class="pull-right">usuario.viajes.count</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Chofer</b> <a class="pull-right">usuario.viaje.chofer</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Pasajero</b> <a class="pull-right">usuario.viaje.pasajero</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Reputacion</b> <a class="pull-right">usuario.reputacion</a>
-                        </li>
-                    </ul>
+            {% block boxPerfil %}
+                <!-- Profile Image -->
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <img class="profile-user-img img-responsive img-circle" src="{% if session.get('usuario').foto %}{{session.get('usuario').foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
+                        <h3 class="profile-username text-center"> {{session.get('usuario').nombre}} {{session.get('usuario').apellido}}</h3>
+                        <p class="text-muted text-center">{{session.get('usuario').email}}</p>
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>Total de Viajes</b> <a class="pull-right">usuario.viajes.count</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Chofer</b> <a class="pull-right">usuario.viaje.chofer</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Pasajero</b> <a class="pull-right">usuario.viaje.pasajero</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Reputacion</b> <a class="pull-right">usuario.reputacion</a>
+                            </li>
+                        </ul>
 
-                    <a class="btn btn-info btn-block" href= "/usuario/editarPerfil">
-                        <i class="fa fa-edit"></i> Editar
-                    </a>
-                    <br/>
-                    <button class="btn btn-success btn-block" id="publicarViaje" {% if not session.get('chofer') %} disabled=""{% endif %} ><b>PUBLICAR VIAJE </b></button>
+                        <a class="btn btn-info btn-block" href= "/usuario/editarPerfil">
+                            <i class="fa fa-edit"></i> Editar
+                        </a>
+                        <br/>
+                        <button class="btn btn-success btn-block" id="publicarViaje" {% if not session.get('chofer') %} disabled=""{% endif %} ><b>PUBLICAR VIAJE </b></button>
+                    </div>
+                    <!-- /.box-body -->
                 </div>
-                <!-- /.box-body -->
-            </div>
+            {% endblock %}
             <!-- /.box -->
         </div>
         <!-- /.col -->
@@ -50,15 +52,15 @@
 
 {% endblock %}
 
-    {% block script %}
-        {{parent()}}
-        <script>
+{% block script %}
+    {{parent()}}
+    <script>
 
-            $().ready(function () {
-                $("#publicarViaje").click(function () {
-                    console.log("asd");
-                    $(location).attr('href',"/viaje/alta")
-                });
+        $().ready(function () {
+            $("#publicarViaje").click(function () {
+                console.log("asd");
+                $(location).attr('href', "/viaje/alta")
             });
-        </script>
-    {% endblock %}
+        });
+    </script>
+{% endblock %}

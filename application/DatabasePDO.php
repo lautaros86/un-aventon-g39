@@ -91,7 +91,7 @@ class DatabasePDO extends PDO {
         return $this->query->fetchAll($conf);
     }
 
-    public function fetch($conf = null) {
+    public function fetch($conf = PDO::FETCH_ASSOC) {
         return $this->query->fetch($conf);
     }
 

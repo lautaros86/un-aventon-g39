@@ -1,4 +1,4 @@
-{% extends 'layout.html.twig' %}
+{% extends 'layoutPerfil.html.twig' %}
 {% block title %}
     UnAventon - Viaje
 {% endblock %}
@@ -17,7 +17,37 @@
     </style>
 
 {% endblock %} 
+{% block boxPerfil %}
+    <!-- Profile Image -->
+    <div class="box box-primary">
+        <div class="box-body box-profile">
+            <img class="profile-user-img img-responsive img-circle" src="{% if viaje.foto %}{{viaje.foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
+            <h3 class="profile-username text-center"> {{viaje.nombre}} {{viaje.apellido}}</h3>
+            <p class="text-muted text-center">{{viaje.email}}</p>
+            <ul class="list-group list-group-unbordered">
+                <li class="list-group-item">
+                    <b>Total de Viajes</b> <a class="pull-right">usuario.viajes.count</a>
+                </li>
+                <li class="list-group-item">
+                    <b>Chofer</b> <a class="pull-right">usuario.viaje.chofer</a>
+                </li>
+                <li class="list-group-item">
+                    <b>Pasajero</b> <a class="pull-right">usuario.viaje.pasajero</a>
+                </li>
+                <li class="list-group-item">
+                    <b>Reputacion</b> <a class="pull-right">usuario.reputacion</a>
+                </li>
+            </ul>
 
+            <a class="btn btn-info btn-block" href= "/usuario/editarPerfil">
+                <i class="fa fa-edit"></i> Editar
+            </a>
+            <br/>
+            <button class="btn btn-success btn-block" id="publicarViaje" {% if not session.get('chofer') %} disabled=""{% endif %} ><b>PUBLICAR VIAJE </b></button>
+        </div>
+        <!-- /.box-body -->
+    </div>
+{% endblock %}
 {% block subContenido %}
     <div class="box">
         <div class="box-header">
@@ -25,12 +55,16 @@
         </div>
 
         <div class="box-body">
-            {{viaje | json_decode()}}
-        </div>
-        <div class="box-footer">
-            footer
-        </div>
+            <pre>
+                {{viaje | json_encode}}
+            </pre>
+            <input class="form-control" id="origen" type="textbox" value="{{viaje.origen}}" readonly="">
+            <input class="form-control" id="destino" type="textbox" value="{{viaje.destino}}" readonly="">
 
+            <div id="map"></div>
+            <div id="directions-panel"></div>
+
+        </div>
     </div>
 </div>
 
@@ -38,3 +72,75 @@
 
 {% endblock %}
 
+{% block script %}
+    {{ parent() }}
+    <script>
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 8,
+                center: {lat: -34.91482928576744, lng: -57.94609843010255}
+            });
+            var geocoder = new google.maps.Geocoder();
+
+            var directionsService = new google.maps.DirectionsService();
+            var directionsDisplay = new google.maps.DirectionsRenderer();
+
+
+            directionsDisplay.setMap(map);
+
+            /* En caso de querer ver las indicaciones */
+            directionsDisplay.setPanel($('#panel').html());
+
+            var origen = $('#origen').val();
+            var destino = $('#destino').val();
+            calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino)
+        }
+        function geocodeAddress(geocoder, resultsMap) {
+            var address = document.getElementById('address').value;
+            geocoder.geocode({'address': address}, function (results, status) {
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+        function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
+            directionsService.route({
+                origin: origen,
+                destination: destino,
+                optimizeWaypoints: true,
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                    var summaryPanel = document.getElementById('directions-panel');
+                    summaryPanel.innerHTML = '';
+                    // For each route, display summary information.
+                    for (var i = 0; i < route.legs.length; i++) {
+                        console.log(route.legs[i])
+                        var routeSegment = i + 1;
+                        summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
+                        summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
+                        summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+                        summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';
+                    }
+                } else {
+                    window.alert('La direccion requerida fallo: ' + status);
+                }
+            });
+        }
+
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&callback=initMap">
+    </script>
+{% endblock %}

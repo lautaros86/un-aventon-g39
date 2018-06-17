@@ -34,14 +34,14 @@ class usuarioController extends Controller {
                 $this->_usuario->eliminarUsuario($id);
                 Session::setMessage("La cuenta se elimino exitosamente.", SessionMessageType::Success);
                 Session::destroy();
-                echo json_encode(array("ok"=>true,"titulo" => "Cuenta eliminada", "mensaje" => "Su cuenta se elimino con exito. Gracias por haber sido parte del sistema."));
+                echo json_encode(array("ok" => true, "titulo" => "Cuenta eliminada", "mensaje" => "Su cuenta se elimino con exito. Gracias por haber sido parte del sistema."));
             } catch (PDOException $e) {
                 Session::setMessage("La cuenta no pudo eliminarse, por favor comuniquese con un administrador.", SessionMessageType::Error);
             } catch (ErrorException $e) {
                 Session::setMessage("Error.", SessionMessageType::Error);
             }
         } else {
-            echo json_encode(array("ok"=>false,"titulo" => "Oh! Parace que hubo un problema", "mensaje" => "La contraseña no es correcta."));
+            echo json_encode(array("ok" => false, "titulo" => "Oh! Parace que hubo un problema", "mensaje" => "La contraseña no es correcta."));
         }
     }
 
@@ -228,14 +228,30 @@ class usuarioController extends Controller {
                     "fecha" => $form['fecha_nac']
                 );
                 if ($_FILES['foto']['size'] > 0) {
+                    $dirImages = ROOT . 'img/usuarios/';
+                    $imgName = str_replace(' ', '_', basename($_FILES['foto']['name']));
+                    $dirFile = $dirImages . $imgName;
                     $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
                     $file_name = $_FILES['foto']['name'];
                     $file_size = $_FILES['foto']['size'];
-                    $file_tmp = $_FILES['foto']['tmp_name'];
-                    $type = pathinfo($file_tmp, PATHINFO_EXTENSION);
-                    $data = file_get_contents($file_tmp);
-                    $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                    $params["foto"] = $base64;
+                    $type = explode("/", $_FILES['foto']['type'])[1];
+                    if (in_array($type, $allowed_ext)) {
+                        if ($file_size <= "512000") {
+                            if (move_uploaded_file($_FILES['foto']['tmp_name'], $dirFile)) {
+                                $params["foto"] = '/img/usuarios/' . $imgName;
+                                if (!is_null(Session::get("usuario")["foto"])) {
+                                    if (file_exists(ROOT . Session::get("usuario")["foto"]))
+                                        unlink(ROOT . Session::get("usuario")["foto"]);
+                                }
+                            } else {
+                                Session::setMessage("Error al guardar la imagen.", SessionMessageType::Error);
+                            }
+                        } else {
+                            Session::setMessage("La imagen es muy grande.", SessionMessageType::Error);
+                        }
+                    } else {
+                        Session::setMessage("El formato de imagen es incorrecto.", SessionMessageType::Error);
+                    }
                 }
                 $this->_usuario->editarUsuario($params);
                 Session::setMessage("Tus datos fueron editados correctamente :)", SessionMessageType::Success);
@@ -244,10 +260,9 @@ class usuarioController extends Controller {
                 $newUsuario['nombre'] = $this->getAlphaNum('nombre');
                 $newUsuario['apellido'] = $this->getPostParam('apellido');
                 $newUsuario['fecha_nac'] = $this->getPostParam('fecha_nac');
-                if (isset($base64)) {
-                    $newUsuario['foto'] = $base64;
+                if (isset($params["foto"])) {
+                    $newUsuario['foto'] = $params["foto"];
                 }
-                Session::destroy("usuario");
                 Session::set("usuario", $newUsuario);
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {

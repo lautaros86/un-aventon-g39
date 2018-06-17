@@ -18,6 +18,16 @@ class usuarioModel extends Model {
         return $this->_db->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getDatosChofer($id) {
+        $id = (int) $id;
+        $sql = "SELECT * 
+            FROM usuarios
+            inner join
+            WHERE id = :id";
+        $user = $this->_db->execute($sql, array(':id' => $id));
+        return $this->_db->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function insertarUsuario($titulo, $cuerpo) {
         $this->_db->prepare("INSERT INTO usuarios VALUES (null, :titulo, :cuerpo)")
                 ->execute(

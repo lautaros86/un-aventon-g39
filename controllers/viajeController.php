@@ -41,6 +41,9 @@ class viajeController extends Controller {
             $this->redireccionar();
         }
         $params["viaje"] = $this->_viaje->getViaje($idviaje);
+        $params["chofer"] = $this->_usuario->getUsuario($params["viaje"]["id_chofer"]);
+        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
+        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
 

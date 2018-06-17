@@ -21,48 +21,60 @@
     <!-- Profile Image -->
     <div class="box box-primary">
         <div class="box-body box-profile">
-            <img class="profile-user-img img-responsive img-circle" src="{% if viaje.foto %}{{viaje.foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
-            <h3 class="profile-username text-center"> {{viaje.nombre}} {{viaje.apellido}}</h3>
-            <p class="text-muted text-center">{{viaje.email}}</p>
+            <img class="profile-user-img img-responsive img-circle" src="{% if chofer.foto %}{{chofer.foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
+            <h3 class="profile-username text-center"> {{chofer.nombre}} {{chofer.apellido}}</h3>
+            <p class="text-muted text-center">{{chofer.email}}</p>
             <ul class="list-group list-group-unbordered">
                 <li class="list-group-item">
-                    <b>Total de Viajes</b> <a class="pull-right">usuario.viajes.count</a>
+                    <b>Total de Viajes</b> <a class="pull-right">{{chofer.cantViajesChofer + chofer.cantViajesPasajero}}</a>
                 </li>
                 <li class="list-group-item">
-                    <b>Chofer</b> <a class="pull-right">usuario.viaje.chofer</a>
+                    <b>Como Chofer</b> <a class="pull-right">{{chofer.cantViajesChofer}}</a>
                 </li>
                 <li class="list-group-item">
-                    <b>Pasajero</b> <a class="pull-right">usuario.viaje.pasajero</a>
+                    <b>Pasajero</b> <a class="pull-right">{{chofer.cantViajesPasajero}}</a>
                 </li>
                 <li class="list-group-item">
-                    <b>Reputacion</b> <a class="pull-right">usuario.reputacion</a>
+                    <b>Reputacion</b> <a class="pull-right">{{chofer.reputacion}}</a>
                 </li>
             </ul>
 
-            <a class="btn btn-info btn-block" href= "/usuario/editarPerfil">
-                <i class="fa fa-edit"></i> Editar
-            </a>
+            <button class="btn btn-warning btn-block" id="postularseViaje"><b>CONSULTAR</b></button>
             <br/>
-            <button class="btn btn-success btn-block" id="publicarViaje" {% if not session.get('chofer') %} disabled=""{% endif %} ><b>PUBLICAR VIAJE </b></button>
+            <button class="btn btn-success btn-block" id="postularse "><b>POSTULARME</b></button>
         </div>
         <!-- /.box-body -->
     </div>
 {% endblock %}
 {% block subContenido %}
-    <div class="box">
+
+    <div class="box box-primary">
+        <div class="box-body box-profile">
+            <h3 class="profile-username text-center">Info general</h3>
+            <p class="text-muted text-center">{{chofer.email}}</p>
+            <ul class="list-group list-group-unbordered">
+                <li class="list-group-item" id="detalleOrigen">
+                    <b>Origen: </b>
+                </li>
+                <li class="list-group-item" id="detalleDestino">
+                    <b>Origen: </b>
+                </li>
+                <li class="list-group-item" id="detalleKms">
+                    <b>Kms: </b>
+                </li>
+            </ul>
+            <div id="directions-panel"></div>
+
+        </div>
+        <!-- /.box-body -->
+
         <div class="box-header">
-            <h3 class="box-title">Detalle de viaje</h3>
+            <h3 class="box-title">Recorrido estimado</h3>
         </div>
 
         <div class="box-body">
-            <pre>
-                {{viaje | json_encode}}
-            </pre>
-            <input class="form-control" id="origen" type="textbox" value="{{viaje.origen}}" readonly="">
-            <input class="form-control" id="destino" type="textbox" value="{{viaje.destino}}" readonly="">
 
             <div id="map"></div>
-            <div id="directions-panel"></div>
 
         </div>
     </div>
@@ -91,8 +103,8 @@
             /* En caso de querer ver las indicaciones */
             directionsDisplay.setPanel($('#panel').html());
 
-            var origen = $('#origen').val();
-            var destino = $('#destino').val();
+            var origen = "{{viaje.origen}}";
+            var destino = "{{viaje.destino}}";
             calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino)
         }
         function geocodeAddress(geocoder, resultsMap) {
@@ -121,10 +133,12 @@
                     var route = response.routes[0];
                     var summaryPanel = document.getElementById('directions-panel');
                     summaryPanel.innerHTML = '';
+                    $("#detalleOrigen").append(route.legs[0].start_address);
+                    $("#detalleDestino").append(route.legs[0].end_address);
+                    $("#detalleKms").append(route.legs[0].distance.text);
                     // For each route, display summary information.
-                    for (var i = 0; i < route.legs.length; i++) {
-                        console.log(route.legs[i])
-                        var routeSegment = i + 1;
+{#                    for (var i = 0; i < route.legs.length; i++) {
+                        console.log(route.legs[0])
                         summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
                         summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
                         summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
@@ -133,7 +147,7 @@
                         summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
                         summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
                         summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';
-                    }
+                    }#}
                 } else {
                     window.alert('La direccion requerida fallo: ' + status);
                 }

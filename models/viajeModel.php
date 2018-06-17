@@ -12,12 +12,22 @@ class viajeModel extends Model {
     }
 
     public function getViaje($id) {
-        $sql = "select * 
-                from viaje v
-                inner join usuarios u on (v.id_chofer = u.id)
-                where v.id = :idviaje";
+        $sql = "select * from viaje where id = :idviaje";
         $this->_db->execute($sql, array(":idviaje" => $id));
         return $this->_db->fetch();
+    }
+
+    public function getCantViajesChofer($id_chofer) {
+        $sql = "select * from viaje where id_chofer = :id_chofer";
+        $this->_db->execute($sql, array(":id_chofer" => $id_chofer));
+        return $this->_db->rowCount();
+    }
+
+    // TODO: deberia traer la cantidad de viajes como pasajero.
+    public function getCantViajesPasajero($id_chofer) {
+        $sql = "select * from viaje where id_chofer = :id_chofer";
+        $this->_db->execute($sql, array(":id_chofer" => $id_chofer));
+        return $this->_db->rowCount();
     }
 
     public function insertarViaje($form) {

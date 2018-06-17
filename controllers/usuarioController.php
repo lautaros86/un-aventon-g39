@@ -236,13 +236,14 @@ class usuarioController extends Controller {
                     $file_size = $_FILES['foto']['size'];
                     $type = explode("/", $_FILES['foto']['type'])[1];
                     if (in_array($type, $allowed_ext)) {
-                        if ($file_size <= "512000") {
+                        if ($file_size <= "2048000") {
+                            if (!is_null(Session::get("usuario")["foto"])) {
+                                if (file_exists(ROOT . Session::get("usuario")["foto"])) {
+                                    unlink(ROOT . Session::get("usuario")["foto"]);
+                                }
+                            }
                             if (move_uploaded_file($_FILES['foto']['tmp_name'], $dirFile)) {
                                 $params["foto"] = '/img/usuarios/' . $imgName;
-                                if (!is_null(Session::get("usuario")["foto"])) {
-                                    if (file_exists(ROOT . Session::get("usuario")["foto"]))
-                                        unlink(ROOT . Session::get("usuario")["foto"]);
-                                }
                             } else {
                                 Session::setMessage("Error al guardar la imagen.", SessionMessageType::Error);
                             }

@@ -41,7 +41,7 @@ class viajeController extends Controller {
             $this->redireccionar();
         }
         $params["viaje"] = $this->_viaje->getViaje($idviaje);
-        if (empty($param["viaje"])) {
+        if (empty($params["viaje"])) {
             Session::setMessage("El viaje requerido no existe.", SessionMessageType::Error);
             $this->redireccionar("perfil");
         }

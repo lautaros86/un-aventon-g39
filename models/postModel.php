@@ -8,7 +8,7 @@ class postModel extends Model {
 
     public function getPosts() {
         $post = $this->_db->query("select * from posts");
-        return $post->fetchall();
+        return $post->fetchAll();
     }
 
     public function getPost($id) {

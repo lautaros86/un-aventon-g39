@@ -8,12 +8,22 @@ class usuarioModel extends Model {
 
     public function getUsuarios() {
         $usuario = $this->_db->query("select * from usuarios");
-        return $usuario->fetchall();
+        return $usuario->fetchAll();
     }
 
     public function getUsuario($id) {
         $id = (int) $id;
         $sql = "SELECT * FROM usuarios WHERE id = :id";
+        $user = $this->_db->execute($sql, array(':id' => $id));
+        return $this->_db->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getDatosChofer($id) {
+        $id = (int) $id;
+        $sql = "SELECT * 
+            FROM usuarios
+            inner join
+            WHERE id = :id";
         $user = $this->_db->execute($sql, array(':id' => $id));
         return $this->_db->fetch(PDO::FETCH_ASSOC);
     }

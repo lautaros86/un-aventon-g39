@@ -4,6 +4,7 @@ class viajeController extends Controller {
 
     private $_registro;
     private $_usuario;
+    private $_viaje;
 
     public function __construct() {
         parent::__construct();
@@ -13,6 +14,7 @@ class viajeController extends Controller {
         require_once ROOT . 'models' . DS . 'viajeModel.php';
         $this->_usuario = new usuarioModel();
         $this->_registro = new vehiculoModel();
+        $this->_viaje = new viajeModel();
     }
 
     public function index() {
@@ -20,21 +22,42 @@ class viajeController extends Controller {
     }
 
     public function alta() {
-        Session::set('autenticado', true);
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
         $vehiculoModel = new vehiculoModel();
         $params["vehiculos"] = $vehiculoModel->getVehiculosOfUser(Session::get("id_usuario"));
+        if (sizeof($params["vehiculos"]) == 0) {
+            Session::setMessage("No tienes vehiculos para publicar un viaje.", SessionMessageType::Error);
+            $this->redireccionar('perfil');
+        }
         $form = Session::get("form");
         Session::destroy("form");
         $this->_view->renderizar('alta', 'viaje', array("form" => $form, "params" => $params));
+    }
+
+    public function detalle($idviaje) {
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $params["viaje"] = $this->_viaje->getViaje($idviaje);
+        if (empty($param["viaje"])) {
+            Session::setMessage("El viaje requerido no existe.", SessionMessageType::Error);
+            $this->redireccionar("perfil");
+        }
+        $params["chofer"] = $this->_usuario->getUsuario($params["viaje"]["id_chofer"]);
+        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
+        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
+        $this->_view->renderizar('detalle', 'viaje', $params);
     }
 
     public function crear() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("registro");
+        }
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
         }
         $form = array();
         $form['monto'] = $this->getPostParam('monto');
@@ -70,7 +93,7 @@ class viajeController extends Controller {
         if ($form['monto'] == "") {
             Session::setFormErrors("monto", "El monto es obligatorio.");
             $errors = true;
-        }elseif ($form['monto'] <= 0) {
+        } elseif ($form['monto'] <= 0) {
             Session::setFormErrors("monto", "El monto debe ser mayor a 0.");
             $errors = true;
         }

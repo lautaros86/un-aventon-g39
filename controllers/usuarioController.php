@@ -11,26 +11,37 @@ class usuarioController extends Controller {
         require_once ROOT . 'models' . DS . 'usuarioModel.php';
         $this->_registro = new registroModel();
         $this->_usuario = new usuarioModel();
-//      $this->_registro = $this->loadModel('registro');
     }
+
     public function index() {
         
     }
 
     public function eliminarCuenta() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar("registro");
+        }
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
         $id = Session::get('usuario')["id"];
-        try {
-            $this->_usuario->eliminarUsuario($id);
-            Session::setMessage("La cuenta se elimino exitosamente.", SessionMessageType::Success);
-            Session::destroy();
-            $this->redireccionar();
-        } catch (PDOException $e) {
-            Session::setMessage("La cuenta no pudo eliminarse, por favor comuniquese con un administrador.", SessionMessageType::Error);
-        } catch (ErrorException $e) {
-            Session::setMessage("Error.", SessionMessageType::Error);
+        $pass = $this->getPostParam("data");
+        $requestHasPass = Hash::getHash('sha256', $pass, HASH_KEY);
+        $userPass = Session::get("usuario")["password"];
+        if ($requestHasPass == $userPass) {
+            try {
+                $this->_usuario->eliminarUsuario($id);
+                Session::setMessage("La cuenta se elimino exitosamente.", SessionMessageType::Success);
+                Session::destroy();
+                echo json_encode(array("ok" => true, "titulo" => "Cuenta eliminada", "mensaje" => "Su cuenta se elimino con exito. Gracias por haber sido parte del sistema."));
+            } catch (PDOException $e) {
+                Session::setMessage("La cuenta no pudo eliminarse, por favor comuniquese con un administrador.", SessionMessageType::Error);
+            } catch (ErrorException $e) {
+                Session::setMessage("Error.", SessionMessageType::Error);
+            }
+        } else {
+            echo json_encode(array("ok" => false, "titulo" => "Oh! Parace que hubo un problema", "mensaje" => "La contraseña no es correcta."));
         }
     }
 
@@ -50,11 +61,10 @@ class usuarioController extends Controller {
         $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
-        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$usuario['fecha_nac']))
-        {
-           $usuario['fecha_nac'] = date('d/m/Y', strtotime($usuario['fecha_nac']));
+        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $usuario['fecha_nac'])) {
+            $usuario['fecha_nac'] = date('d/m/Y', strtotime($usuario['fecha_nac']));
         }
-         
+
         $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
     }
 
@@ -200,10 +210,10 @@ class usuarioController extends Controller {
         $form = array();
         $date = $this->getPostParam('fecha_nac');
         $date = str_replace('/', '-', $date);
-        $form['fecha_nac'] = date('Y-m-d', strtotime($date));      
+        $form['fecha_nac'] = date('Y-m-d', strtotime($date));
         $form['nombre'] = $this->getAlphaNum('nombre');
         $form['apellido'] = $this->getPostParam('apellido');
-        
+
 
         Session::set("form", $form);
         if (!$errors) {
@@ -214,18 +224,35 @@ class usuarioController extends Controller {
                 $form['fecha_nac'] = date('Y-m-d', strtotime($date));
                 $params = array("id" => $usuario["id"],
                     "nombre" => $this->getAlphaNum('nombre'),
-                    "apellido" => $this->getPostParam('apellido'),                    
+                    "apellido" => $this->getPostParam('apellido'),
                     "fecha" => $form['fecha_nac']
                 );
                 if ($_FILES['foto']['size'] > 0) {
+                    $dirImages = ROOT . 'img/usuarios/';
+                    $imgName = str_replace(' ', '_', basename($_FILES['foto']['name']));
+                    $dirFile = $dirImages . $imgName;
                     $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
                     $file_name = $_FILES['foto']['name'];
                     $file_size = $_FILES['foto']['size'];
-                    $file_tmp = $_FILES['foto']['tmp_name'];
-                    $type = pathinfo($file_tmp, PATHINFO_EXTENSION);
-                    $data = file_get_contents($file_tmp);
-                    $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                    $params["foto"] = $base64;
+                    $type = explode("/", $_FILES['foto']['type'])[1];
+                    if (in_array($type, $allowed_ext)) {
+                        if ($file_size <= "2048000") {
+                            if (!is_null(Session::get("usuario")["foto"])) {
+                                if (file_exists(ROOT . Session::get("usuario")["foto"])) {
+                                    unlink(ROOT . Session::get("usuario")["foto"]);
+                                }
+                            }
+                            if (move_uploaded_file($_FILES['foto']['tmp_name'], $dirFile)) {
+                                $params["foto"] = '/img/usuarios/' . $imgName;
+                            } else {
+                                Session::setMessage("Error al guardar la imagen.", SessionMessageType::Error);
+                            }
+                        } else {
+                            Session::setMessage("La imagen es muy grande.", SessionMessageType::Error);
+                        }
+                    } else {
+                        Session::setMessage("El formato de imagen es incorrecto.", SessionMessageType::Error);
+                    }
                 }
                 $this->_usuario->editarUsuario($params);
                 Session::setMessage("Tus datos fueron editados correctamente :)", SessionMessageType::Success);
@@ -234,10 +261,9 @@ class usuarioController extends Controller {
                 $newUsuario['nombre'] = $this->getAlphaNum('nombre');
                 $newUsuario['apellido'] = $this->getPostParam('apellido');
                 $newUsuario['fecha_nac'] = $this->getPostParam('fecha_nac');
-                if (isset($base64)) {
-                    $newUsuario['foto'] = $base64;
+                if (isset($params["foto"])) {
+                    $newUsuario['foto'] = $params["foto"];
                 }
-                Session::destroy("usuario");
                 Session::set("usuario", $newUsuario);
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
@@ -260,9 +286,9 @@ class usuarioController extends Controller {
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
         $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos));
     }
-    
+
     public function editarContrasenia() {
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar("editar");
@@ -270,13 +296,13 @@ class usuarioController extends Controller {
         $usuario = Session::get('usuario');
         $errors = $this->validarContrasenia($usuario["id"]);
         $form = array();
-       
+
         $form['contraseniaNueva'] = $this->getPostParam('contraseniaNueva');
         $form['contraseniaVieja'] = $this->getPostParam('contraseniaVieja');
         $form['repeatPassNuevo'] = $this->getPostParam('repeatPassNuevo');
         Session::set("form", $form);
         if (!$errors) {
-            try {                         
+            try {
                 $this->_usuario->editarUsuarioContrasenia($usuario["id"], $form['contraseniaNueva']);
                 Session::setMessage("Tu contraseña fue editada correctamente :)", SessionMessageType::Success);
             } catch (PDOException $e) {
@@ -287,28 +313,29 @@ class usuarioController extends Controller {
             $this->redireccionar("usuario/editarPerfil");
         }
         $this->_view->renderizar('editar', 'usuario', array("form" => $form));
-    }    
+    }
+
     public function validarContrasenia($id) {
         $errors = false;
         $formErrors = array();
         $oldPass = Hash::getHash('sha256', $this->getPostParam('contraseniaVieja'), HASH_KEY);
         //$a = $oldPass -> Hash::getHash('sha256', $oldPasss, HASH_KEY);
-        try {                         
+        try {
             $pass = $this->_usuario->getUsuario($id);
         } catch (PDOException $e) {
-                Session::setMessage("Error al editar tus datos :/", SessionMessageType::Error);
-            }
+            Session::setMessage("Error al editar tus datos :/", SessionMessageType::Error);
+        }
         if ($this->getPostParam('contraseniaNueva') == "") {
-            
-            
+
+
             Session::setFormErrors("contraseniaNueva", "este campo no puede estar vacío", SessionMessageType::Error);
             $errors = true;
         }
         if ($this->getPostParam('contraseniaVieja') == "") {
             Session::setFormErrors("contraseniaVieja", "este campo no puede estar vacío");
             $errors = true;
-        }else{
-            if ($pass['password'] != $oldPass){
+        } else {
+            if ($pass['password'] != $oldPass) {
                 Session::setFormErrors("contraseniaVieja", "Lo lamento está no es tu contraseña actual");
                 $errors = true;
             }
@@ -325,7 +352,6 @@ class usuarioController extends Controller {
 
         return $errors;
     }
-    
 
 }
 

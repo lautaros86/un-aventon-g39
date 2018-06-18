@@ -1,21 +1,81 @@
 {% extends 'layoutPerfil.html.twig' %}
 {% block style %}
     {{ parent() }}
-    <!-- iCheck -->
     <link rel="stylesheet" href="../../bower_components/admin-lte/plugins/iCheck/square/blue.css">
     <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+
+    <style>
+        /* The Modal (background) */
+
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            padding-top: 100px;
+            /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        input {
+            text-transform: uppercase;
+        }
+
+        .small,
+        small { 
+            font-size: 82% !important;
+        }
+    </style>
 {% endblock %} 
 
 {% block subContenido %}
     <div class="box box-primary">
-
-        <form action="/usuario/editar" method="post" enctype="multipart/form-data" role="form">
-            <div class="box-header">
-                <h3>Edita Tu Perfil</h3>
-            </div>
-            <div class="box-body">
+        <div class="box-header">
+            <h3>Edita Tu Perfil</h3>
+        </div>
+        <div class="box-body">
+            <h3>Datos personales</h3>
+            <form action="/usuario/editar" method="post" enctype="multipart/form-data" role="form" id="formDatos">
                 <div class="form-group {% if errors.nombre is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="nombre" placeholder="Nombre" {% if form is defined  %}value="{{form.nombre}}"{% endif %}>
+                    <input type="text" class="form-control" name="nombre" placeholder="Nombre"  autocomplete="off" {% if form is defined  %}value="{{form.nombre}}"{% endif %}>
 
                     {% if errors.nombre is defined %}
                         {% for err_msg in errors.nombre %}
@@ -24,7 +84,7 @@
                     {% endif %}
                 </div>
                 <div class="form-group {% if errors.apellido is defined  %}has-error{% endif %}">
-                    <input type="text" class="form-control" name="apellido" placeholder="Apellido" {% if form is defined  %}value="{{form.apellido}}"{% endif %}>
+                    <input type="text" class="form-control" name="apellido" placeholder="Apellido"  autocomplete='additional-name' {% if form is defined  %}value="{{form.apellido}}"{% endif %}>
 
                     {% if errors.apellido is defined %}
                         {% for err_msg in errors.apellido %}
@@ -51,9 +111,7 @@
                         </div>
                     </div>
                 </div>     
-            </div>
 
-            <div class="box-footer">
 
                 <div class="col-xs-4">
                     <div class="form-group {% if errors.terminos is defined  %}has-error{% endif %}">
@@ -61,22 +119,22 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Confirmar</button>
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Confirmar</button>
                 </div>
 
                 <div class="col-xs-4">
-                    <button type="reset" id="resetRegistro" class="btn btn-primary btn-block btn-flat">Cancelar</button>
+                    <button type="reset"  class="btn btn-primary btn-block btn-flat">Cancelar</button>
                 </div>                    
                 <!-- /.col -->
-            </div>
-        </form>
-<form action="/usuario/editarContrasenia" method="post" enctype="multipart/form-data" role="form">
-            <div class="box-header">
-                <h3>Edita Tu Contraseña</h3>
-            </div>
-            <div class="box-body">
+            </form>
+            <br/>
+            <br/>
+            <hr/>
+
+            <h3>Cambiar ontraseña</h3>
+            <form action="/usuario/editarContrasenia" method="post" enctype="multipart/form-data" role="form">
                 <div class="form-group">
-                    <input type="password" class="form-control" name="contraseniaVieja" placeholder="Ingresa tu contraseña actual">
+                    <input type="password" class="form-control" name="contraseniaVieja" placeholder="Ingresa tu contraseña actual" autocomplete="off">
 
                     {% if errors.contraseniaVieja is defined %}
                         {% for err_msg in errors.contraseniaVieja %}
@@ -85,7 +143,7 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" name="contraseniaNueva" placeholder="Ahora ingresa tu nueva contraseña">
+                    <input type="password" class="form-control" name="contraseniaNueva" placeholder="Ahora ingresa tu nueva contraseña" autocomplete="off">
 
                     {% if errors.contraseniaNueva is defined %}
                         {% for err_msg in errors.contraseniaNueva %}
@@ -94,7 +152,7 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" name="repeatPassNuevo" placeholder="Repeti tu contraseña por favor">
+                    <input type="password" class="form-control" name="repeatPassNuevo" placeholder="Repeti tu contraseña por favor" autocomplete="off">
 
                     {% if errors.repeatPassNuevo is defined %}
                         {% for err_msg in errors.repeatPassNuevo %}
@@ -102,9 +160,6 @@
                         {% endfor %}
                     {% endif %}
                 </div>    
-            </div>
-
-            <div class="box-footer">
 
                 <div class="col-xs-4">
                     <div class="form-group {% if errors.terminos is defined  %}has-error{% endif %}">
@@ -112,18 +167,73 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Confirmar</button>
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Confirmar</button>
                 </div>
 
                 <div class="col-xs-4">
-                    <button type="reset" id="resetRegistro" class="btn btn-primary btn-block btn-flat">Cancelar</button>
+                    <button type="reset" class="btn btn-primary btn-block btn-flat">Cancelar</button>
                 </div>                    
                 <!-- /.col -->
-            </div>
-        </form>                    
-                    
-    </div>          
+            </form>                    
 
+            <br/>
+            <br/>
+            <hr/>
+
+            <h3>Eliminar cuenta</h3>
+            <button class="btn btn-danger btn-block" id="cerrarCuenta" href= "/usuario/eliminarCuenta">
+                <i class="fa fa-trash-o"></i> Eliminar Cuenta
+            </button>
+        </div>
+
+    </div>          
+    <div class="modal" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Por favor, ingrese su contraseña.</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="password" name="confirmPassword" id="confirmPassword"  class="form-control" autocomplete="off"/>
+                        </div>   
+                    </form>            
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="cancelar">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmEliminar">Confirmar</button>  
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mensajeModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="titulo"></h4>
+                </div>
+                <div class="modal-body" id="mensaje">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="loadingModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cargando... Por favor espere.</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}                
 
 {% block script %}
@@ -146,6 +256,65 @@
                 startView: "decade",
                 orientation: 'bottom'
             });
+        });
+        $().ready(function () {
+            $("#cerrarCuenta").click(function () {
+                $('#confirmModal').show();
+            });
+            $(".close").click(function () {
+                $('#confirmModal').show();
+                $('#mensajeModal').hide();
+            });
+            $("#confirmEliminar").click(function () {
+                $('#confirmModal').hide();
+                $('#loadingModal').show();
+                $.ajax({
+                    url: "/usuario/eliminarCuenta",
+                    dataType: 'json',
+                    type: "post",
+                    data: {data: $("#confirmPassword").val()},
+                    success: function (data) {
+                        $("#titulo").empty()
+                        $("#titulo").append($('<h4>').text(data.titulo))
+                        $("#mensaje").empty()
+                        $("#mensaje").append($('<p>').text(data.mensaje))
+                        $('#loadingModal').hide();
+                        $('#mensajeModal').show();
+                        $("#confirmPassword").val("");
+                        if (data.ok) {
+                            $("#mensaje").append($('<p>').text("La pagina se recargara en 10 segundos."))
+                            setTimeout(
+                                    function ()
+                                    {
+                                        location.reload();
+                                    }, 10000);
+                        }
+                    },
+                    error: function (data) {
+                        $('#loadingModal').hide();
+                        $("#confirmPassword").val("");
+                    },
+                });
+            });
+            $(window).click(function (event) {
+                if (event.target == $('#confirmModal')[0] || event.target == $('#mensajeModal')[0]) {
+                    $('#confirmModal').hide();
+                    $('#mensajeModal').hide();
+                }
+            });
+            var imgSize = 0;
+            $('#foto').change(function () {
+                //this.files[0].size gets the size of your file.
+                imgSize = this.files[0].size;
+                console.log(imgSize)
+            });
+            $("#formDatos").submit(function (e) {
+                if (imgSize > "2048000") {
+                    e.preventDefault();
+                    alert("La imagen es muy grande");
+                }
+            })
+
         });
     </script>
 {% endblock %}  

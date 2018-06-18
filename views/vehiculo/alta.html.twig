@@ -1,6 +1,3 @@
-
-
-
 {% extends 'layoutPerfil.html.twig' %}
 {% block title %}
     UnAventon - Perfil
@@ -8,76 +5,76 @@
 
 
 {% block subContenido %}
-<div class="register-box-body">
-                <p class="login-box-msg">Registrar nuevo vehiculo</p>
+    <div class="register-box-body">
+        <p class="login-box-msg">Registrar nuevo vehiculo</p>
 
-                <form action="/vehiculo/crear" method="post">
-                    <div class="form-group {% if errors.marca is defined  %}has-error{% endif %}">
-                        <input type="text" class="form-control" name="marca" placeholder="Marca" {% if form is defined  %}value="{{form.marca}}"{% endif %}>
-                        {% if errors.marca is defined %}
-                            {% for err_msg in errors.marca %}
-                                <span class="help-block">{{err_msg}}</span>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                    <div class="form-group {% if errors.modelo is defined  %}has-error{% endif %}">
-                        <input type="text" class="form-control" name="modelo" placeholder="modelo" {% if form is defined  %}value="{{form.modelo}}"{% endif %}>
-                        {% if errors.modelo is defined %}
-                            {% for err_msg in errors.modelo %}
-                                <span class="help-block">{{err_msg}}</span>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                    <div class="form-group {% if errors.patente is defined  %}has-error{% endif %}">
-                        <input type="patente" class="form-control" name="patente" placeholder="Patente" {% if form is defined  %}value="{{form.patente}}"{% endif %}>
-                        {% if errors.patente is defined %}
-                            {% for err_msg in errors.patente %}
-                                <span class="help-block">{{err_msg}}</span>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                    <div class="form-group {% if errors.asientos is defined  %}has-error{% endif %}">
-                        <input type="text" class="form-control" name="asientos" id="asientos" {% if form is defined  %}value="{{form.asientos}}"{% endif %}
-                               placeholder="Ingrese cantidad de Asientos">
-                        {% if errors.asientos is defined %}
-                            {% for err_msg in errors.asientos %}
-                                <span class="help-block">{{err_msg}}</span>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+        <form action="/vehiculo/crear" method="post">
+            <div class="form-group {% if errors.marca is defined  %}has-error{% endif %}">
+                <input type="text" class="form-control" name="marca" placeholder="Marca" {% if form is defined  %}value="{{form.marca}}"{% endif %}>
+                {% if errors.marca is defined %}
+                    {% for err_msg in errors.marca %}
+                        <span class="help-block">{{err_msg}}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group {% if errors.modelo is defined  %}has-error{% endif %}">
+                <input type="text" class="form-control" name="modelo" placeholder="modelo" {% if form is defined  %}value="{{form.modelo}}"{% endif %}>
+                {% if errors.modelo is defined %}
+                    {% for err_msg in errors.modelo %}
+                        <span class="help-block">{{err_msg}}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group {% if errors.patente is defined  %}has-error{% endif %}">
+                <input type="patente" class="form-control" name="patente" placeholder="Patente" {% if form is defined  %}value="{{form.patente}}"{% endif %}>
+                {% if errors.patente is defined %}
+                    {% for err_msg in errors.patente %}
+                        <span class="help-block">{{err_msg}}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group {% if errors.asientos is defined  %}has-error{% endif %}">
+                <input type="text" class="form-control" name="asientos" id="asientos" {% if form is defined  %}value="{{form.asientos}}"{% endif %}
+                       placeholder="Ingrese cantidad de Asientos">
+                {% if errors.asientos is defined %}
+                    {% for err_msg in errors.asientos %}
+                        <span class="help-block">{{err_msg}}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
 
-                    <div class="row">
-                        <div class="col-xs-8">
-                            <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
+            <div class="row">
+                <div class="col-xs-8">
+                    <div class="form-group {% if errors.repass is defined  %}has-error{% endif %}">
 
-                                <div class="checkbox icheck ">
-                                    <label>
-                                        
-                                        <label> <input name="baul" type="checkbox" 
+                        <div class="checkbox icheck ">
+                            <label>
+
+                                <label> <input name="baul" type="checkbox" 
                                                {% if form is defined %}
                                                    {% if form.baul==1%}
                                                        checked
                                                    {% endif %}
                                                {% endif %} > Cuento con baúl </label>
-                                      {#  <input name="baul" type="checkbox"> <label>Cuento con baúl </label>#}
+                                    {#  <input name="baul" type="checkbox"> <label>Cuento con baúl </label>#}
 
-                                        {% if errors.baul is defined %}
-                                            {% for err_msg in errors.terminos %}
-                                                <span class="help-block">{{err_msg}}</span>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </label>
-                                </div>
-                            </div>
+                                {% if errors.baul is defined %}
+                                    {% for err_msg in errors.terminos %}
+                                        <span class="help-block">{{err_msg}}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </label>
                         </div>
-                        <!-- /.col -->
-                        <div class="col-xs-4">
-                            <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Registrar</button>
-                        </div>
-                        <!-- /.col -->
                     </div>
-                </form>
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-4">
+                    <button type="submit" id="submitRegistro" class="btn btn-primary btn-block btn-flat">Registrar</button>
+                </div>
+                <!-- /.col -->
             </div>
+        </form>
+    </div>
 {% endblock %}
 
 

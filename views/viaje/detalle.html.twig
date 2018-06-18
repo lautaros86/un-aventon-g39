@@ -1,0 +1,318 @@
+{% extends 'layoutPerfil.html.twig' %}
+{% block title %}
+    UnAventon - Viaje
+{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <!-- iCheck -->
+    <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <!-- Bootstrap time Picker -->
+    <link rel="stylesheet" href="../../bower_components/admin-lte/plugins/timepicker/bootstrap-timepicker.css">
+    <style>
+        #map {
+            min-height: 260px;
+            min-width: 430px;
+        }
+    </style>
+
+{% endblock %} 
+{% block boxPerfil %}
+    <!-- Profile Image -->
+    <div class="box box-primary">
+        <div class="box-body box-profile">
+            <img class="profile-user-img img-responsive img-circle" src="{% if chofer.foto %}{{chofer.foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
+            <h3 class="profile-username text-center"> {{chofer.nombre}} {{chofer.apellido}}</h3>
+            <p class="text-muted text-center">{{chofer.email}}</p>
+            <ul class="list-group list-group-unbordered">
+                <li class="list-group-item">
+                    <b>Total de Viajes</b> <a class="pull-right">{{chofer.cantViajesChofer + chofer.cantViajesPasajero}}</a>
+                </li>
+                <li class="list-group-item">
+                    <b>Como Chofer</b> <a class="pull-right">{{chofer.cantViajesChofer}}</a>
+                </li>
+                <li class="list-group-item">
+                    <b>Pasajero</b> <a class="pull-right">{{chofer.cantViajesPasajero}}</a>
+                </li>
+                <li class="list-group-item">
+                    <b>Reputacion</b> <a class="pull-right">{{chofer.reputacion}}</a>
+                </li>
+            </ul>
+
+            <button class="btn btn-warning btn-block" id="postularseViaje"><b>CONSULTAR</b></button>
+            <br/>
+            <button class="btn btn-success btn-block" id="postularse "><b>POSTULARME</b></button>
+        </div>
+        <!-- /.box-body -->
+    </div>
+{% endblock %}
+{% block subContenido %}
+
+    <div class="box box-info">
+
+        <div class="box-body">
+            <h3 class="profile-username text-center">Info general</h3>
+            <ul class="list-group list-group-unbordered">
+                <li class="list-group-item" id="detalleOrigen">
+                    <b>Origen: </b>
+                </li>
+                <li class="list-group-item" id="detalleDestino">
+                    <b>Origen: </b>
+                </li>
+                <li class="list-group-item" id="detalleKms">
+                    <b>Kms: </b>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="box box-info">
+        <div class="box-body">
+            <h3 class="profile-username text-center">Recorrido estimado</h3>
+        </div>
+        <!-- /.box-body -->
+
+        <div class="box-header">
+            <h3 class="box-title">Recorrido estimado</h3>
+        </div>
+
+        <div class="box-body">
+
+            <div id="map"></div>
+
+        </div>
+    </div>
+
+    <!-- Chat box -->
+    <div class="box box-warning">
+        <div class="box-header">
+            <h3 class="profile-username text-center">Recorrido estimado</h3>
+
+            <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
+
+            </div>
+        </div>
+        <div class="box-body chat" id="chat-box">
+            <!-- chat item -->
+            <div class="item">
+                <img src="/img/anonimo.png" alt="user image" class="online">
+
+                <p class="message">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
+                        Mike Doe
+                    </a>
+                    I would like to meet you to discuss the latest news about
+                    the arrival of the new theme. They say it is going to be one the
+                    best themes on the market
+                </p>
+                <div class="attachment item">
+                    <img src="/img/anonimo.png" alt="user image" class="online">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
+                        Mike Doe
+                    </a>
+                    <p>
+                        I would like to meet you to discuss the latest news about
+                        the arrival of the new theme. They say it is going to be one the
+                        best themes on the market
+                    </p>
+                </div>
+                <!-- /.attachment -->
+            </div>
+            <!-- /.item -->
+            <!-- chat item -->
+            <div class="item">
+                <img src="/img/anonimo.png" alt="user image" class="offline">
+
+                <p class="message">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:15</small>
+                        Alexander Pierce
+                    </a>
+                    I would like to meet you to discuss the latest news about
+                    the arrival of the new theme. They say it is going to be one the
+                    best themes on the market
+                </p>
+                <div class="input-group">
+                    <input class="form-control" placeholder="Type message...">
+
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-success">Responder</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.item -->
+            <!-- chat item -->
+            <div class="item">
+                <img src="/img/anonimo.png" alt="user image" class="offline">
+
+                <p class="message">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:30</small>
+                        Susan Doe
+                    </a>
+                    I would like to meet you to discuss the latest news about
+                    the arrival of the new theme. They say it is going to be one the
+                    best themes on the market
+                </p>
+                <div class="attachment item">
+                    <img src="/img/anonimo.png" alt="user image" class="online">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
+                        Mike Doe
+                    </a>
+                    <p class="message">
+                        I would like to meet you to discuss the latest news about
+                        the arrival of the new theme. They say it is going to be one the
+                        best themes on the market
+                    </p>
+                </div>
+            </div>
+            <!-- /.item -->
+
+            <!-- chat item -->
+            <div class="item">
+                <img src="/img/anonimo.png" alt="user image" class="offline">
+
+                <p class="message">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:30</small>
+                        Susan Doe
+                    </a>
+                    I would like to meet you to discuss the latest news about
+                    the arrival of the new theme. They say it is going to be one the
+                    best themes on the market
+                </p>
+                <div class="input-group">
+                    <input class="form-control" placeholder="Type message...">
+
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-success">Responder</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.item -->
+
+            <!-- chat item -->
+            <div class="item">
+                <img src="/img/anonimo.png" alt="user image" class="offline">
+
+                <p class="message">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:30</small>
+                        Susan Doe
+                    </a>
+                    I would like to meet you to discuss the latest news about
+                    the arrival of the new theme. They say it is going to be one the
+                    best themes on the market
+                </p>
+                <div class="input-group">
+                    <input class="form-control" placeholder="Type message...">
+
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-success">Responder</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.item -->
+
+            <!-- chat item -->
+            <div class="item">
+                <img src="/img/anonimo.png" alt="user image" class="offline">
+
+                <p class="message">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:30</small>
+                        Susan Doe
+                    </a>
+                    I would like to meet you to discuss the latest news about
+                    the arrival of the new theme. They say it is going to be one the
+                    best themes on the market
+                </p>
+                <div class="attachment item">
+                    <img src="/img/anonimo.png" alt="user image" class="online">
+                    <a href="#" class="name">
+                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
+                        Mike Doe
+                    </a>
+                    <p class="message">
+                        I would like to meet you to discuss the latest news about
+                        the arrival of the new theme. They say it is going to be one the
+                        best themes on the market
+                    </p>
+                </div>
+            </div>
+            <!-- /.item -->
+        </div>
+    </div>
+    <!-- /.box (chat box) -->
+</div>
+
+
+
+{% endblock %}
+
+{% block script %}
+    {{ parent() }}
+    <script>
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 8,
+                center: {lat: -34.91482928576744, lng: -57.94609843010255}
+            });
+            var geocoder = new google.maps.Geocoder();
+
+            var directionsService = new google.maps.DirectionsService();
+            var directionsDisplay = new google.maps.DirectionsRenderer();
+
+
+            directionsDisplay.setMap(map);
+
+            /* En caso de querer ver las indicaciones */
+            directionsDisplay.setPanel($('#panel').html());
+
+            var origen = "{{viaje.origen}}";
+            var destino = "{{viaje.destino}}";
+            calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino)
+        }
+        function geocodeAddress(geocoder, resultsMap) {
+            var address = document.getElementById('address').value;
+            geocoder.geocode({'address': address}, function (results, status) {
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+        function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
+            directionsService.route({
+                origin: origen,
+                destination: destino,
+                optimizeWaypoints: true,
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                    var summaryPanel = document.getElementById('directions-panel');
+                    $("#detalleOrigen").append(route.legs[0].start_address);
+                    $("#detalleDestino").append(route.legs[0].end_address);
+                    $("#detalleKms").append(route.legs[0].distance.text);
+                } else {
+                    window.alert('La direccion requerida fallo: ' + status);
+                }
+            });
+        }
+
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&callback=initMap">
+    </script>
+
+    <!-- Slimscroll -->
+    <script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+{% endblock %}

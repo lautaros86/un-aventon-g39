@@ -8,14 +8,21 @@ class vehiculoModel extends Model {
 
     public function getVehiculos() {
         $vehiculo = $this->_db->query("select * from vehiculo ");
-        return $vehiculo->fetchall();
+        return $vehiculo->fetchAll();
     }
 
     public function getVehiculosOfUser($iduser) {
         $sql = "select * from vehiculo where id_usuario = :id_usuario";
         $params = array(":id_usuario"=> $iduser);
         $this->_db->execute($sql, $params);
-        return $this->_db->fetchall();
+        return $this->_db->fetchAll();
+    }
+
+    public function cantVehiculos($iduser) {
+        $sql = "select * from vehiculo where id_usuario = :id_usuario and estado = 0";
+        $params = array(":id_usuario"=> $iduser);
+        $this->_db->execute($sql, $params);
+        return $this->_db->rowCount();
     }
 
     public function getVehiculo($id) {
@@ -25,8 +32,8 @@ class vehiculoModel extends Model {
     }
 
     public function insertarVehiculo($form, $idUsuario) {
-        $sql = "INSERT INTO vehiculo(patente, modelo, marca, id_usuario, asientos, baul) "
-                . "VALUES (:patente, :modelo, :marca, :id_usuario, :asientos, :baul)";
+        $sql = "INSERT INTO vehiculo(patente, modelo, marca, id_usuario, asientos, baul, fecha_crea, fecha_modi) "
+                . "VALUES (:patente, :modelo, :marca, :id_usuario, :asientos, :baul, NOW(), NOW())";
         $params = array(":patente"=> $form["patente"], "modelo"=>$form["modelo"], "marca"=>$form["marca"],
                 "id_usuario"=>$idUsuario, "asientos"=>$form["asientos"], "baul"=>$form["baul"]);
         $this->_db->execute($sql, $params);
@@ -71,7 +78,7 @@ class vehiculoModel extends Model {
         $sql = "select * from vehiculo where (id_usuario = :idusuario) and (estado=0)";
         $params = array(':idusuario' => $idusuairo);
         $this->_db->execute($sql, $params);
-        return $this->_db->fetchall(PDO::FETCH_ASSOC);
+        return $this->_db->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

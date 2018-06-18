@@ -23,8 +23,7 @@
                     </div>
                     <!-- End of tab viajes postulados -->
                     <div class="tab-pane" id="timeline">
-                        timeline
-{#                        {% include 'usuario/tabs/timeline.html.twig' %}#}
+                       
                     </div>
                     <div class="tab-pane" id="misVehiculos">
                         {% include 'usuario/tabs/misVehiculos.html.twig' %}
@@ -42,8 +41,8 @@
 {% block script %}
     {{parent()}}
     <script>
-        $().ready(function () {
-
+        var bandera = true;
+        $().ready(function () {            
             $(".edit").click(function (event) {
                 var elem = $(event.target);
                 if (elem.is("i")) {
@@ -66,7 +65,9 @@
             });
         });
         $("#historial").click(function(){
-                $.ajax({
+                if (bandera){
+                    bandera = !bandera;
+                    $.ajax({
                     url: "/historial",
                     success: function (data, textStatus, jqXHR) {
                         console.log("todo bien")
@@ -75,7 +76,8 @@
                     error: function(){
                         console.log("todo mal");
                     }
-                });
+                    });
+                }
             })
     </script>
 {% endblock %}

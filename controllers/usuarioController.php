@@ -77,9 +77,10 @@ class usuarioController extends Controller {
         $form = array();
         $form['nombre'] = $this->getAlphaNum('nombre');
         $form['apellido'] = $this->getPostParam('apellido');
-        $date = $this->getPostParam('fecha_nac');
-        $date = str_replace('/', '-', $date);
-        $form['fecha_nac'] = date('Y-m-d', strtotime($date));
+        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $usuario['fecha_nac'])) {
+            $usuario['fecha_nac'] = date('d/m/Y', strtotime($usuario['fecha_nac']));
+        }
+        $form['fecha_nac'] = $this->getPostParam('fecha_nac');
         $form['email'] = $this->getPostParam('email');
         $form['pass'] = $this->getAlphaNum('pass');
         Session::set("form", $form);

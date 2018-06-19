@@ -26,6 +26,14 @@ class notificacionModel extends Model {
         return $fallo;
     }
 
+    public function crearNotificacionSimple($mensaje, $idDestinatario, $color) {
+        $this->_db->prepare("INSERT INTO notificacion(mensaje, color, idusuario, fecha) VALUES (:mensaje, :color, :idusuario, now())");
+        $this->_db->bindValue(':mensaje', $mensaje);
+        $this->_db->bindValue(':color', $color);
+        $this->_db->bindValue(':idusuario', $idDestinatario);
+        $this->_db->bindExecute();
+    }
+
     public function limpiarNotificaciones($idPersona, $idsNotificaciones) {
         $this->_db->prepare("update notificacion set estado = 2 where idusuario = :idusuario and id=:id");
         $fallo = false;

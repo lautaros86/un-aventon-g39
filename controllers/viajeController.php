@@ -40,14 +40,50 @@ class viajeController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $params["viaje"] = $this->_viaje->getViaje($idviaje);
-        if (empty($params["viaje"])) {
+        $viaje = $this->_viaje->getViaje($idviaje);
+        if (empty($viaje)) {
             Session::setMessage("El viaje requerido no existe.", SessionMessageType::Error);
             $this->redireccionar("perfil");
         }
-        $params["chofer"] = $this->_usuario->getUsuario($params["viaje"]["id_chofer"]);
+        $params["viaje"] = $this->_viaje->getViaje($idviaje);
+        $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
+        $usuario = Session::get("usuario");
+        if ($chofer["id"] == $usuario["id"]) {
+            $this->detalleChofer($viaje, $chofer, $usuario);
+        } else {
+            $this->detallePostulante($viaje, $chofer, $usuario);
+        }
+    }
+
+    private function detallePostulante($viaje, $chofer, $usuario) {
+        $params["viaje"] = $viaje;
+        $params["chofer"] = $chofer;
         $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
         $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
+        $params["esChofer"] = false;
+        $postulaciones = $this->_viaje->getPostulacionesViaje($viaje["id"]);
+        foreach ($postulaciones as $postu) {
+            if ($postu["id_pasajero"] == $usuario["id"]) {
+                $params["postulado"] = true;
+            }
+        }
+        $this->_view->renderizar('detalle', 'viaje', $params);
+    }
+
+    private function detalleChofer($viaje, $chofer, $usuario) {
+        $params["viaje"] = $viaje;
+        $params["chofer"] = $chofer;
+        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
+        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
+        $params["chofer"] = false;
+        $params["usuario"] = $usuario;
+        $postulaciones = $this->_viaje->getPostulacionesOf($idviaje);
+        $params["postulado"] = false;
+        foreach ($postulaciones as $postu) {
+            if ($postu["id_usuairo"] == $usuario["id"]) {
+                $params["postulado"] = true;
+            }
+        }
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
 

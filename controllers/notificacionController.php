@@ -5,7 +5,6 @@ class notificacionController extends Controller {
     private $_notificacionModel;
 
     public function __construct() {
-        parent::__construct();
         require_once ROOT . 'models' . DS . 'notificacionModel.php';
         $this->_notificacionModel = new notificacionModel();
     }
@@ -46,6 +45,14 @@ class notificacionController extends Controller {
         } catch (PDOException $e) {
             //rollback transaction
             $this->_notificacionModel->rollBack();
+        }
+    }
+
+    public function crearNotificacionSimple($mensaje, $idDestinatario, $color = "aqua") {
+        try {
+            $this->_notificacionModel->crearNotificacionSimple($mensaje, $idDestinatario, $color);
+        } catch (PDOException $e) {
+            return $e;
         }
     }
 }

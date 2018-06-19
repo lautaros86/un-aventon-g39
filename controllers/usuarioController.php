@@ -301,10 +301,11 @@ class usuarioController extends Controller {
             $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " se postulo a tu viaje con nº " . $idViaje, $idChofer);
             $this->_usuario->postular($usuario["id"], $idViaje);
             $this->_usuario->commit();
+            Session::setMessage("Ud. se postulo exitosamente.", SessionMessageType::Success);
             echo json_encode(array("ok" => true));
         } catch (PDOException $e) {
             $this->_usuario->rollback();
-            echo json_encode(array("ok" => true, "mensaje" => $e->getMessage()));
+            echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
         }
     }
 

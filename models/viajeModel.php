@@ -47,7 +47,7 @@ class viajeModel extends Model {
     }
 
     public function getPostulacionesViaje($idviaje) {
-        $sql = "select * from postulacion where id_viaje = :id_viaje where id_estado in (1, 2)";
+        $sql = "select * from postulacion where id_viaje = :id_viaje and id_estado in (1, 2)";
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
         return $this->_db->fetchAll();
     }

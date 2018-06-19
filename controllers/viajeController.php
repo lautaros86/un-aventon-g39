@@ -62,6 +62,7 @@ class viajeController extends Controller {
         $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
         $params["esChofer"] = false;
         $postulaciones = $this->_viaje->getPostulacionesViaje($viaje["id"]);
+        $params["postulado"] = false;
         foreach ($postulaciones as $postu) {
             if ($postu["id_pasajero"] == $usuario["id"]) {
                 $params["postulado"] = true;

@@ -6,7 +6,7 @@ class Model
     
     public function __construct() 
     {
-        $this->_db = new DatabasePDO();
+        $this->_db = DatabasePDO::getInstance();
     }
     
     

@@ -288,6 +288,47 @@ class usuarioController extends Controller {
         $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos));
     }
 
+    public function postular() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar();
+        }
+        $usuario = Session::get('usuario');
+        $idViaje = $this->getAlphaNum("idViaje");
+        $idChofer = $this->getAlphaNum("idChofer");
+        try {
+            $this->_usuario->beginTransaction();
+            $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " se postulo a tu viaje con nº " . $idViaje, $idChofer);
+            $this->_usuario->postular($usuario["id"], $idViaje);
+            $this->_usuario->commit();
+            Session::setMessage("Ud. se postulo exitosamente.", SessionMessageType::Success);
+            echo json_encode(array("ok" => true));
+        } catch (PDOException $e) {
+            $this->_usuario->rollback();
+            echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
+        }
+    }
+
+    public function cancelarPostulacion() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar();
+        }
+        $usuario = Session::get('usuario');
+        $idViaje = $this->getAlphaNum("idViaje");
+        $idChofer = $this->getAlphaNum("idChofer");
+        try {
+            $this->_usuario->beginTransaction();
+            $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " cancelo su postulacion al viaje nº " . $idViaje, $idChofer);
+            $this->_usuario->cancelarPostulacion($usuario["id"], $idViaje);
+            $this->_usuario->commit();
+            echo json_encode(array("ok" => true));
+        } catch (PDOException $e) {
+            $this->_usuario->rollback();
+            echo json_encode(array("ok" => true, "mensaje" => $e->getMessage()));
+        }
+    }
+
     public function editarContrasenia() {
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

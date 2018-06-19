@@ -2,11 +2,12 @@
 
 class DatabasePDO extends PDO {
 
+    protected static $instance = null;
     private $PDO;
     private $query;
     private $transactionCounter;
 
-    public function __construct() {
+    protected function __construct() {
         try {
             $this->PDO = new PDO('mysql:host=' . DB_HOST .
                     ';dbname=' . DB_NAME, DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES  \'UTF8\''));
@@ -15,6 +16,17 @@ class DatabasePDO extends PDO {
             print "¡Error!: " . $e->getMessage() . "<br/>";
             die();
         }
+    }
+
+    private function __clone() {
+        
+    }
+
+    public static function getInstance() {
+        if (!isset(static::$instance)) {
+            static::$instance = new static;
+        }
+        return static::$instance;
     }
 
     public function getPdo() {

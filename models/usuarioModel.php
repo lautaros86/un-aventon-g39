@@ -37,6 +37,20 @@ class usuarioModel extends Model {
         ));
     }
 
+    public function postular($idUsuario, $idViaje) {
+        $sql = "INSERT INTO postulacion (id_pasajero, id_viaje) VALUES (:idusuario, :idviaje)";
+        $this->_db->execute($sql, array(
+            ':idusuario' => $idUsuario,
+            ':idviaje' => $idViaje)
+        );
+    }
+    public function cancelarPostulacion($idUsuario, $idViaje) {
+        $id = (int) $id;
+        $sql = "UPDATE postulacion SET id_estado = 4 WHERE id_pasajero = :id_pasajero";
+        $params = array(':id_pasajero' => $idUsuario);
+        $this->_db->execute($sql, $params);
+    }
+    
     public function editarUsuario($datos) {
         $id = (int) $datos["id"];
         $params = array();

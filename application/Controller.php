@@ -3,10 +3,12 @@
 abstract class Controller {
 
     protected $_view;
+    protected $_notificacion;
 
     public function __construct() {
         $this->_view = new View(Router::getInstance());
-        $this->_view->setNotificacion(Notificacion::getNotificaciones());
+        require_once ROOT . 'controllers' . DS . 'notificacionController.php';
+        $this->_notificacion = new notificacionController();
     }
 
     abstract public function index();

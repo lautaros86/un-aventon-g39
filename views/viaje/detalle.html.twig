@@ -38,10 +38,17 @@
                     <b>Reputacion</b> <a class="pull-right">{{chofer.reputacion}}</a>
                 </li>
             </ul>
-
-            <button class="btn btn-warning btn-block" id="postularseViaje"><b>CONSULTAR</b></button>
-            <br/>
-            <button class="btn btn-success btn-block" id="postularse "><b>POSTULARME</b></button>
+            {% if esChofer %}
+                <button class="btn btn-success btn-block" id="cancelarViaje"><b>CANCELAR VIAJE</b></button>
+            {% else %}
+                <button class="btn btn-warning btn-block" id="consultar"><b>CONSULTAR</b></button>
+                <br/>
+                {% if postulado %}
+                    <button class="btn btn-success btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
+                {% else %}
+                    <button class="btn btn-success btn-block" id="postularse"><b>POSTULARME</b></button>
+                {% endif %}
+            {% endif %}
         </div>
         <!-- /.box-body -->
     </div>
@@ -255,6 +262,36 @@
 {% block script %}
     {{ parent() }}
     <script>
+        $().ready(function () {
+            $("#postularse").click(function () {
+                $.ajax({
+                    url: "/usuario/postular",
+                    dataType: 'json',
+                    type: "post",
+                    data: {idViaje:{{viaje.id}}, idChofer:{{chofer.id}}},
+                    success: function (resp) {
+                        if(resp.ok){
+                           location.reload();
+                        }else{
+                            alert("error al registrar la postulacion.")
+                        }
+                    }
+                });
+            });
+            
+            $("#anularPostulacion").click(function () {
+                $.ajax({
+                    url: "/usuario/cancelarPostulacion",
+                    dataType: 'json',
+                    type: "post",
+                    data: {idViaje:{{viaje.id}}, idChofer:{{chofer.id}}},
+                    success: function (resp) {
+                        alert(resp)
+                    }
+                });
+            });
+        });
+
         function initMap() {
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 8,

@@ -44,6 +44,7 @@ class vehiculoModel extends Model {
         $this->_db->execute($sql, $params);
         //return $this->db->fetch();
     }
+    //public function modificar ()
     
     public function consultarPatente ($form){
         //patente=:patente

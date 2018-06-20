@@ -9,8 +9,10 @@ class usuarioController extends Controller {
         parent::__construct();
         require_once ROOT . 'models' . DS . 'registroModel.php';
         require_once ROOT . 'models' . DS . 'usuarioModel.php';
+        require_once ROOT . 'models' . DS . 'viajeModel.php';
         $this->_registro = new registroModel();
         $this->_usuario = new usuarioModel();
+        $this->_viajes = new viajeModel();
     }
 
     public function index() {
@@ -287,11 +289,16 @@ class usuarioController extends Controller {
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
         $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos));
     }
-    public function verUsuarioAjeno() {
+    public function verOtroUsuaurio($id_otroUsuario) {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $otroUsuario = $this->_usuario->getUsuario($id);
+        $otroUsuario = $this->_usuario->getUsuario($id_otroUsuario);
+        $otroUsuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($id_otroUsuario);
+        $otroUsuario['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($id_otroUsuario);
+        $otroUsuario['cantViajesTotal'] = $otroUsuario['cantViajesPasajero'] + $otroUsuario['cantViajesChofer'];
+        $otroUsuario['reputacion'] = '20';
+        
         $this->_view->renderizar('perfilAjeno', 'usuario', array('usuario' => $otroUsuario));
     }
     public function postular() {

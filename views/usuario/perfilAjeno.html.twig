@@ -1,39 +1,28 @@
-{% extends 'layoutPerfil.html.twig' %}
+{% extends 'layout.html.twig' %}
 {% block title %}
     UnAventon - Perfil
 {% endblock %}
-{% block boxPerfil %}
+{% block contenido %}
     <!-- Profile Image -->
     <div class="box box-primary">
         <div class="box-body box-profile">
-            <img class="profile-user-img img-responsive img-circle" src="{% if chofer.foto %}{{chofer.foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
-            <h3 class="profile-username text-center"> {{chofer.nombre}} {{chofer.apellido}}</h3>
-            <p class="text-muted text-center">{{chofer.email}}</p>
+            <img class="profile-user-img img-responsive img-circle" src="{% if usuario.foto %}{{usuario.foto}}{% else %}/img/anonimo.png{% endif %}" alt="User profile picture">
+            <h3 class="profile-username text-center"> {{usuario.nombre}} {{usuario.apellido}}</h3>
+            <p class="text-muted text-center">{{usuario.email}}</p>
             <ul class="list-group list-group-unbordered">
                 <li class="list-group-item">
-                    <b>Total de Viajes</b> <a class="pull-right">{{chofer.cantViajesChofer + chofer.cantViajesPasajero}}</a>
+                    <b>Total de Viajes</b> <a class="pull-right">{{usuario.cantViajesTotal}}</a>
                 </li>
                 <li class="list-group-item">
-                    <b>Como Chofer</b> <a class="pull-right">{{chofer.cantViajesChofer}}</a>
+                    <b>Como Chofer</b> <a class="pull-right">{{usuario.cantViajesChofer}}</a>
                 </li>
                 <li class="list-group-item">
-                    <b>Pasajero</b> <a class="pull-right">{{chofer.cantViajesPasajero}}</a>
+                    <b>Como Pasajero</b> <a class="pull-right">{{usuario.cantViajesPasajero}}</a>
                 </li>
                 <li class="list-group-item">
-                    <b>Reputacion</b> <a class="pull-right">{{chofer.reputacion}}</a>
+                    <b>Reputacion</b> <a class="pull-right">{{usuario.reputacion}}</a>
                 </li>
             </ul>
-            {% if esChofer %}
-                <button class="btn btn-success btn-block" id="cancelarViaje"><b>CANCELAR VIAJE</b></button>
-            {% else %}
-                <button class="btn btn-warning btn-block" id="consultar"><b>CONSULTAR</b></button>
-                <br/>
-                {% if postulado %}
-                    <button class="btn btn-success btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
-                {% else %}
-                    <button class="btn btn-success btn-block" id="postularse"><b>POSTULARME</b></button>
-                {% endif %}
-            {% endif %}
         </div>
         <!-- /.box-body -->
     </div>

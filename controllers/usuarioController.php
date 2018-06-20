@@ -287,7 +287,13 @@ class usuarioController extends Controller {
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
         $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos));
     }
-
+    public function verUsuarioAjeno() {
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $otroUsuario = $this->_usuario->getUsuario($id);
+        $this->_view->renderizar('perfilAjeno', 'usuario', array('usuario' => $otroUsuario));
+    }
     public function postular() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);

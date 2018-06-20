@@ -39,12 +39,12 @@
                 </li>
             </ul>
             {% if esChofer %}
-                <button class="btn btn-success btn-block" id="cancelarViaje"><b>CANCELAR VIAJE</b></button>
+                <a class="btn btn-danger btn-block" id="cancelarViaje" href="/viaje/cancelarviaje/{{viaje.id}}"><b>CANCELAR VIAJE</b></a>
             {% else %}
                 <button class="btn btn-warning btn-block" id="consultar"><b>CONSULTAR</b></button>
                 <br/>
                 {% if postulado %}
-                    <button class="btn btn-success btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
+                    <button class="btn btn-danger btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
                 {% else %}
                     <button class="btn btn-success btn-block" id="postularse"><b>POSTULARME</b></button>
                 {% endif %}
@@ -262,94 +262,103 @@
 {% block script %}
     {{ parent() }}
     <script>
+
         $().ready(function () {
-            $("#postularse").click(function () {
-                $.ajax({
-                    url: "/usuario/postular",
-                    dataType: 'json',
-                    type: "post",
-                    data: {idViaje:{{viaje.id}}, idChofer:{{chofer.id}}},
-                    success: function (resp) {
-                        if(resp.ok){
-                           location.reload();
-                        }else{
-                            alert("error al registrar la postulacion.")
-                        }
-                    }
-                });
-            });
-            
-            $("#anularPostulacion").click(function () {
-                $.ajax({
-                    url: "/usuario/cancelarPostulacion",
-                    dataType: 'json',
-                    type: "post",
-                    data: {idViaje:{{viaje.id}}, idChofer:{{chofer.id}}},
-                    success: function (resp) {
-                        alert(resp)
-                    }
-                });
-            });
-        });
-
-        function initMap() {
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 8,
-                center: {lat: -34.91482928576744, lng: -57.94609843010255}
-            });
-            var geocoder = new google.maps.Geocoder();
-
-            var directionsService = new google.maps.DirectionsService();
-            var directionsDisplay = new google.maps.DirectionsRenderer();
+            {% if not esChofer %}
+                    {% if postulado %}
+                        $("#anularPostulacion").click(function () {
+                            $.ajax({
+                                url: "/usuario/cancelarPostulacion",
+                                dataType: 'json',
+                                type: "post",
+                            data: {idViaje:{{viaje.id}}, idChofer:{{chofer.id}}},
+                                success: function (resp) {
+                                    if (resp.ok) {
+                                        location.reload();
+                                    } else {
+                                        alert("error al anular la postulacion.")
+                                    }
+                                }
+                            });
+                        });
+                    {% else %}
+                        $("#postularse").click(function () {
+                            $.ajax({
+                                url: "/usuario/postular",
+                                dataType: 'json',
+                                type: "post",
+                                data: {idViaje:{{viaje.id}}, idChofer:{{chofer.id}}},
+                                success: function (resp) {
+                                    if (resp.ok) {
+                                        location.reload();
+                                    } else {
+                                        alert("error al registrar la postulacion.")
+                                    }
+                                }
+                            });
+                        });
+                {% endif %}
+            {% endif %}
 
 
-            directionsDisplay.setMap(map);
 
-            /* En caso de querer ver las indicaciones */
-            directionsDisplay.setPanel($('#panel').html());
 
-            var origen = "{{viaje.origen}}";
-            var destino = "{{viaje.destino}}";
-            calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino)
-        }
-        function geocodeAddress(geocoder, resultsMap) {
-            var address = document.getElementById('address').value;
-            geocoder.geocode({'address': address}, function (results, status) {
-                if (status === 'OK') {
-                    resultsMap.setCenter(results[0].geometry.location);
-                    var marker = new google.maps.Marker({
-                        map: resultsMap,
-                        position: results[0].geometry.location
+
+
                     });
-                } else {
-                    alert('Geocode was not successful for the following reason: ' + status);
-                }
-            });
-        }
-        function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
-            directionsService.route({
-                origin: origen,
-                destination: destino,
-                optimizeWaypoints: true,
-                travelMode: 'DRIVING'
-            }, function (response, status) {
-                if (status === 'OK') {
-                    directionsDisplay.setDirections(response);
-                    var route = response.routes[0];
-                    var summaryPanel = document.getElementById('directions-panel');
-                    $("#detalleOrigen").append(route.legs[0].start_address);
-                    $("#detalleDestino").append(route.legs[0].end_address);
-                    $("#detalleKms").append(route.legs[0].distance.text);
-                } else {
-                    window.alert('La direccion requerida fallo: ' + status);
-                }
-            });
-        }
+                    function initMap() {
+                        var map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 8,
+                            center: {lat: -34.91482928576744, lng: -57.94609843010255}
+                        });
+                        var geocoder = new google.maps.Geocoder();
+                        var directionsService = new google.maps.DirectionsService();
+                        var directionsDisplay = new google.maps.DirectionsRenderer();
+                        directionsDisplay.setMap(map);
+                        /* En caso de querer ver las indicaciones */
+                        directionsDisplay.setPanel($('#panel').html());
+                        var origen = "{{viaje.origen}}";
+                        var destino = "{{viaje.destino}}";
+                        calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino)
+                    }
+                    function geocodeAddress(geocoder, resultsMap) {
+                        var address = document.getElementById('address').value;
+                        geocoder.geocode({'address': address}, function (results, status) {
+                            if (status === 'OK') {
+                                resultsMap.setCenter(results[0].geometry.location);
+                                var marker = new google.maps.Marker({
+                                    map: resultsMap,
+                                    position: results[0].geometry.location
+                                });
+                            } else {
+                                alert('Geocode was not successful for the following reason: ' + status);
+                            }
+                        });
+                    }
+                    function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
+                        directionsService.route({
+                            origin: origen,
+                            destination: destino,
+                            optimizeWaypoints: true,
+                            travelMode: 'DRIVING'
+                        }, function (response, status) {
+                            if (status === 'OK') {
+                                directionsDisplay.setDirections(response);
+                                var route = response.routes[0];
+                                var summaryPanel = document.getElementById('directions-panel');
+                                $("#detalleOrigen").append(route.legs[0].start_address);
+                                $("#detalleDestino").append(route.legs[0].end_address);
+                                $("#detalleKms").append(route.legs[0].distance.text);
+                            } else {
+                                window.alert('La direccion requerida fallo: ' + status);
+                            }
+                        });
+                    }
 
-    </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&callback=initMap">
-    </script>
+                </script>
+                <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&callback=initMap">
+                </script>
 
-    <!-- Slimscroll -->
-    <script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-{% endblock %}
+                <!-- Slimscroll -->
+                <script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+                {% endblock %}

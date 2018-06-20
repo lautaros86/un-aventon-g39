@@ -8,7 +8,7 @@
     <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#activity" data-toggle="tab">Viajes publicados</a></li>
-                    <li><a href="#postulados" data-toggle="tab" >Viajes Postulados</a></li>
+                    <li><a href="#postulados" id="postulaciones" data-toggle="tab" >Viajes Postulados</a></li>
                     <li><a href="#timeline" id="historial"data-toggle="tab" >Historial</a></li>
                     <li ><a href="#misVehiculos" data-toggle="tab">Mis Vehiculos</a></li>
                     <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas de credito</a></li>
@@ -47,6 +47,7 @@
     {{parent()}}
     <script>
         var bandera = true;
+        var banderaP = true;
         $().ready(function () {            
             $(".edit").click(function (event) {
                 var elem = $(event.target);
@@ -84,5 +85,19 @@
                     });
                 }
             })
+        $("#postulaciones").click(function(){
+                if (banderaP){
+                    banderaP = !banderaP;
+                    $.ajax({
+                    url: "/historial/postulaciones",
+                    success: function (data, textStatus, jqXHR) {
+                        $("#postulados").append(data);
+                    },
+                    error: function(){
+                        console.log("todo mal");
+                    }
+                    });
+                }
+            })            
     </script>
 {% endblock %}

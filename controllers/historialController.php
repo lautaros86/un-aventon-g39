@@ -19,7 +19,13 @@ class historialController extends Controller {
             $this->_view->renderizar('noTimeline', 'usuario/tabs');
         }
     }
+    
+    public function postulaciones() {
+        $id = Session::get('usuario')["id"];
+        $postulaciones = $this->_viajes->getPostulaciones($id);
+        if (!empty($postulaciones)) {
+            $this->_view->renderizar('postulados', 'usuario/tabs', array("postulaciones" => $postulaciones));
+        }  
+    }
 
 }
-
-?>

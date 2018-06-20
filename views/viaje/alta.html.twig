@@ -104,7 +104,7 @@
                             <label for="origen">Cantidad de asientos: </label>
                             <select class="form-control" name="asientos" id="selectAsientos" >
                                 {% for i in range(1, params.vehiculos[0].asientos) %}
-                                    <option value="i" {% if (form is defined) and (form.asientos == i) %}selected="selected"{% endif %}>
+                                    <option value="{{i}}" {% if (form is defined) and (form.asientos == i) %}selected="selected"{% endif %}>
                                         {{i}}
                                     </option>
                                 {% endfor %}

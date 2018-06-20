@@ -46,6 +46,10 @@ class vehiculoController extends Controller {
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $vehiculoModel = new vehiculoModel();
         $vehiculoModel->darDeBaja($id);
+        $vehiculos = $vehiculoModel->getVehiculosByUserId(Session::get("id_usuario"));
+        if(!(sizeof($vehiculos) > 0)){
+            Session::set('chofer', false);
+        }
         Session::setMessage("Vehiculo dado de baja", SessionMessageType::Success);
         $this->redireccionar("perfil");
     }

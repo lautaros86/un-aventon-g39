@@ -338,7 +338,7 @@ class usuarioController extends Controller {
             echo json_encode(array("ok" => true));
         } catch (PDOException $e) {
             $this->_usuario->rollback();
-            echo json_encode(array("ok" => true, "mensaje" => $e->getMessage()));
+            echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
         }
     }
 

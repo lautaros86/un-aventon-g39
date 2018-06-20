@@ -37,14 +37,9 @@ class notificacionController extends Controller {
 
     public function crearNotificacion($mensaje, $destinatarios, $color = "aqua") {
         try {
-            //begin transaction
-            $this->_notificacionModel->beginTransaction();
             $this->_notificacionModel->crearNotificacion($mensaje, $destinatarios, $color);
-            //commit
-            $this->_notificacionModel->commit();
         } catch (PDOException $e) {
-            //rollback transaction
-            $this->_notificacionModel->rollBack();
+            return $e;
         }
     }
 
@@ -55,6 +50,7 @@ class notificacionController extends Controller {
             return $e;
         }
     }
+
 }
 
 ?>

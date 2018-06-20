@@ -76,15 +76,9 @@ class viajeController extends Controller {
         $params["chofer"] = $chofer;
         $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
         $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
-        $params["chofer"] = false;
+        $params["esChofer"] = true;
         $params["usuario"] = $usuario;
-        $postulaciones = $this->_viaje->getPostulacionesOf($idviaje);
-        $params["postulado"] = false;
-        foreach ($postulaciones as $postu) {
-            if ($postu["id_usuairo"] == $usuario["id"]) {
-                $params["postulado"] = true;
-            }
-        }
+        $postulaciones = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
 
@@ -168,6 +162,35 @@ class viajeController extends Controller {
         }
 
         return $errors;
+    }
+
+    public function cancelarViaje() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar("registro");
+        }
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $idViaje = $this->getPostParam("idViaje");
+        $viaje = $this->_viaje->getViaje($idViaje);
+        if ($viaje["id_chofer"] == Session::get("usuario")["id"]) {
+            $postulantes = $this->_viaje->getPostulacionesViaje($idviaje);
+            try {
+                $this->_viaje->beginTransaction();
+                $this->_notificacion->crearNotificacion("El usuario nombre apelldo cancelo el viaje al que te habias postulado", $destinatarios, "red");
+                $this->_viaje->cancelarViaje($idViaje);
+                Session::setMessage("El viaje se cancelo exitosamente.", SessionMessageType::Success);
+                $this->_viaje->commit();
+                $this->redireccionar("perfil");
+            } catch (PDOException $e) {
+                $this->_viaje->rollback();
+                Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+                $this->redireccionar("/viaje/detalle/" . $idViaje);
+            }
+        } else {
+            //solo el dueño puede cancelar un viaje
+        }
     }
 
 }

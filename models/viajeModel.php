@@ -17,6 +17,11 @@ class viajeModel extends Model {
         return $this->_db->fetch();
     }
 
+    /**
+     * Retorna la cantidad de viajes de un usuario.
+     * @param type $id_chofer id de usuaario
+     * @return type
+     */
     public function getCantViajesChofer($id_chofer) {
         $sql = "select * from viaje where id_chofer = :id_chofer";
         $this->_db->execute($sql, array(":id_chofer" => $id_chofer));
@@ -46,12 +51,23 @@ class viajeModel extends Model {
         $this->_db->execute($sql, $params);
     }
 
+    /**
+     * 
+     * Retorna las los ids de usuarios postulados a un id de viaje.
+     * 
+     * @param type $idviaje
+     * @return type
+     */
     public function getPostulacionesViaje($idviaje) {
         $sql = "select * from postulacion where id_viaje = :id_viaje and id_estado in (1, 2)";
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
         return $this->_db->fetchAll();
     }
-
+    
+    public function cancelarViaje($idviaje) {
+        $sql = "UPDATE viaje SET id_estado = 3 WHERE id = :id_viaje";
+        $this->_db->execute($sql, array(":id_viaje" => $idviaje));
+    }
 }
 ?>
 

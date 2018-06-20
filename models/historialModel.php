@@ -29,7 +29,7 @@ class historialModel extends Model {
     
     public function getPostulaciones($id) {
         (int) $id;
-        $sql = "select viaje.fecha, viaje.hora ,viaje.origen, viaje.destino, viaje.monto,viaje.asientos, usuarios.nombre,usuarios.apellido, usuarios.foto
+        $sql = "select viaje.fecha, viaje.hora ,viaje.origen, viaje.destino, viaje.monto,viaje.asientos, usuarios.nombre,usuarios.apellido, usuarios.id ,usuarios.foto
         from postulacion 
         inner join estado_postulacion on postulacion.id_estado = estado_postulacion.id 
         inner join viaje on postulacion.id_viaje = viaje.id

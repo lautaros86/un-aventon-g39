@@ -3,7 +3,7 @@
         <div class="user-block">
             <img class="img-circle img-bordered-sm" src="{{postulacion.foto}}" alt="user image">
             <span class="username">
-                <a href="#">El chofer de este viaje es: {{postulacion.apellido}} {{postulacion.nombre}}</a>
+                <a href="verOtroUsuaurio/{{postulacion.id}}">El chofer de este viaje es: {{postulacion.apellido}} {{postulacion.nombre}}</a>
             </span>
             <span class="description">{{postulacion.fecha | date("d/m/Y")}} {{postulacion.hora}}</span>
             El viaje sale desde:{{postulacion.origen}}
@@ -12,7 +12,6 @@
             El monto a abonar es de: {{postulacion.monto}}
         </div>
         <!-- /.user-block -->
-
     </div>
     <!-- /.post -->
 {% endfor %}

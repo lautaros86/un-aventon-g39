@@ -66,21 +66,16 @@ class vehiculoController extends Controller {
         }
         else $errors=1;
         if ($errors==1) {Session::setFormErrors("patente", "Esa patente Ud. la tiene cargada.");}
-        //{ Session::setMessage("Esa patente Ud. la tiene cargada", SessionMessageType::Error);
         if (!$errors) {
             try {
-
-
                 require_once ROOT . 'models' . DS . 'vehiculoModel.php';
                 $vehiculoModel = new vehiculoModel();
                 $vehiculoModel->insertarVehiculo($form, Session::get("usuario")["id"]);
-
                 Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
                 Session::destroy("form");
+                Session::set('chofer', true);
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
-                var_dump($e->getMessage());
-                die;
                 Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
                 $this->redireccionar("vehiculo/alta");
             }
@@ -93,7 +88,6 @@ class vehiculoController extends Controller {
             $form["baul"] = $form["baul"] == "on" ? 1 : 0;
             Session::set("form", $form);
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
-
             $this->redireccionar("vehiculo/alta");
         }
         $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));

@@ -287,8 +287,11 @@ class usuarioController extends Controller {
         $vehiculoModel = new vehiculoModel();
         $usuario = Session::get("usuario");
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
-        $viajes = $this->_viajes->getViajesAbiertos();
-        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos , "viajes" => $viajes));
+        $travels = $this->_viajes->getViajesAbiertos();        
+        $usuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($usuario['id']);
+        $usuario['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($usuario['id']);
+        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos , "travels" => $travels));
+
     }
     public function verOtroUsuaurio($id_otroUsuario) {
         if (!Session::get('autenticado')) {

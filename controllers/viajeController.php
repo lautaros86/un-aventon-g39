@@ -102,13 +102,20 @@ class viajeController extends Controller {
         $errors = $this->validarAltaViaje($form);
         if (!$errors) {
             try {
-                require_once ROOT . 'models' . DS . 'viajeModel.php';
-                $viajeModel = new viajeModel();
-                $viajeModel->insertarViaje($form, Session::get("usuario")["id"]);
+                $this->_viaje->beginTransaction();
+                $this->_viaje->insertarViaje($form, Session::get("usuario")["id"]);
+                $idViajeInsertado = $this->_viaje->lastInsertId();
+                require_once ROOT . 'models' . DS . 'facturaModel.php';
+                $facturaModel =  new facturaModel();
+                $montoTotal = ($form['monto'] * $form['asientos']) * 0.05;
+                $descripcion = "Derecho a publicación del viaje nº " . $idViajeInsertado . " con origen: " . $form['origen'] . " y destino: " . $form['destino'] . ". Con cantidad de asientos: ". $form["asientos"] ." y costo por cada uno de: $".$form['monto'];
+                $facturaModel->crearFactura(Session::get("id_usuario"), $idViajeInsertado, number_format((float)$montoTotal, 2, '.', ''), $descripcion, 1);
                 Session::setMessage("Viaje publicado", SessionMessageType::Success);
                 Session::destroy("form");
+                $this->_viaje->commit();
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
+                $this->_viaje->rollback();
                 Session::setMessage("Error al registrar el viaje", SessionMessageType::Error);
                 $this->redireccionar("viaje/alta");
             }

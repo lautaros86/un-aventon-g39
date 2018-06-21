@@ -287,7 +287,8 @@ class usuarioController extends Controller {
         $vehiculoModel = new vehiculoModel();
         $usuario = Session::get("usuario");
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
-        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos));
+        $viajes = $this->_viajes->getViajesAbiertos();
+        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos , "viajes" => $viajes));
     }
     public function verOtroUsuaurio($id_otroUsuario) {
         if (!Session::get('autenticado')) {
@@ -297,7 +298,7 @@ class usuarioController extends Controller {
         $otroUsuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($id_otroUsuario);
         $otroUsuario['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($id_otroUsuario);
         $otroUsuario['cantViajesTotal'] = $otroUsuario['cantViajesPasajero'] + $otroUsuario['cantViajesChofer'];
-        $otroUsuario['reputacion'] = '20';
+        
         
         $this->_view->renderizar('perfilAjeno', 'usuario', array('usuario' => $otroUsuario));
     }

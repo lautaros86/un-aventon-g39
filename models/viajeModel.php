@@ -63,11 +63,25 @@ class viajeModel extends Model {
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
         return $this->_db->fetchAll();
     }
-    
+
     public function cancelarViaje($idviaje) {
         $sql = "UPDATE viaje SET id_estado = 3 WHERE id = :id_viaje";
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
     }
+    /**
+     * retorna todos los viajes con estado abierto
+     * @return type
+     */
+    public function getViajesAbiertos() {
+        $sql = "select viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido
+        from viaje 
+        inner join estado_viaje on viaje.id_estado = estado_viaje.id
+        inner join usuarios on viaje.id_chofer = usuarios.id
+        where viaje.id_estado = 1";
+        $this->_db->execute($sql);
+        return $this->_db->fetchAll();
+    }
+
 }
 ?>
 

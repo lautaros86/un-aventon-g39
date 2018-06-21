@@ -55,21 +55,98 @@
 {% endblock %}
 {% block subContenido %}
 
+
+    <!-- Tabla de postulantes -->          
+    <div class="box box-info">
+        <div class="box-body">
+            <h3 class="profile-username text-center">Postulantes al viaje</h3>
+        </div>
+        <!-- /.box-body -->
+
+
+        <div class="box-body">
+
+            <table class="table text-center">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Reputacion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for postu in postulaciones %}
+                        <tr>
+                            <td>{{postu.nombre}}, {{postu.apellido}}</td>
+                            <td>{{postu.reputacion}}</td>
+                            <td>
+                                {% if postu.estado_postulacion == 1 %}
+                                    <a href="/viaje/aceptarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-success aceptarPostulacion">Aceptar {{postu.id_postulacion}}</a>
+                                    <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-warning rechazarPostulacion">Rechazar {{postu.id_postulacion}}</a>
+                                {% elseif postu.estado_postulacion == 2 %}
+                                    <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-danger rechazarPostulacion">Rechazar {{postu.id_postulacion}}</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor%}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
     <div class="box box-info">
 
         <div class="box-body">
-            <h3 class="profile-username text-center">Info general</h3>
-            <ul class="list-group list-group-unbordered">
-                <li class="list-group-item" id="detalleOrigen">
-                    <b>Origen: </b>
-                </li>
-                <li class="list-group-item" id="detalleDestino">
-                    <b>Origen: </b>
-                </li>
-                <li class="list-group-item" id="detalleKms">
-                    <b>Kms: </b>
-                </li>
-            </ul>
+            <div class="col-md-6">
+                <h3 class="profile-username text-center">Info general</h3>
+                <ul class="list-group list-group-unbordered">
+                    <li class="list-group-item" id="detalleOrigen">
+                        <b>Origen: </b>
+                    </li>
+                    <li class="list-group-item" id="detalleDestino">
+                        <b>Origen: </b>
+                    </li>
+                    <li class="list-group-item" id="detalleKms">
+                        <b>Kms: </b>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Fecha:</b> {{viaje.fecha|date("d/m/Y")}}
+                    </li>
+                    <li class="list-group-item">
+                        <b>hora:</b> {{viaje.hora|date("H:i")}}
+                    </li>
+                    <li class="list-group-item">
+                        <b>Usuarios postulados:</b> {{postulaciones|length}}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-6">
+                <h3 class="profile-username text-center">Vehiculo</h3>
+                <ul class="list-group list-group-unbordered">
+                    <li class="list-group-item" id="detalleOrigen">
+                        <b>Marca: </b> {{vehiculo.marca}}
+                    </li>
+                    <li class="list-group-item" id="detalleDestino">
+                        <b>Modelo: </b> {{vehiculo.modelo}}
+                    </li>
+                    <li class="list-group-item" id="detalleKms">
+                        <b>Patente: </b> {{vehiculo.patente}}
+                    </li>
+                    <li class="list-group-item">
+                        <b>Baul:</b> {% if vehiculo.baul %}SI{% else %}NO{% endif %}
+                    </li>
+                    <li class="list-group-item">
+                        <b>Asientos:</b> {{viaje.asientos}}
+                    </li>
+                    <li class="list-group-item">
+                        <b>Usuarios Aceptados:</b> {{postulacionesAceptadas}}
+                    </li>
+                    <li class="list-group-item">
+                        <b>Asientos Disponibles:</b> {{viaje.asientos - postulacionesAceptadas}}
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="box box-info">
@@ -77,22 +154,16 @@
             <h3 class="profile-username text-center">Recorrido estimado</h3>
         </div>
         <!-- /.box-body -->
-
-        <div class="box-header">
-            <h3 class="box-title">Recorrido estimado</h3>
-        </div>
-
         <div class="box-body">
 
             <div id="map"></div>
 
         </div>
     </div>
-
     <!-- Chat box -->
     <div class="box box-warning">
         <div class="box-header">
-            <h3 class="profile-username text-center">Recorrido estimado</h3>
+            <h3 class="profile-username text-center">Preguntas al conductor</h3>
 
             <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
 
@@ -263,102 +334,114 @@
     {{ parent() }}
     <script>
 
-        $().ready(function () {
-            {% if not esChofer %}
-                    {% if postulado %}
-                        $("#anularPostulacion").click(function () {
-                            $.ajax({
-                                url: "/usuario/cancelarPostulacion",
-                                dataType: 'json',
-                                type: "post",
-                            data: {idViaje:{{viaje.id}}, idChofer:{{chofer.id}}},
-                                success: function (resp) {
-                                    if (resp.ok) {
-                                        location.reload();
-                                    } else {
-                                        alert("error al anular la postulacion.")
-                                    }
-                                }
-                            });
-                        });
-                    {% else %}
-                        $("#postularse").click(function () {
-                            $.ajax({
-                                url: "/usuario/postular",
-                                dataType: 'json',
-                                type: "post",
-                                data: {idViaje:{{viaje.id}}, idChofer:{{chofer.id}}},
-                                success: function (resp) {
-                                    if (resp.ok) {
-                                        location.reload();
-                                    } else {
-                                        alert("error al registrar la postulacion.")
-                                    }
-                                }
-                            });
-                        });
-                {% endif %}
-            {% endif %}
-
-
-
-
-
-
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 8,
+                center: {lat: -34.91482928576744, lng: -57.94609843010255}
+            });
+            var geocoder = new google.maps.Geocoder();
+            var directionsService = new google.maps.DirectionsService();
+            var directionsDisplay = new google.maps.DirectionsRenderer();
+            directionsDisplay.setMap(map);
+            /* En caso de querer ver las indicaciones */
+            directionsDisplay.setPanel($('#panel').html());
+            var origen = "{{viaje.origen}}";
+            var destino = "{{viaje.destino}}";
+            calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino)
+        }
+        function geocodeAddress(geocoder, resultsMap) {
+            var address = document.getElementById('address').value;
+            geocoder.geocode({'address': address}, function (results, status) {
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: results[0].geometry.location
                     });
-                    function initMap() {
-                        var map = new google.maps.Map(document.getElementById('map'), {
-                            zoom: 8,
-                            center: {lat: -34.91482928576744, lng: -57.94609843010255}
-                        });
-                        var geocoder = new google.maps.Geocoder();
-                        var directionsService = new google.maps.DirectionsService();
-                        var directionsDisplay = new google.maps.DirectionsRenderer();
-                        directionsDisplay.setMap(map);
-                        /* En caso de querer ver las indicaciones */
-                        directionsDisplay.setPanel($('#panel').html());
-                        var origen = "{{viaje.origen}}";
-                        var destino = "{{viaje.destino}}";
-                        calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino)
-                    }
-                    function geocodeAddress(geocoder, resultsMap) {
-                        var address = document.getElementById('address').value;
-                        geocoder.geocode({'address': address}, function (results, status) {
-                            if (status === 'OK') {
-                                resultsMap.setCenter(results[0].geometry.location);
-                                var marker = new google.maps.Marker({
-                                    map: resultsMap,
-                                    position: results[0].geometry.location
-                                });
-                            } else {
-                                alert('Geocode was not successful for the following reason: ' + status);
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+        function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
+            directionsService.route({
+                origin: origen,
+                destination: destino,
+                optimizeWaypoints: true,
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                    var summaryPanel = document.getElementById('directions-panel');
+                    $("#detalleOrigen").append(route.legs[0].start_address);
+                    $("#detalleDestino").append(route.legs[0].end_address);
+                    $("#detalleKms").append(route.legs[0].distance.text);
+                } else {
+                    window.alert('La direccion requerida fallo: ' + status);
+                }
+            });
+        }
+
+        $().ready(function () {
+            $(".aceptarPostulacion").click(function () {
+                var ok = confirm("Seguro que desea aceptar esta postulación?");
+                if (!ok) {
+                    return false;
+                }
+            });
+            $(".rechazarPostulacion").click(function () {
+                var ok = confirm("Seguro que desea rechazar esta postulación?");
+                if (!ok) {
+                    return false;
+                }
+            });
+            $(".eliminarPostulacion").click(function () {
+                var ok = confirm("Seguro que desea eliminar esta postulación?");
+                if (!ok) {
+                    return false;
+                }
+            });
+        {% if not esChofer %}
+            {% if postulado %}
+                    $("#anularPostulacion").click(function () {
+                        $.ajax({
+                            url: "/usuario/cancelarPostulacion",
+                            dataType: 'json',
+                            type: "post",
+                            data: {idViaje: '{{viaje.id}}', idChofer: '{{chofer.id}}'},
+                            success: function (resp) {
+                                if (resp.ok) {
+                                    location.reload();
+                                } else {
+                                    alert("error al anular la postulacion.")
+                                }
                             }
                         });
-                    }
-                    function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
-                        directionsService.route({
-                            origin: origen,
-                            destination: destino,
-                            optimizeWaypoints: true,
-                            travelMode: 'DRIVING'
-                        }, function (response, status) {
-                            if (status === 'OK') {
-                                directionsDisplay.setDirections(response);
-                                var route = response.routes[0];
-                                var summaryPanel = document.getElementById('directions-panel');
-                                $("#detalleOrigen").append(route.legs[0].start_address);
-                                $("#detalleDestino").append(route.legs[0].end_address);
-                                $("#detalleKms").append(route.legs[0].distance.text);
-                            } else {
-                                window.alert('La direccion requerida fallo: ' + status);
+                    });
+            {% else %}
+                    $("#postularse").click(function () {
+                        $.ajax({
+                            url: "/usuario/postular",
+                            dataType: 'json',
+                            type: "post",
+                            data: {idViaje: '{{viaje.id}}', idChofer: '{{chofer.id}}'},
+                            success: function (resp) {
+                                if (resp.ok) {
+                                    location.reload();
+                                } else {
+                                    alert("error al registrar la postulacion.")
+                                }
                             }
                         });
-                    }
+                    });
+            {% endif %}
+        {% endif %}
+            });
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&callback=initMap">
+    </script>
 
-                </script>
-                <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&callback=initMap">
-                </script>
-
-                <!-- Slimscroll -->
-                <script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-                {% endblock %}
+    <!-- Slimscroll -->
+    <script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+{% endblock %}

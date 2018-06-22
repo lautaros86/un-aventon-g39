@@ -87,7 +87,7 @@
                         </div>
                         <div class="form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
                             <label for="origen">Vehiculo: </label>
-                            <select class="form-control" name="idVehiculo" id="idVehiculo" >
+                            <select class="form-control" name="idVehiculo" id="selectVehiculo" >
                                 {% for vehiculo in params.vehiculos %}
                                     <option value="{{vehiculo.id}}" {% if (form is defined) and (form.vehiculo.id == vehiculo.id) %}selected="selected"{% endif %}>
                                         {{vehiculo.marca}} - {{vehiculo.modelo}} - {{vehiculo.patente}}
@@ -102,7 +102,13 @@
                         </div>
                         <div class="form-group {% if errors.asientos is defined  %}has-error{% endif %}">
                             <label for="origen">Cantidad de asientos: </label>
-                            <input type="text" class="form-control" name="asientos" id="asientos" placeholder="asientos" {% if form is defined  %}value="{{form.asientos}}"{% endif %}>
+                            <select class="form-control" name="asientos" id="selectAsientos" >
+                                {% for i in range(1, params.vehiculos[0].asientos) %}
+                                    <option value="{{i}}" {% if (form is defined) and (form.asientos == i) %}selected="selected"{% endif %}>
+                                        {{i}}
+                                    </option>
+                                {% endfor %}
+                            </select>
                             {% if errors.asientos is defined %}
                                 {% for err_msg in errors.asientos %}
                                     <span class="help-block">{{err_msg}}</span>
@@ -141,6 +147,21 @@
         var verifRuta = false;
         $().ready(function () {
 
+            $("#selectVehiculo").change(function () {
+                $.ajax({
+                    url: "/vehiculo/getVehiculoJson",
+                    dataType: 'json',
+                    type: "post",
+                    data: {idVehiculo: $(this).val()},
+                    success: function (resp) {
+                        $("#selectAsientos").empty();
+                        console.log(resp)
+                        for (var i = 1; i <= resp.vehiculo.asientos; i++) {
+                            $("#selectAsientos").append($('<option>').val(i).text(i));
+                        }
+                    }
+                });
+            });
             var minDate = new Date(2019, 1, 1);
             $(function () {
                 $('#fecha').datepicker({
@@ -155,13 +176,11 @@
                     showMeridian: false,
                     minuteStep: 5
                 });
-
             });
-
             $("#submitform").click(function () {
                 var origen = document.getElementById('origen');
                 var destino = document.getElementById('destino');
-               if (origen.value == "" || destino.value == "") {
+                if (origen.value == "" || destino.value == "") {
                     alert("Las dos direcciones son requeridas.");
                 } else {
                     var d1 = $.Deferred();
@@ -185,8 +204,8 @@
                     return false;
                 }
             });
-        });
-
+        }
+        );
         function initAutocomplete() {
             // servicios para dibujar la ruta
             var directionsService = new google.maps.DirectionsService;
@@ -201,19 +220,16 @@
             // obtengo los search boxes.
             var origen = document.getElementById('origen');
             var destino = document.getElementById('destino');
-
             // convierte el texto en un lugar
             searchBoxes = [];
             searchBoxes.push(new google.maps.places.SearchBox(origen));
             searchBoxes.push(new google.maps.places.SearchBox(destino));
-
             // Sesgar los resultados del cuadro de búsqueda a la vista de mapas actuales.
             $.each(searchBoxes, function (i, sb) {
                 map.addListener('bounds_changed', function () {
                     sb.setBounds(map.getBounds());
                 });
             });
-
             $.each(searchBoxes, function (i, sb) {
                 sb.addListener('places_changed', function () {
                     if (origen.value == "" || destino.value == "") {
@@ -223,7 +239,6 @@
                     }
                 });
             });
-
             directionsDisplay.setMap(map);
             if (origen.value == "" || destino.value == "") {
                 return;
@@ -257,18 +272,20 @@
                     var route = response.routes[0];
                     var summaryPanel = document.getElementById('directions-panel');
                     summaryPanel.innerHTML = '';
+                    console.log(route)
                     // For each route, display summary information.
-{#                    for (var i = 0; i < route.legs.length; i++) {
+                    for (var i = 0; i < route.legs.length; i++) {
                         var routeSegment = i + 1;
                         summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
                         summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
                         summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
                         summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].duration.text + '<br><br>';
                         summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
                         summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
                         summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
                         summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';
-                    }#}
+                    }
                 } else {
                     verifRuta = false;
                     alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor verifique los campos.");

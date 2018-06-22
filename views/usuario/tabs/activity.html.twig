@@ -1,59 +1,28 @@
-<div class="post">
-    <div class="user-block">
-        <img class="img-circle img-bordered-sm" src="/img/anonimo.png" alt="user image">
-        <span class="username">
-            <a href="#">Destino del viaje</a>
-            <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
-        </span>
-        <span class="description">12/12/2010 7:30 PM</span>
-    </div>
-    <!-- /.user-block -->
-    <p>
-        Lorem ipsum represents a long-held tradition for designers,
-        typographers and the like. Some people hate it and argue for
-        its demise, but others ignore the hate as they create awesome
-        tools to help create filler text for everyone from bacon lovers
-        to Charlie Sheen fans.
-    </p>
-    <ul class="list-inline">
-        <li>
-            <a href="#" class="link-black text-sm"><i class="fa fa-comments-o margin-r-5"></i> 
-                Comments (5)</a>
-        </li>
-    </ul>
+{%for viaje in travels %}
+    <div class="post">
+        <div class="user-block">
+            <img class="img-circle img-bordered-sm" src="{{viaje.foto}}" alt="user image">
+            <span class="username">
+                <a href="#">{{viaje.nombre}} {{viaje.apellido}}</a>
 
-    <input class="form-control input-sm" type="text" placeholder="Type a comment">
-</div>
+            </span>
+            <span class="description">{{viaje.fecha | date ("d/m/Y")}} {{viaje.hora}}</span>
+        </div>
+        <!-- /.user-block -->
+        
+         <p><strong>Origen: </strong>{{viaje.origen}}</p>
+         <p><strong>Destino: </strong>{{viaje.destino}}</p>
+         <p><strong>Monto del viaje: </strong>{{viaje.monto}}$</p>
+         <p><strong>Lugares disponibles: </strong>{{viaje.asientos}}</p>
+        
+        <p>
+            <a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                Ver Detalle
+            </a>
+        </p>
+
+    </div>
+{% endfor %}
 <!-- /.post -->
 
-<!-- Post -->
-<div class="post">
-    <div class="user-block">
-        <img class="img-circle img-bordered-sm" src="/img/anonimo.png" alt="user image">
-        <span class="username">
-            <a href="#">Destino del viaje</a>
-            <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
-        </span>
-        <span class="description">12/12/2010 7:30 PM</span>
-    </div>
-    <!-- /.user-block -->
-    <p>
-        Lorem ipsum represents a long-held tradition for designers,
-        typographers and the like. Some people hate it and argue for
-        its demise, but others ignore the hate as they create awesome
-        tools to help create filler text for everyone from bacon lovers
-        to Charlie Sheen fans.
-    </p>
-    <ul class="list-inline">
-        <li>
-            <a href="#" class="link-black text-sm"><i class="fa fa-comments-o margin-r-5"></i> 
-                    Comments (5)</a>
-        </li>
-        <li>
-            <label class="label label-success">Nuevos comentarios</label>
-        </li>
-    </ul>
 
-    <input class="form-control input-sm" type="text" placeholder="Type a comment">
-</div>
-<!-- /.post -->

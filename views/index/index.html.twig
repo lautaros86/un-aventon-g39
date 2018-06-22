@@ -73,6 +73,13 @@
 
             <header class="main-header">
                 {% include 'template/menu.html.twig' with {'session': session, 'host': host} %}
+                {% block messages %}
+                    {% for msg in messages %}
+                        <div class="callout callout-{{msg['type']}}" style="margin: 0px">
+                            <p>{{msg['message']}}</p>
+                        </div>
+                    {% endfor %}
+                {% endblock %}
             </header>
 
             <aside id="colorlib-hero">

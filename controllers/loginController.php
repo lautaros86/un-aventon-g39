@@ -4,11 +4,14 @@ class loginController extends Controller {
 
     private $_login;
     private $_vehiculo;
+    private $_factura;
 
     public function __construct() {
         parent::__construct();
         $this->_login = $this->loadModel('login');
         $this->_vehiculo = $this->loadModel('vehiculo');
+        require_once ROOT . 'models' . DS . 'facturaModel.php';
+        $this->_factura = new facturaModel();
     }
 
     public function index() {
@@ -36,32 +39,33 @@ class loginController extends Controller {
             exit;
         }
 
-        $row = $this->_login->getUsuario(
+        $usuario = $this->_login->getUsuario(
                 $this->getPostParam('email'), $this->getPostParam('pass')
         );
 
-        if (!$row) {
+        if (!$usuario) {
             Session::setMessage('Usuario y/o password incorrectos', SessionMessageType::Error);
             $this->redireccionar('login');
             exit;
         }
 
-        if ($row['estado'] == 2) {
+        if ($usuario['estado'] == 2) {
             Session::setMessage('Este usuario no esta habilitado', SessionMessageType::Error);
             $this->redireccionar('login');
             exit;
         }
 
-        $cant = $this->_vehiculo->cantVehiculos($row['id']);
-        if ( $cant > 0) {
+        $cant = $this->_vehiculo->cantVehiculos($usuario['id']);
+        if ($cant > 0) {
             Session::set('chofer', true);
-        }else{
+        } else {
             Session::set('chofer', false);
         }
-        
+
+        Session::set('esDeudor', $this->esDeudor($usuario));
         Session::set('autenticado', true);
-        Session::set('usuario', $row);
-        Session::set('id_usuario', $row['id']);
+        Session::set('usuario', $usuario);
+        Session::set('id_usuario', $usuario['id']);
         $this->redireccionar('usuario/verUsuario');
     }
 
@@ -71,6 +75,11 @@ class loginController extends Controller {
         }
         Session::destroy();
         $this->redireccionar();
+    }
+
+    public function esDeudor($usuario) {
+        $pendientes = $this->_factura->getFacturasPendinetesOf($usuario["id"]);
+        return sizeof($pendientes) > 0;
     }
 
 }

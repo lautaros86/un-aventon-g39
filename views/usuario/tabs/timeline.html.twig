@@ -1,4 +1,32 @@
-<!-- The timeline -->
+<table id="example" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Chofer</th>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Monto</th>
+                <th>Est. Viaje</th>
+                <th>Est. Postulación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for viaje in viajes %}
+            <tr>
+                <td><a href="usuario/verOtroUsuaurio/{{viaje.id}}">{{viaje.nombre}} {{viaje.apellido}}</a></td>
+                <td>{{viaje.origen}}</td>
+                <td>{{viaje.destino}}</td>
+                <td>{{viaje.fecha | date("d/m/Y")}}</td>
+                <td>{{viaje.hora}}</td>
+                <td>{{viaje.monto}}</td>
+                <td>{{viaje.nombreEstadoViaje}}</td>
+                <td>{{viaje.nombreEstadoPostulacion}}</td>
+            </tr>
+            {% endfor %}
+        </tbody> 
+    </table>
+{#<!-- The timeline -->
 <ul class="timeline timeline-inverse">
     <!-- timeline time label -->
     <li class="time-label">
@@ -35,4 +63,4 @@
     <li>
         <i class="fa fa-clock-o bg-gray"></i>
     </li>
-</ul>
+</ul>#}

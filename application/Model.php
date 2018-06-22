@@ -21,5 +21,10 @@ class Model
     public function rollback() {
         return $this->_db->rollback();
     }
+    
+    
+    public function lastInsertId($seqname = NULL) {
+        return $this->_db->lastInsertId($seqname);
+    }
 }
 ?>

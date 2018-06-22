@@ -1,39 +1,39 @@
 {% extends 'layoutPerfil.html.twig' %}
+
 {% block title %}
     UnAventon - Perfil
+{% endblock %}
+
+{% block style %}
+    {{parent()}}
 {% endblock %}
 
 
 {% block subContenido %}
     <div class="nav-tabs-custom">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#activity" data-toggle="tab">Viajes publicados</a></li>
-                    <li><a href="#postulados" id="postulaciones" data-toggle="tab" >Viajes Postulados</a></li>
-                    <li><a href="#timeline" id="historial"data-toggle="tab" >Historial</a></li>
-                    <li ><a href="#misVehiculos" data-toggle="tab">Mis Vehiculos</a></li>
-                    <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas de credito</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div class="active tab-pane" id="activity">
-                        {% include 'usuario/tabs/activity.html.twig' %}
-                    </div>
-                    <!-- /.tab-pane viajes publicados -->
-                    <div class="tab-pane" id="postulados">
-                        {% include 'usuario/tabs/postulados.html.twig' %}
-                    </div>
-                    <!-- End of tab viajes postulados -->
-                    <div class="tab-pane" id="timeline">
-                       
-                    </div>
-                    <div class="tab-pane" id="misVehiculos">
-                        {% include 'usuario/tabs/misVehiculos.html.twig' %}
-                    </div>
-                    <div class="tab-pane" id="tarjetaCredito">
-                        {% include 'usuario/tabs/tarjetaCredito.html.twig' %}
-                    </div>
-                    <!-- /.tab-content -->
-                </div>
-                <!-- /.nav-tabs-custom -->
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#activity" data-toggle="tab">Viajes publicados</a></li>
+            <li><a href="#timeline" id="historial"data-toggle="tab" >Historial</a></li>
+            <li ><a href="#misVehiculos" data-toggle="tab">Mis Vehiculos</a></li>
+            <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas de credito</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="active tab-pane" id="activity">
+                {% include 'usuario/tabs/activity.html.twig' %}
+            </div>
+            <!-- /.tab-pane viajes publicados -->
+            <div class="tab-pane" id="postulados">
+                {% include 'usuario/tabs/postulados.html.twig' %}
+            </div>
+            <!-- End of tab viajes postulados -->
+            <div class="tab-pane" id="timeline">
+
+            </div>
+            <div class="tab-pane" id="misVehiculos">
+                {% include 'usuario/tabs/misVehiculos.html.twig' %}
+            </div>
+            <div class="tab-pane" id="tarjetaCredito">
+                {% include 'usuario/tabs/tarjetaCredito.html.twig' %}
             </div>
             <!-- /.nav-tabs-custom -->
         </div>
@@ -45,10 +45,13 @@
 
 {% block script %}
     {{parent()}}
+    <script type="text/javascript" src="../../libs/datatables.js"></script>        
+    <script type="text/javascript" src="../../libs/datatable-bootstrap.js"></script>        
+
     <script>
         var bandera = true;
         var banderaP = true;
-        $().ready(function () {            
+        $().ready(function () {
             $(".edit").click(function (event) {
                 var elem = $(event.target);
                 if (elem.is("i")) {
@@ -64,40 +67,32 @@
                     if (elem.is("i")) {
                         elem = $(elem.parent());
                     }
-                    $(location).attr('href', 'vehiculo/eliminarVehiculo/'+elem.data('idvehiculo'));
+                    $(location).attr('href', 'vehiculo/eliminarVehiculo/' + elem.data('idvehiculo'));
                 } else {
                     alert("Pedido cancelado");
                 }
             });
+
         });
-        $("#historial").click(function(){
-                if (bandera){
-                    bandera = !bandera;
-                    $.ajax({
+        $("#historial").click(function () {
+            if (bandera) {
+                bandera = !bandera;
+                $.ajax({
                     url: "/historial",
                     success: function (data, textStatus, jqXHR) {
                         console.log("todo bien")
                         $("#timeline").append(data);
+                        $('#example').DataTable({
+                            "language": {
+                                url: "http://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+                            }
+                        });                                
                     },
-                    error: function(){
+                    error: function () {
                         console.log("todo mal");
                     }
-                    });
-                }
-            })
-        $("#postulaciones").click(function(){
-                if (banderaP){
-                    banderaP = !banderaP;
-                    $.ajax({
-                    url: "/historial/postulaciones",
-                    success: function (data, textStatus, jqXHR) {
-                        $("#postulados").append(data);
-                    },
-                    error: function(){
-                        console.log("todo mal");
-                    }
-                    });
-                }
-            })            
+                });
+            }
+        })
     </script>
 {% endblock %}

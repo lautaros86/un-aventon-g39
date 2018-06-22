@@ -1,0 +1,50 @@
+{% extends 'layoutPerfil.html.twig' %}
+
+{% block title %}
+    UnAventon - Perfil
+{% endblock %}
+
+{% block style %}
+    {{parent()}}
+{% endblock %}
+
+
+{% block subContenido %}
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#activity" data-toggle="tab">Resultados</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="active tab-pane" id="activity">
+                {%for viaje in viajes %}
+                    <div class="post">
+                        <div class="user-block">
+                            <img class="img-circle img-bordered-sm" src="{% if viaje.foto %}{{viaje.foto}}{% else %}/img/anonimo.png{% endif %}" alt="user image">
+                            <span class="username">
+                                <a href="usuario/verOtroUsuaurio/{{viaje.id}}">{{viaje.nombre}} {{viaje.apellido}}</a>
+
+                            </span>
+                            <span class="description">{{viaje.fecha | date ("d/m/Y")}} {{viaje.hora}}</span>
+                        </div>
+                        <!-- /.user-block -->
+
+                        <p><strong>Origen: </strong>{{viaje.origen}}</p>
+                        <p><strong>Destino: </strong>{{viaje.destino}}</p>
+                        <p><strong>Monto del viaje: </strong>{{viaje.monto}}$</p>
+                        <p><strong>Lugares disponibles: </strong>{{viaje.asientos}}</p>
+
+                        <p>
+                            <a href="Viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                                Ver Detalle
+                            </a>
+                        </p>
+
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    {% endblock %}
+
+
+

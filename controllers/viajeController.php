@@ -275,6 +275,61 @@ class viajeController extends Controller {
         return $errors;
     }
 
-}
+    public function cancelarViaje() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar("registro");
+        }
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $idViaje = $this->getPostParam("idViaje");
+        $viaje = $this->_viaje->getViaje($idViaje);
+        if ($viaje["id_chofer"] == Session::get("usuario")["id"]) {
+            $postulantes = $this->_viaje->getPostulacionesViaje($idviaje);
+            try {
+                $this->_viaje->beginTransaction();
+                $this->_notificacion->crearNotificacion("El usuario nombre apelldo cancelo el viaje al que te habias postulado", $destinatarios, "red");
+                $this->_viaje->cancelarViaje($idViaje);
+                Session::setMessage("El viaje se cancelo exitosamente.", SessionMessageType::Success);
+                $this->_viaje->commit();
+                $this->redireccionar("perfil");
+            } catch (PDOException $e) {
+                $this->_viaje->rollback();
+                Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+                $this->redireccionar("/viaje/detalle/" . $idViaje);
+            }
+        } else {
+            //solo el dueño puede cancelar un viaje
+        }
+    }
+    /**
+     * esta funcion recibe un arreglo con, fecha, origen y destino de un viaje
+     * en base a esos datos consulta en la base de datos por aquellos viajes
+     * que esten abiertos, que cumplan con los requisitos y renderiza una vista
+     * con los resultados.
+     * @param array $param
+     */
+    public function buscarViaje() {
+         $param = array();
+         $param['origen'] = $this->getPostParam('origen');
+         $param['destino'] = $this->getPostParam('destino');
+         $param['fecha'] = date('Y-m-d', strtotime($this->getPostParam('fecha')));
+         $viajes = $this->_viaje->buscarViaje($param);
+         //pregunto si el array no esta vacio 
+         if (!empty($viajes)){
+             //y el usuario esta autenticado
+             if(Session::get('autenticado')){
+                 //renderizo los resultados para personas legueadas
+                 $this->_view->renderizar('resultadoBusqueda', 'viaje', array("viajes" => $viajes));
+             }else{
+                 //sino muestro los resultados para personas no logueadas
+                 $this->_view->renderizar('resultado', 'viaje', array("viajes" => $viajes));
+             }
+             
+         }else {
+             $this->_view->renderizar('noResultadoBusqueda', 'viaje');
+         }
+    }
 
-?>
+}

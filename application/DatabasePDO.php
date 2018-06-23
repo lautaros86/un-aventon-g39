@@ -7,14 +7,18 @@ class DatabasePDO extends PDO {
     private $query;
     private $transactionCounter;
 
-    protected function __construct() {
-        try {
-            $this->PDO = new PDO('mysql:host=' . DB_HOST .
-                    ';dbname=' . DB_NAME, DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES  \'UTF8\''));
-            $this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            print "¡Error!: " . $e->getMessage() . "<br/>";
-            die();
+    public function __construct() {
+        // Check to see if static PDO instance
+        // has already been created, so we create only one (singleton)
+        if (!self::$instance) {
+            try {
+                $this->PDO = new PDO('mysql:host=' . DB_HOST .
+                        ';dbname=' . DB_NAME, DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES  \'UTF8\''));
+                $this->PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                print "¡Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
         }
     }
 

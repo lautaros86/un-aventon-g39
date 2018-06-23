@@ -73,6 +73,13 @@
 
             <header class="main-header">
                 {% include 'template/menu.html.twig' with {'session': session, 'host': host} %}
+                {% block messages %}
+                    {% for msg in messages %}
+                        <div class="callout callout-{{msg['type']}}" style="margin: 0px">
+                            <p>{{msg['message']}}</p>
+                        </div>
+                    {% endfor %}
+                {% endblock %}
             </header>
 
             <aside id="colorlib-hero">
@@ -124,14 +131,14 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12 search-wrap">
-                            <form method="post" class="colorlib-form">
+                            <form method="post" class="colorlib-form" action="/viaje/buscarViaje">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="date">Origen:</label>
                                             <div class="form-field">
                                                 <i class="icon icon-map3"></i>
-                                                <input type="text" id="origen" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
+                                                <input type="text" id="origen" name="origen" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
                                             </div>
                                         </div>
                                     </div>
@@ -140,7 +147,7 @@
                                             <label for="date">Destino:</label>
                                             <div class="form-field">
                                                 <i class="icon icon-map3"></i>
-                                                <input type="text" id="destino" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
+                                                <input type="text" id="destino" name="destino" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
                                             </div>
                                         </div>
                                     </div>
@@ -149,7 +156,7 @@
                                             <label for="date">Fecha:</label>
                                             <div class="form-field">
                                                 <i class="icon icon-calendar2"></i>
-                                                <input type="text" id="fecha" class="form-control date" placeholder="DD/MM/AAAA">
+                                                <input type="text" id="fecha" name="fecha" class="form-control date" placeholder="DD/MM/AAAA">
                                             </div>
                                         </div>
                                     </div>

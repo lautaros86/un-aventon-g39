@@ -26,9 +26,9 @@ class vehiculoModel extends Model {
     }
 
     public function getVehiculo($id) {
-        $id = (int) $id;
-        $vehiculo = $this->_db->query("select * from vehiculo where id = $id");
-        return $vehiculo->fetch();
+        $sql = "select * from vehiculo where id = :id";
+        $this->_db->execute($sql, array(":id" => $id));
+        return $this->_db->fetch();
     }
 
     public function insertarVehiculo($form, $idUsuario) {

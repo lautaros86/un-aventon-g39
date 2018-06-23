@@ -5,6 +5,7 @@ class viajeController extends Controller {
     private $_registro;
     private $_usuario;
     private $_viaje;
+    private $_vehiculo;
 
     public function __construct() {
         parent::__construct();
@@ -12,9 +13,11 @@ class viajeController extends Controller {
         require_once ROOT . 'models' . DS . 'usuarioModel.php';
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         require_once ROOT . 'models' . DS . 'viajeModel.php';
+        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $this->_usuario = new usuarioModel();
         $this->_registro = new vehiculoModel();
         $this->_viaje = new viajeModel();
+        $this->_vehiculo = new vehiculoModel();
     }
 
     public function index() {
@@ -78,7 +81,9 @@ class viajeController extends Controller {
         $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
         $params["esChofer"] = true;
         $params["usuario"] = $usuario;
-        $postulaciones = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
+        $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
+        $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadas($params["viaje"]["id"]);
+        $params["vehiculo"] = $this->_vehiculo->getVehiculo($viaje["id_vehiculo"]);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
 
@@ -102,13 +107,20 @@ class viajeController extends Controller {
         $errors = $this->validarAltaViaje($form);
         if (!$errors) {
             try {
-                require_once ROOT . 'models' . DS . 'viajeModel.php';
-                $viajeModel = new viajeModel();
-                $viajeModel->insertarViaje($form, Session::get("usuario")["id"]);
+                $this->_viaje->beginTransaction();
+                $this->_viaje->insertarViaje($form, Session::get("usuario")["id"]);
+                $idViajeInsertado = $this->_viaje->lastInsertId();
+                require_once ROOT . 'models' . DS . 'facturaModel.php';
+                $facturaModel = new facturaModel();
+                $montoTotal = ($form['monto'] * $form['asientos']) * 0.05;
+                $descripcion = "Derecho a publicación del viaje nº " . $idViajeInsertado . " con origen: " . $form['origen'] . " y destino: " . $form['destino'] . ". Con cantidad de asientos: " . $form["asientos"] . " y costo por cada uno de: $" . $form['monto'];
+                $facturaModel->crearFactura(Session::get("id_usuario"), $idViajeInsertado, number_format((float) $montoTotal, 2, '.', ''), $descripcion, 1);
                 Session::setMessage("Viaje publicado", SessionMessageType::Success);
                 Session::destroy("form");
+                $this->_viaje->commit();
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
+                $this->_viaje->rollback();
                 Session::setMessage("Error al registrar el viaje", SessionMessageType::Error);
                 $this->redireccionar("viaje/alta");
             }
@@ -117,6 +129,105 @@ class viajeController extends Controller {
             $this->redireccionar("viaje/alta");
         }
         $this->_view->renderizar('alta', 'viaje', array("form" => $form));
+    }
+
+    public function cancelarViaje() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar("registro");
+        }
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $idViaje = $this->getPostParam("idViaje");
+        $viaje = $this->_viaje->getViaje($idViaje);
+        if ($viaje["id_chofer"] == Session::get("usuario")["id"]) {
+            $postulantes = $this->_viaje->getPostulacionesViaje($idviaje);
+            try {
+                $this->_viaje->beginTransaction();
+                $this->_notificacion->crearNotificacion("El usuario nombre apelldo cancelo el viaje al que te habias postulado", $destinatarios, "red");
+                $this->_viaje->cancelarViaje($idViaje);
+                Session::setMessage("El viaje se cancelo exitosamente.", SessionMessageType::Success);
+                $this->_viaje->commit();
+                $this->redireccionar("perfil");
+            } catch (PDOException $e) {
+                $this->_viaje->rollback();
+                Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+                $this->redireccionar("/viaje/detalle/" . $idViaje);
+            }
+        } else {
+            //solo el dueño puede cancelar un viaje
+        }
+    }
+
+    public function aceptarPostulacion($idPostu) {
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $error = false;
+        $postulacion = $this->_viaje->getPostulacion($idPostu);
+        $pasajero = $this->_usuario->getUsuario($postulacion["id_pasajero"]);
+        $viaje = $this->_viaje->getViaje($postulacion["id_viaje"]);
+        $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
+        $lleno = $this->_viaje->getPostulacionesAceptadas($viaje["id"]) >= $viaje["asientos"];
+        if ($lleno) {
+            $error = true;
+            Session::setMessage("No puede aceptarse esta postulacion, el viaje esta lleno.", SessionMessageType::Error);
+        }
+        // TODO: Validar que el pasajero de la postulacion no tenga otra postulacion aceptada para un viaje en el mismo dia y rango de 2 horas del que se lo esta aceptando.
+        $timestamp = strtotime($viaje["hora"]) + 120 * 60;
+        $horaFin = date('H:i'.':00', $timestamp);
+        $viajesSuperpuestos = $this->_viaje->validarSuperposicionDeViajesConPostulaciones($pasajero["id"], $viaje["fecha"], $viaje["hora"], $horaFin, $idPostu, $viaje["id"]);
+        if ($viajesSuperpuestos > 0) {
+            $error = true;
+            Session::setMessage("No puede aceptarse esta postulacion porque al usuario se le acepto otra postulacion en un viaje que se superpone con este, si desea puede rechazarlo.", SessionMessageType::Error);
+        }
+        if ($viaje["id_chofer"] != Session::get("id_usuario")) {
+            $error = true;
+            Session::setMessage("No puede aceptarse esta postulacion, solo el dueño puede aceptar publicaciones.", SessionMessageType::Error);
+        }
+        if ($postulacion["id_estado"] == 3) {
+            $error = true;
+            Session::setMessage("No puede aceptarse esta postulacion porque ya fue rechazada.", SessionMessageType::Error);
+        }
+        if (!$error) {
+            try {
+                $this->_viaje->beginTransaction();
+                $this->_notificacion->crearNotificacionSimple("El usuario " . $chofer["nombre"] . " " . $chofer["apellido"] . " acepto tu postulacion al viaje nº " . $postulacion["id_viaje"], $pasajero["id"]);
+                $this->_viaje->aceptarPostulacion($idPostu);
+                $this->_viaje->commit();
+                Session::setMessage("La postulacion se acepto correctamente.", SessionMessageType::Success);
+            } catch (PDOException $e) {
+                $this->_viaje->rollback();
+                Session::setMessage("Error al intentar guardar la postulacion.", SessionMessageType::Error);
+            }
+        }
+        $this->redireccionar("/viaje/detalle/" . $postulacion["id_viaje"]);
+    }
+
+    public function rechazarPostulacion($idPostu) {
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $postulacion = $this->_viaje->getPostulacion($idPostu);
+        $pasajero = $this->_usuario->getUsuario($postulacion["id_pasajero"]);
+        $viaje = $this->_viaje->getViaje($postulacion["id_viaje"]);
+        $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
+        if ($viaje["id_chofer"] == Session::get("id_usuario") && $postulacion["id_estado"] != 3) {
+            try {
+                $this->_viaje->beginTransaction();
+                $this->_notificacion->crearNotificacionSimple("El usuario " . $chofer["nombre"] . " " . $chofer["apellido"] . " rechazo tu postulacion al viaje nº " . $postulacion["id_viaje"], $pasajero["id"]);
+                $this->_viaje->rechazarPostulacion($idPostu);
+                $this->_viaje->commit();
+                Session::setMessage("La postulacion se rechazo correctamente.", SessionMessageType::Success);
+            } catch (PDOException $e) {
+                $this->_viaje->rollback();
+                Session::setMessage("Error al intentar rechazar la postulacion.", SessionMessageType::Error);
+            }
+        } else {
+            Session::setMessage("No puede rechazarse esta postulacion.", SessionMessageType::Error);
+        }
+        $this->redireccionar("/viaje/detalle/" . $postulacion["id_viaje"]);
     }
 
     public function validarAltaViaje($form) {
@@ -192,7 +303,33 @@ class viajeController extends Controller {
             //solo el dueño puede cancelar un viaje
         }
     }
+    /**
+     * esta funcion recibe un arreglo con, fecha, origen y destino de un viaje
+     * en base a esos datos consulta en la base de datos por aquellos viajes
+     * que esten abiertos, que cumplan con los requisitos y renderiza una vista
+     * con los resultados.
+     * @param array $param
+     */
+    public function buscarViaje() {
+         $param = array();
+         $param['origen'] = $this->getPostParam('origen');
+         $param['destino'] = $this->getPostParam('destino');
+         $param['fecha'] = date('Y-m-d', strtotime($this->getPostParam('fecha')));
+         $viajes = $this->_viaje->buscarViaje($param);
+         //pregunto si el array no esta vacio 
+         if (!empty($viajes)){
+             //y el usuario esta autenticado
+             if(Session::get('autenticado')){
+                 //renderizo los resultados para personas legueadas
+                 $this->_view->renderizar('resultadoBusqueda', 'viaje', array("viajes" => $viajes));
+             }else{
+                 //sino muestro los resultados para personas no logueadas
+                 $this->_view->renderizar('resultado', 'viaje', array("viajes" => $viajes));
+             }
+             
+         }else {
+             $this->_view->renderizar('noResultadoBusqueda', 'viaje');
+         }
+    }
 
 }
-
-?>

@@ -77,7 +77,7 @@ class usuarioController extends Controller {
         }
         $errors = $this->validarRegistro();
         $form = array();
-        $form['nombre'] = $this->getAlphaNum('nombre');
+        $form['nombre'] = $this->getPostParam('nombre');
         $form['apellido'] = $this->getPostParam('apellido');
         if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $usuario['fecha_nac'])) {
             $usuario['fecha_nac'] = date('d/m/Y', strtotime($usuario['fecha_nac']));
@@ -110,12 +110,12 @@ class usuarioController extends Controller {
     public function validarRegistro() {
         $errors = false;
         $formErrors = array();
-        if ($this->getAlphaNum('nombre') == "") {
+        if ($this->getPostParam('nombre') == "") {
             Session::setFormErrors("nombre", "El nombre es obligatorio.");
             $errors = true;
         }
 
-        if ($this->getAlphaNum('apellido') == "") {
+        if ($this->getPostParam('apellido') == "") {
             Session::setFormErrors("apellido", "El apellido es obligatorio.");
             $errors = true;
         }
@@ -177,12 +177,12 @@ class usuarioController extends Controller {
     public function validarDatosDeUsuario() {
         $errors = false;
         $formErrors = array();
-        if ($this->getAlphaNum('nombre') == "") {
+        if ($this->getPostParam('nombre') == "") {
             Session::setFormErrors("nombre", "El nombre es obligatorio.");
             $errors = true;
         }
 
-        if ($this->getAlphaNum('apellido') == "") {
+        if ($this->getPostParam('apellido') == "") {
             Session::setFormErrors("apellido", "El apellido es obligatorio.");
             $errors = true;
         }
@@ -214,7 +214,7 @@ class usuarioController extends Controller {
         $date = $this->getPostParam('fecha_nac');
         $date = str_replace('/', '-', $date);
         $form['fecha_nac'] = date('Y-m-d', strtotime($date));
-        $form['nombre'] = $this->getAlphaNum('nombre');
+        $form['nombre'] = $this->getPostParam('nombre');
         $form['apellido'] = $this->getPostParam('apellido');
 
 
@@ -226,7 +226,7 @@ class usuarioController extends Controller {
                 $date = str_replace('/', '-', $date);
                 $form['fecha_nac'] = date('Y-m-d', strtotime($date));
                 $params = array("id" => $usuario["id"],
-                    "nombre" => $this->getAlphaNum('nombre'),
+                    "nombre" => $this->getPostParam('nombre'),
                     "apellido" => $this->getPostParam('apellido'),
                     "fecha" => $form['fecha_nac']
                 );
@@ -261,7 +261,7 @@ class usuarioController extends Controller {
                 Session::setMessage("Tus datos fueron editados correctamente :)", SessionMessageType::Success);
                 //esta parte se esta tocando
                 $newUsuario = Session::get("usuario");
-                $newUsuario['nombre'] = $this->getAlphaNum('nombre');
+                $newUsuario['nombre'] = $this->getPostParam('nombre');
                 $newUsuario['apellido'] = $this->getPostParam('apellido');
                 $newUsuario['fecha_nac'] = $this->getPostParam('fecha_nac');
                 if (isset($params["foto"])) {

@@ -78,7 +78,7 @@ class loginController extends Controller {
     }
 
     public function esDeudor($usuario) {
-        $pendientes = $this->_factura->getFacturasPendinetesOf($idUsuario["id"]);
+        $pendientes = $this->_factura->getFacturasPendinetesOf($usuario["id"]);
         return sizeof($pendientes) > 0;
     }
 

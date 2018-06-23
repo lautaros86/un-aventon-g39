@@ -272,24 +272,26 @@
                     var route = response.routes[0];
                     var summaryPanel = document.getElementById('directions-panel');
                     summaryPanel.innerHTML = '';
+                    console.log(route)
                     // For each route, display summary information.
-        {#                    for (var i = 0; i < route.legs.length; i++) {
-                                var routeSegment = i + 1;
-                                summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
-                                summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
-                                summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
-                                summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
-                                summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
-                                summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
-                                summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
-                                summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';
-                            }#}
-                                        } else {
-                                            verifRuta = false;
-                                            alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor verifique los campos.");
-                                        }
-                                    });
-                                }
+                    for (var i = 0; i < route.legs.length; i++) {
+                        var routeSegment = i + 1;
+                        summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
+                        summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
+                        summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+                        summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].duration.text + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';
+                    }
+                } else {
+                    verifRuta = false;
+                    alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor verifique los campos.");
+                }
+            });
+        }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&libraries=places&callback=initAutocomplete"
     async defer></script>

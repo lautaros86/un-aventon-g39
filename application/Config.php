@@ -9,7 +9,6 @@ define('APP_SLOGAN', 'Un Aventon');
 define('APP_COMPANY', 'www.lsilva.com.ar');
 define('SESSION_TIME', 1);
 define('HASH_KEY', '53bf025929f1f');
-define('ENV_DEV', true);
 
 if ($_SERVER['HTTP_HOST'] == 'unaventon.local') {
     define('BASE_URL', 'http://unaventon.local/');
@@ -38,8 +37,8 @@ if ($_SERVER['HTTP_HOST'] == 'unaventon.lsilva.com.ar') {
     define('ENV_DEV', false);
 }
 
-if ($_SERVER['HTTP_HOST'] == '35.197.185.188 ') {
-    define('BASE_URL', 'http://35.197.185.188 /');
+if ($_SERVER['HTTP_HOST'] == '35.197.185.188') {
+    define('BASE_URL', 'http://35.197.185.188/');
     define('DB_HOST', 'localhost');
     define('DB_USER', 'root');
     define('DB_PASS', '1234');

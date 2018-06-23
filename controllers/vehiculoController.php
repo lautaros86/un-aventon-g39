@@ -53,7 +53,6 @@ class vehiculoController extends Controller {
         Session::setMessage("Vehiculo dado de baja", SessionMessageType::Success);
         $this->redireccionar("perfil");
     }
-
     public function crear() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);

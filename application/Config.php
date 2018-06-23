@@ -42,7 +42,7 @@ if ($_SERVER['HTTP_HOST'] == '35.197.185.188') {
     define('DB_HOST', 'localhost');
     define('DB_USER', 'root');
     define('DB_PASS', '1234');
-    define('DB_NAME', 'grupo_93');
+    define('DB_NAME', 'grupo_39');
     define('DB_CHAR', 'utf8');
     define('ENV_DEV', false);
 }

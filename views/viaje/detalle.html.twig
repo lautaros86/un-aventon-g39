@@ -41,10 +41,14 @@
             {% if esChofer %}
                 <a class="btn btn-danger btn-block" id="cancelarViaje" href="/viaje/cancelarviaje/{{viaje.id}}"><b>CANCELAR VIAJE</b></a>
             {% else %}
-                <button class="btn btn-warning btn-block" id="consultar"><b>CONSULTAR</b></button>
+                <button class="btn btn-info btn-block" id="consultar"><b>CONSULTAR</b></button>
                 <br/>
                 {% if postulado %}
-                    <button class="btn btn-danger btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
+                    {% if postulacion.estado_postulacion == 2 %}
+                        <button class="btn btn-danger btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
+                    {% else %}
+                        <button class="btn btn-warning btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
+                    {% endif %}
                 {% else %}
                     <button class="btn btn-success btn-block" id="postularse"><b>POSTULARME</b></button>
                 {% endif %}
@@ -96,6 +100,20 @@
 
             </div>
         </div>
+    {% elseif postulado %}
+        {% if postulacion.estado_postulacion == 2 %}
+            <div class="callout callout-success">
+                <p>Estas aceptado!!! Solo queda esperar el dia de partida. Podes contactar al chofer en la seccion de consultas!!!</p>
+            </div>  
+        {% else %}
+            <div class="callout callout-info">
+                <p>Estas postulado!!! Solo queda que el chofer te confirme. Podes contactarlo en la seccion de consultas!!!</p>
+            </div>  
+        {% endif %}
+    {% else %}
+        <div class="callout callout-info">
+            <p>No estas postulado a este viaje. Animate a viajar!!! Postulate Ya!!!</p>
+        </div>  
     {% endif %}
     <div class="box box-info">
 
@@ -107,11 +125,10 @@
                         <b>Origen: </b>
                     </li>
                     <li class="list-group-item" id="detalleDestino">
-                        <b>Origen: </b>
+                        <b>Destino: </b>
                     </li>
                     <li class="list-group-item" id="detalleKms">
                         <b>Kms: </b>
-                    </li>
                     </li>
                     <li class="list-group-item" id="detalleDuracion">
                         <b>Duración: </b>
@@ -413,20 +430,27 @@
         {% if not esChofer %}
             {% if postulado %}
                     $("#anularPostulacion").click(function () {
-                        $.ajax({
-                            url: "/usuario/cancelarPostulacion",
-                            dataType: 'json',
-                            type: "post",
-                            data: {idViaje: '{{viaje.id}}', idChofer: '{{chofer.id}}'},
-                            success: function (resp) {
-                                if (resp.ok) {
-                                    location.reload();
-                                } else {
-                                    alert("error al anular la postulacion.")
-                                }
+                {% if postulacion.estado_postulacion == 2 %}
+                            var msj = "CUIDADO!!! Ya fuiste aceptado, si anular tu postulacion ahora seras penalizado con -1 punto de reputacion. Seguro que queres anular tu postulacion?"
+                {% else %}
+                            var msj = "Aun no fuiste aceptado, seguro que desea anular su postulacion?"
+                {% endif %}
+                            if (confirm(msj)) {
+                                $.ajax({
+                                    url: "/usuario/cancelarPostulacion",
+                                    dataType: 'json',
+                                    type: "post",
+                                    data: {idViaje: '{{viaje.id}}', idChofer: '{{chofer.id}}', idPostu: {{postulacion.id_postulacion}}},
+                                    success: function (resp) {
+                                        if (resp.ok) {
+                                            location.reload();
+                                        } else {
+                                            alert("error al anular la postulacion.")
+                                        }
+                                    }
+                                });
                             }
                         });
-                    });
             {% else %}
                     $("#postularse").click(function () {
                         $.ajax({

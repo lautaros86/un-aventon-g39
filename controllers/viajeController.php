@@ -49,7 +49,7 @@ class viajeController extends Controller {
             Session::setMessage("El viaje requerido no existe.", SessionMessageType::Error);
             $this->redireccionar("perfil");
         }
-        $params["viaje"] = $this->_viaje->getViaje($idviaje);
+        $params["viaje"] = $viaje;
         $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
         $usuario = Session::get("usuario");
         if ($chofer["id"] == $usuario["id"]) {
@@ -69,6 +69,7 @@ class viajeController extends Controller {
         $params["postulado"] = false;
         foreach ($postulaciones as $postu) {
             if ($postu["id_pasajero"] == $usuario["id"]) {
+                $params["postulacion"] = $postu;
                 $params["postulado"] = true;
             }
         }
@@ -126,7 +127,6 @@ class viajeController extends Controller {
                 Session::setMessage("Ud tiene una postulacion aceptada en un viaje que se superpone con la fecha y horas ingresadas.", SessionMessageType::Error);
                 $errors = true;
             }
-            $errors = true;
             if (!$errors) {
                 try {
                     $this->_viaje->beginTransaction();

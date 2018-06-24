@@ -55,45 +55,48 @@
 {% endblock %}
 {% block subContenido %}
 
+    {% if chofer.id == session.get('usuario').id %}
+        <!-- Tabla de postulantes -->          
+        <div class="box box-info">
+            <div class="box-body">
+                <h3 class="profile-username text-center">Postulantes al viaje</h3>
+            </div>
+            <!-- /.box-body -->
 
-    <!-- Tabla de postulantes -->          
-    <div class="box box-info">
-        <div class="box-body">
-            <h3 class="profile-username text-center">Postulantes al viaje</h3>
-        </div>
-        <!-- /.box-body -->
 
+            <div class="box-body">
 
-        <div class="box-body">
-
-            <table class="table text-center">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Reputacion</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for postu in postulaciones %}
+                <table class="table text-center">
+                    <thead>
                         <tr>
-                            <td>{{postu.nombre}}, {{postu.apellido}}</td>
-                            <td>{{postu.reputacion}}</td>
-                            <td>
-                                {% if postu.estado_postulacion == 1 %}
-                                    <a href="/viaje/aceptarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-success aceptarPostulacion">Aceptar {{postu.id_postulacion}}</a>
-                                    <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-warning rechazarPostulacion">Rechazar {{postu.id_postulacion}}</a>
-                                {% elseif postu.estado_postulacion == 2 %}
-                                    <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-danger rechazarPostulacion">Rechazar {{postu.id_postulacion}}</a>
-                                {% endif %}
-                            </td>
+                            <th>Usuario</th>
+                            <th>Reputacion</th>
+                            <th>Acciones</th>
                         </tr>
-                    {% endfor%}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for postu in postulaciones %}
+                            <tr>
+                                <td>{{postu.nombre}}, {{postu.apellido}}</td>
+                                <td>{{postu.reputacion}}</td>
+                                {% if viaje.id_estado not in [2, 3, 5] %}
+                                    <td>
+                                        {% if postu.estado_postulacion == 1 %}
+                                            <a href="/viaje/aceptarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-success aceptarPostulacion">Aceptar</a>
+                                            <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-warning rechazarPostulacion">Rechazar</a>
+                                        {% elseif postu.estado_postulacion == 2 %}
+                                            <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-danger rechazarPostulacion">Rechazar</a>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor%}
+                    </tbody>
+                </table>
 
+            </div>
         </div>
-    </div>
+    {% endif %}
     <div class="box box-info">
 
         <div class="box-body">
@@ -108,6 +111,10 @@
                     </li>
                     <li class="list-group-item" id="detalleKms">
                         <b>Kms: </b>
+                    </li>
+                    </li>
+                    <li class="list-group-item" id="detalleDuracion">
+                        <b>Duración: </b>
                     </li>
                     <li class="list-group-item">
                         <b>Fecha:</b> {{viaje.fecha|date("d/m/Y")}}
@@ -377,6 +384,7 @@
                     $("#detalleOrigen").append(route.legs[0].start_address);
                     $("#detalleDestino").append(route.legs[0].end_address);
                     $("#detalleKms").append(route.legs[0].distance.text);
+                    $("#detalleDuracion").append(route.legs[0].duration.text);
                 } else {
                     window.alert('La direccion requerida fallo: ' + status);
                 }

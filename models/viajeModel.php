@@ -36,12 +36,13 @@ class viajeModel extends Model {
     }
 
     public function insertarViaje($form) {
-        $sql = "INSERT INTO viaje (monto,fecha,hora,origen,destino,id_chofer,id_vehiculo,asientos,fecha_crea, fecha_modif) 
-                VALUES (:monto,STR_TO_DATE(:fecha, '%d/%m/%Y'),:hora,:origen,:destino,:id_chofer,:id_vehiculo,:asientos, NOW(), NOW())";
+        $sql = "INSERT INTO viaje (monto,fecha,hora,duracion,origen,destino,id_chofer,id_vehiculo,asientos,fecha_crea, fecha_modif) 
+                VALUES (:monto,STR_TO_DATE(:fecha, '%d/%m/%Y'),:hora,:duracion,:origen,:destino,:id_chofer,:id_vehiculo,:asientos, NOW(), NOW())";
         $params = array(
             ":monto" => $form["monto"],
             ":fecha" => $form["fecha"],
             ":hora" => $form["hora"],
+            ":duracion" => $form["duracion"],
             ":origen" => $form["origen"],
             ":destino" => $form["destino"],
             ":id_chofer" => Session::get("id_usuario"),
@@ -149,6 +150,101 @@ class viajeModel extends Model {
         $this->_db->execute($sql, array(":id" => $idPostu));
     }
 
+    /**
+     * 
+     * Dado un datetime y un intervalo de tiempo en segundos, retorna los viajes que se superpongan en ese intervalo de tiempo.
+     * 
+     * @param type $idPostu
+     * @return type
+     */
+    public function getViajesSupuerpuestos($datetime, $segundos) {
+        $sql = "SELECT * FROM `viaje` 
+                WHERE
+                (
+                -- El inicio de mi viaje este entre el inicio y el final de otro viaje
+                    (:dateTime BETWEEN DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') AND DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') + INTERVAL duracion SECOND)
+                    OR 
+                -- El inicio de otro viaje este entre el principio y fin de mi nuevo viaje
+                    (DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') BETWEEN :dateTime AND :dateTime + INTERVAL :segundos SECOND )
+                    OR 
+                -- El fin de otro viaje este entre el principio y fin de mi nuevo viaje
+                    (DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') + INTERVAL duracion SECOND BETWEEN :dateTime AND :dateTime + INTERVAL :segundos SECOND )
+                )
+                and id_chofer = :id_chofer";
+        $chofer = Session::get("id_usuario");
+        $this->_db->execute($sql, array(
+            ":segundos" => $segundos,
+            ":dateTime" => $datetime,
+            ":id_chofer" => $chofer
+                )
+        );
+        return $this->_db->fetchAll();
+    }
+
+    /**
+     * 
+     * Dado un datetime, un intervalo de tiempo en segundos y un idvehiculo,, retorna los viajes que se superpongan en ese intervalo de tiempo con ese vehiculo.
+     * 
+     * @param type $idPostu
+     * @return type
+     */
+    public function getAutosSupuerpuestos($datetime, $segundos, $idVehiculo) {
+        $sql = "SELECT * FROM `viaje` 
+                WHERE
+                (
+                -- El inicio de mi viaje este entre el inicio y el final de otro viaje
+                    (:dateTime BETWEEN DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') AND DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') + INTERVAL duracion SECOND)
+                    OR 
+                -- El inicio de otro viaje este entre el principio y fin de mi nuevo viaje
+                    (DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') BETWEEN :dateTime AND :dateTime + INTERVAL :segundos SECOND )
+                    OR 
+                -- El fin de otro viaje este entre el principio y fin de mi nuevo viaje
+                    (DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') + INTERVAL duracion SECOND BETWEEN :dateTime AND :dateTime + INTERVAL :segundos SECOND )
+                )
+                and id_vehiculo = :id_vehiculo";
+        $this->_db->execute($sql, array(
+            ":segundos" => $segundos,
+            ":dateTime" => $datetime,
+            ":id_vehiculo" => $idVehiculo
+                )
+        );
+        return $this->_db->fetchAll();
+    }
+
+    /**
+     * 
+     * Dado un datetime, un intervalo de tiempo en segundos y un usuario,
+     *  retorna las postulaciones a viajes que se superpongan en ese intervalo 
+     * de tiempo.
+     * 
+     * @param type $idPostu
+     * @return type
+     */
+    public function getPostulacionesSupuerpuestos($datetime, $segundos, $idPasajero) {
+        $sql = "SELECT * FROM `postulacion` inner join viaje  
+                WHERE
+                (
+                -- El inicio de mi viaje este entre el inicio y el final de otro viaje
+                    (:dateTime BETWEEN DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') AND DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') + INTERVAL duracion SECOND)
+                    OR 
+                -- El inicio de otro viaje este entre el principio y fin de mi nuevo viaje
+                    (DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') BETWEEN :dateTime AND :dateTime + INTERVAL :segundos SECOND )
+                    OR 
+                -- El fin de otro viaje este entre el principio y fin de mi nuevo viaje
+                    (DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') + INTERVAL duracion SECOND BETWEEN :dateTime AND :dateTime + INTERVAL :segundos SECOND )
+                )
+                -- que la postulacion este aceptada
+                and postulacion.id_estado = 2
+                and id_pasajero = :id_pasajero";
+        $this->_db->execute($sql, array(
+            ":segundos" => $segundos,
+            ":dateTime" => $datetime,
+            ":id_pasajero" => $idPasajero
+                )
+        );
+        return $this->_db->fetchAll();
+    }
+
     public function cancelarViaje($idviaje) {
         $sql = "UPDATE viaje SET id_estado = 3 WHERE id = :id_viaje";
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
@@ -167,9 +263,9 @@ class viajeModel extends Model {
         $this->_db->execute($sql);
         return $this->_db->fetchAll();
     }
-    
+
     public function buscarViaje($search) {
-        $sql="select viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido
+        $sql = "select viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido
         from viaje 
         inner join estado_viaje on viaje.id_estado = estado_viaje.id
         inner join usuarios on viaje.id_chofer = usuarios.id
@@ -181,7 +277,7 @@ class viajeModel extends Model {
         );
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll();
-    }   
+    }
 
 }
 ?>

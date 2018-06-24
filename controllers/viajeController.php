@@ -6,6 +6,7 @@ class viajeController extends Controller {
     private $_usuario;
     private $_viaje;
     private $_vehiculo;
+    private $_factura;
 
     public function __construct() {
         parent::__construct();
@@ -14,10 +15,12 @@ class viajeController extends Controller {
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         require_once ROOT . 'models' . DS . 'viajeModel.php';
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
+        require_once ROOT . 'models' . DS . 'facturaModel.php';
         $this->_usuario = new usuarioModel();
         $this->_registro = new vehiculoModel();
         $this->_viaje = new viajeModel();
         $this->_vehiculo = new vehiculoModel();
+        $this->_factura = new facturaModel();
     }
 
     public function index() {
@@ -48,6 +51,21 @@ class viajeController extends Controller {
         if (empty($viaje)) {
             Session::setMessage("El viaje requerido no existe.", SessionMessageType::Error);
             $this->redireccionar("perfil");
+        }
+        if ($viaje["id_estado"] == 3) {
+            Session::setMessage("El viaje requerido fue eliminado.", SessionMessageType::Error);
+            $this->redireccionar("perfil");
+        }
+        if (in_array($viaje["id_estado"], [2, 5])) {
+            $postulacionesAceptadas = $this->_viaje->getPostulacionesAceptadas($viaje["id"]);
+            $destinatarios = array();
+            foreach ($postulantes as $postulante) {
+                $destinatarios[] = $postulante["id"];
+            }
+            if (!in_array(Session::get("id_usuario"), $destinatarios)) {
+                Session::setMessage("El viaje requerido solo puede ser visto por el chofer y los pasajeros.", SessionMessageType::Error);
+                $this->redireccionar("perfil");
+            }
         }
         $params["viaje"] = $viaje;
         $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
@@ -84,7 +102,7 @@ class viajeController extends Controller {
         $params["esChofer"] = true;
         $params["usuario"] = $usuario;
         $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
-        $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadas($params["viaje"]["id"]);
+        $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadasCant($params["viaje"]["id"]);
         $params["vehiculo"] = $this->_vehiculo->getVehiculo($viaje["id_vehiculo"]);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
@@ -156,32 +174,40 @@ class viajeController extends Controller {
         $this->_view->renderizar('alta', 'viaje', array("form" => $form));
     }
 
-    public function cancelarViaje() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
-            $this->redireccionar("registro");
-        }
+    public function cancelarViaje($idViaje) {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $idViaje = $this->getPostParam("idViaje");
         $viaje = $this->_viaje->getViaje($idViaje);
         if ($viaje["id_chofer"] == Session::get("usuario")["id"]) {
-            $postulantes = $this->_viaje->getPostulacionesViaje($idviaje);
+            $postulantes = $this->_viaje->getPostulacionesViaje($idViaje);
+            $postulantesAceptados = $this->_viaje->getPostulacionesAceptadas($idViaje);
             try {
                 $this->_viaje->beginTransaction();
+                $destinatarios = array();
+                foreach ($postulantes as $postulante) {
+                    $destinatarios[] = $postulante["id"];
+                    $this->_viaje->rechazarPostulacion($postulante["id_postulacion"]);
+                }
                 $this->_notificacion->crearNotificacion("El usuario nombre apelldo cancelo el viaje al que te habias postulado", $destinatarios, "red");
+                if (sizeof($postulantesAceptados) > 0) {
+                    $calificacion = (sizeof($postulantesAceptados) + 1) * -1;
+                    $this->_notificacion->crearNotificacionSimple("Haz sido penalizado con " . $calificacion . " punto de reputacion por cancelar una postulacion aceptada al viaje nº " . $viaje["id"], $viaje["id_chofer"]);
+                    $this->_usuario->calificacionAutomatica($viaje["id_chofer"], $calificacion);
+                    $this->_usuario->actualizarReputacion($viaje["id_chofer"], $calificacion);
+                }
+                $this->_factura->activarFacturaDeViaje($idViaje);
                 $this->_viaje->cancelarViaje($idViaje);
+                $this->_notificacion->crearNotificacionSimple("La factura del viaje nº " . $viaje["id"] . " esta lista para ser pagada.", $viaje["id_chofer"]);
                 Session::setMessage("El viaje se cancelo exitosamente.", SessionMessageType::Success);
                 $this->_viaje->commit();
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
                 $this->_viaje->rollback();
                 Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
-                $this->redireccionar("/viaje/detalle/" . $idViaje);
             }
         } else {
-            //solo el dueño puede cancelar un viaje
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
         }
     }
 
@@ -194,7 +220,7 @@ class viajeController extends Controller {
         $pasajero = $this->_usuario->getUsuario($postulacion["id_pasajero"]);
         $viaje = $this->_viaje->getViaje($postulacion["id_viaje"]);
         $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
-        $lleno = $this->_viaje->getPostulacionesAceptadas($viaje["id"]) >= $viaje["asientos"];
+        $lleno = $this->_viaje->getPostulacionesAceptadasCant($viaje["id"]) >= $viaje["asientos"];
         if ($lleno) {
             $error = true;
             Session::setMessage("No puede aceptarse esta postulacion, el viaje esta lleno.", SessionMessageType::Error);

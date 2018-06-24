@@ -468,6 +468,18 @@
                         });
                     });
             {% endif %}
+        {% else %}
+                $("#cancelarViaje").click(function () {
+                    var msj;
+                    msj = "Recuerda las reglas de UnAventon: \n\
+            Si el viaje no tiene tiene postulaciones aceptadas no hay ningun problema, pero\n\
+            si aceptaste postulaciones tendras -1 punto reputacion por cancelar un viaje \n\
+            con postulaciones aceptadas y -1 punto por cada postulacion aceptada.";
+                    var ok = confirm(msj);
+                    if (!ok) {
+                        return false;
+                    }
+                });
         {% endif %}
             });
     </script>

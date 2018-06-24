@@ -59,6 +59,31 @@ class facturaModel extends Model {
     }
     
     
+    /**
+     * cambia el estado de una factua a ACTIVA(2) 
+     * @param type $form
+     */
+    public function activarFactura($idFactura) {
+        $sql = "update facturas set id_estado = 2 where id = :id_factura";
+        $params = array(
+            ":id_factura" => $idFactura
+        );
+        $this->_db->execute($sql, $params);
+    }
+    
+    /**
+     * cambia el estado de una factua a ACTIVA(2) 
+     * @param type $form
+     */
+    public function activarFacturaDeViaje($idViaje) {
+        $sql = "update facturas set id_estado = 2 where id_viaje = :id_viaje";
+        $params = array(
+            ":id_viaje" => $idViaje
+        );
+        $this->_db->execute($sql, $params);
+    }
+    
+    
     
 
 }

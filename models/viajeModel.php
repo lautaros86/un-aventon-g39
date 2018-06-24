@@ -74,10 +74,23 @@ class viajeModel extends Model {
      * @param type $idviaje
      * @return type
      */
-    public function getPostulacionesAceptadas($idviaje) {
+    public function getPostulacionesAceptadasCant($idviaje) {
         $sql = "select * from postulacion where id_viaje = :id_viaje and id_estado = 2";
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
         return $this->_db->rowCount();
+    }
+
+    /**
+     * 
+     * Retorna la cantidad de postuilaciones aceptadas para un viaje.
+     * 
+     * @param type $idviaje
+     * @return type
+     */
+    public function getPostulacionesAceptadas($idviaje) {
+        $sql = "select * from postulacion where id_viaje = :id_viaje and id_estado = 2";
+        $this->_db->execute($sql, array(":id_viaje" => $idviaje));
+        return $this->_db->fetchAll();
     }
 
     /**

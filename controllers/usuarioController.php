@@ -286,7 +286,7 @@ class usuarioController extends Controller {
         }
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $vehiculoModel = new vehiculoModel();
-        $usuario = Session::get("usuario");
+        $usuario = $this->_usuario->getUsuario(Session::get("id_usuario"));
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
         $travels = $this->_viajes->getViajesAbiertos();
         $usuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($usuario['id']);
@@ -341,7 +341,7 @@ class usuarioController extends Controller {
             $this->_usuario->beginTransaction();
             $postulacion = $this->_viajes->getPostulacion($idPostu);
             if ($postulacion["id_estado"] == 2) {
-                $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " cancelo su postulacion al viaje nº " . $idViaje, $idChofer);
+                $this->_notificacion->crearNotificacionSimple("Haz sido penalizado con -1 punto de reputacion por cancelar una postulacion aceptada al viaje nº " . $idViaje, $postulacion["id_pasajero"]);
                 $this->_usuario->calificacionAutomatica($postulacion["id_pasajero"], -1);
                 $this->_usuario->actualizarReputacion($postulacion["id_pasajero"], -1);
             }

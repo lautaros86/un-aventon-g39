@@ -37,6 +37,39 @@ class usuarioModel extends Model {
         ));
     }
 
+    /**
+     * 
+     * Genera una calificacion negativa para un usuario determinado sin 
+     * setear id de viaje ni usuario calificante
+     * por lo que se interpreta como calificaciond el sistema.
+     * 
+     * @param type $idUsuario
+     * @param type $valor
+     */
+    public function calificacionAutomatica($idUsuario, $valor) {
+        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`) VALUES (:idusuario, :valor)";
+        $this->_db->execute($sql, array(
+            ':idusuario' => $idUsuario,
+            ':valor' => $valor
+                )
+        );
+    }
+    /**
+     * 
+     * Actualiza la reputacion para un usuario determinado con el valor recibido.
+     * 
+     * @param type $idUsuario
+     * @param type $valor
+     */
+    public function actualizarReputacion($idUsuario, $valor) {
+        $sql = "UPDATE `usuarios` set reputacion = reputacion + :valor where id = :idusuario";
+        $this->_db->execute($sql, array(
+            ':idusuario' => $idUsuario,
+            ':valor' => $valor
+                )
+        );
+    }
+
     public function postular($idUsuario, $idViaje) {
         $sql = "INSERT INTO postulacion (id_pasajero, id_viaje) VALUES (:idusuario, :idviaje)";
         $this->_db->execute($sql, array(
@@ -48,7 +81,7 @@ class usuarioModel extends Model {
     public function cancelarPostulacion($idUsuario, $idViaje) {
         $sql = "UPDATE postulacion SET id_estado = 4 WHERE id_pasajero = :id_pasajero and id_viaje = :idviaje";
         $params = array(':id_pasajero' => $idUsuario,
-                        ':idviaje' => $idViaje);
+            ':idviaje' => $idViaje);
         $this->_db->execute($sql, $params);
     }
 

@@ -119,7 +119,7 @@ class vehiculoController extends Controller {
             $this->redireccionar();
         }
         $idVehiculo = $this->getPostParam("idVehiculo");
-        $vehiculo = $this->_vehiculo->getVehiculo($idVehiculo);
+        $vehiculo = $this->_vehiculo->getVehiculosByUserId($idVehiculo);
         echo json_encode(array("vehiculo" => $vehiculo));
     }
 

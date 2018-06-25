@@ -5,15 +5,18 @@ class usuarioController extends Controller {
     private $_registro;
     private $_usuario;
     private $_viajes;
+    private $_tarjeta;
 
     public function __construct() {
         parent::__construct();
         require_once ROOT . 'models' . DS . 'registroModel.php';
         require_once ROOT . 'models' . DS . 'usuarioModel.php';
         require_once ROOT . 'models' . DS . 'viajeModel.php';
+        require_once ROOT . 'models' . DS . 'tarjetaModel.php';
         $this->_registro = new registroModel();
         $this->_usuario = new usuarioModel();
         $this->_viajes = new viajeModel();
+        $this->_tarjeta = new tarjetaModel();
     }
 
     public function index() {
@@ -289,9 +292,10 @@ class usuarioController extends Controller {
         $usuario = $this->_usuario->getUsuario(Session::get("id_usuario"));
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
         $travels = $this->_viajes->getViajesAbiertos();
+        $tarjetas = $this->_tarjeta->getTarjetasDeUnUsuario($usuario["id"]);
         $usuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($usuario['id']);
         $usuario['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($usuario['id']);
-        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos, "travels" => $travels));
+        $this->_view->renderizar('verUsuario', 'usuario', array('tarjetas'=>$tarjetas, 'usuario' => $usuario, "vehiculos" => $vehiculos, "travels" => $travels));
     }
 
     public function verOtroUsuaurio($id_otroUsuario) {

@@ -32,7 +32,7 @@ class viajeController extends Controller {
             $this->redireccionar();
         }
         $vehiculoModel = new vehiculoModel();
-        $params["vehiculos"] = $vehiculoModel->getVehiculosOfUser(Session::get("id_usuario"));
+        $params["vehiculos"] = $vehiculoModel->getVehiculosByUserId(Session::get("id_usuario"));
         if (sizeof($params["vehiculos"]) == 0) {
             Session::setMessage("No tienes vehiculos para publicar un viaje.", SessionMessageType::Error);
             $this->redireccionar('perfil');
@@ -103,7 +103,7 @@ class viajeController extends Controller {
         $params["usuario"] = $usuario;
         $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
         $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadasCant($params["viaje"]["id"]);
-        $params["vehiculo"] = $this->_vehiculo->getVehiculo($viaje["id_vehiculo"]);
+        $params["vehiculo"] = $this->_vehiculo->getVehiculosByUserId($viaje["id_vehiculo"]);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
 

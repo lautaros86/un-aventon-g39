@@ -33,7 +33,9 @@
                             <i class="fa fa-edit"></i> Editar
                         </a>
                         <br/>
-                        <button class="btn btn-success btn-block" id="publicarViaje" {% if not session.get('chofer') %} disabled=""{% endif %} ><b>PUBLICAR VIAJE </b></button>
+                        <button class="btn btn-success btn-block" id="publicarViaje" {% if (tarjetas is empty) or (session.get('chofer') == 0) %} disabled="" {% endif %} >
+                            <b>PUBLICAR VIAJE </b>
+                        </button>
                     </div>
                     <!-- /.box-body -->
                 </div>

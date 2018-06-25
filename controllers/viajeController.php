@@ -103,7 +103,7 @@ class viajeController extends Controller {
         $params["usuario"] = $usuario;
         $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
         $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadasCant($params["viaje"]["id"]);
-        $params["vehiculo"] = $this->_vehiculo->getVehiculosActivosByUserId($viaje["id_vehiculo"]);
+        $params["vehiculo"] = $this->_vehiculo->getVehiculosById($viaje["id_vehiculo"]);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
 

@@ -42,16 +42,16 @@ class vehiculoController extends Controller {
         }
     }
 
-    public function modificar($form){
+    public function modificar($form) {
         $vehiculoModel = new vehiculoModel();
         $errors = $this->validarPatente($form);
-        
+
 //        $errors = 1;
         if ($errors == 1) {
             Session::setFormErrors("patente", "Esa patente Ud. la tiene cargada.");
         }
-        if ($this->validarAltaVehiculo()==TRUE){
-            $error=1;
+        if ($this->validarAltaVehiculo() == TRUE) {
+            $error = 1;
         }
         if (!$errors) {
             try {
@@ -64,7 +64,7 @@ class vehiculoController extends Controller {
                 Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
                 $this->redireccionar("vehiculo/modificar");
             }
-            } else {
+        } else {
             $form['marca'] = $this->getAlphaNum('marca');
             $form['modelo'] = $this->getAlphaNum('modelo');
             $form['patente'] = $this->getPostParam('patente');
@@ -77,30 +77,36 @@ class vehiculoController extends Controller {
         }
         $this->_view->renderizar('modificar', 'vehiculo', array("form" => $form));
     }
-        
+
     public function eliminarVehiculo($id) {
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $vehiculoModel = new vehiculoModel();
+        $viajesActivosAsociados = $this->_vehiculo->getViajesByVehiculoId($id);
+        if (sizeof($viajesActivosAsociados) > 0) {
+            Session::setMessage("No se puede eliminar un vehiculo asociado a viajes pendientes", SessionMessageType::Error);
+            $this->redireccionar("perfil#misVehiculos");
+        }
         $vehiculoModel->darDeBaja($id);
         $vehiculos = $vehiculoModel->getVehiculosActivosByUserId(Session::get("id_usuario"));
-        if(!(sizeof($vehiculos) > 0)){
+        if (!(sizeof($vehiculos) > 0)) {
             Session::set('chofer', false);
         }
         Session::setMessage("Vehiculo dado de baja", SessionMessageType::Success);
         $this->redireccionar("perfil");
     }
-        
+
     public function restoreVehiculo($id) {
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $vehiculoModel = new vehiculoModel();
         $vehiculoModel->restoreVehiculo($id);
         $vehiculos = $vehiculoModel->getVehiculosActivosByUserId(Session::get("id_usuario"));
-        if(!(sizeof($vehiculos) > 0)){
+        if (!(sizeof($vehiculos) > 0)) {
             Session::set('chofer', false);
         }
         Session::setMessage("Vehiculo dado de baja", SessionMessageType::Success);
         $this->redireccionar("perfil");
     }
+
     public function crear() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);

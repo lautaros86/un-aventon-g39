@@ -11,6 +11,19 @@ class vehiculoModel extends Model {
         return $vehiculo->fetchAll();
     }
 
+    public function getVehiculosById($idVehiculo) {
+        $sql = "select * from vehiculo where id = :id";
+        $params = array(':id' => $idVehiculo);
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getViajesByVehiculoId($idVehiculo) {
+        $sql = "select * from viaje where id_vehiculo = :id_vehiculo and id_estado = 1";
+        $params = array(':id_vehiculo' => $idVehiculo);
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll(PDO::FETCH_ASSOC);
+    }
     public function getVehiculosActivosByUserId($idusuairo) {
         $idusuairo = (int) $idusuairo;
         $sql = "select * from vehiculo where (id_usuario = :idusuario) and (id_estado=1)";

@@ -92,7 +92,7 @@ class vehiculoController extends Controller {
             Session::set('chofer', false);
         }
         Session::setMessage("Vehiculo dado de baja", SessionMessageType::Success);
-        $this->redireccionar("perfil");
+        $this->redireccionar("perfil#misVehiculos");
     }
 
     public function restoreVehiculo($id) {
@@ -104,13 +104,13 @@ class vehiculoController extends Controller {
             Session::set('chofer', false);
         }
         Session::setMessage("Vehiculo dado de baja", SessionMessageType::Success);
-        $this->redireccionar("perfil");
+        $this->redireccionar("perfil#misVehiculos");
     }
 
     public function crear() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
-            $this->redireccionar("registro");
+            $this->redireccionar();
         }
 
         $form = array();
@@ -131,14 +131,15 @@ class vehiculoController extends Controller {
         }
         if (!$errors) {
             try {
-                require_once ROOT . 'models' . DS . 'vehiculoModel.php';
-                $vehiculoModel = new vehiculoModel();
-                $vehiculoModel->insertarVehiculo($form, Session::get("usuario")["id"]);
+                $this->_vehiculo->beginTransaction();
+                $this->_vehiculo->insertarVehiculo($form, Session::get("usuario")["id"]);
                 Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
                 Session::destroy("form");
                 Session::set('chofer', true);
+                $this->_vehiculo->commit();
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {
+                $this->_vehiculo->rollBacks();
                 Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
                 $this->redireccionar("vehiculo/alta");
             }
@@ -173,7 +174,7 @@ class vehiculoController extends Controller {
             $this->redireccionar();
         }
         $idVehiculo = $this->getPostParam("idVehiculo");
-        $vehiculo = $this->_vehiculo->getVehiculosActivosByUserId($idVehiculo);
+        $vehiculo = $this->_vehiculo->getVehiculosById($idVehiculo);
         echo json_encode(array("vehiculo" => $vehiculo));
     }
 

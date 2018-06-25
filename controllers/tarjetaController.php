@@ -51,14 +51,12 @@ class tarjetaController extends Controller {
      * @param type $id
      */
     public function darDeBajaTarjeta($id) {
-        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
-        $vehiculoModel = new vehiculoModel();
         $this->_tarjeta->eliminarTarjeta($id);
         $vehiculos = $vehiculoModel->getVehiculosByUserId(Session::get("id_usuario"));
         if (!(sizeof($vehiculos) > 0)) {
             Session::set('chofer', false);
         }
-        Session::setMessage("Vehiculo dado de baja", SessionMessageType::Success);
+        Session::setMessage("Tarjeta dada de baja", SessionMessageType::Success);
         $this->redireccionar("perfil");
     }
 

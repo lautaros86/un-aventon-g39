@@ -54,34 +54,4 @@
             </div>
         </form>
     </div>
-{% endblock %}
-
-
-{% block script %}
-    {{parent()}}
-    <script>
-        $().ready(function () {
-
-            $(".edit").click(function (event) {
-                var elem = $(event.target);
-                if (elem.is("i")) {
-                    elem = $(elem.parent());
-                }
-                console.log(elem.data("id"))
-                alert("Modificar vehiculo con id: " + elem.data("id"));
-            });
-            $(".remove").click(function (event) {
-                ok = confirm("¿Esta seguro que desea eliminar este vehiculo?");
-                if (ok) {
-                    var elem = $(event.target);
-                    if (elem.is("i")) {
-                        elem = $(elem.parent());
-                    }
-                    alert("Eliminar vehiculo con id: " + elem.data("id"));
-                } else {
-                    alert("Pedido cancelado");
-                }
-            });
-        });
-    </script>
-{% endblock %}
+{% endblock %}    

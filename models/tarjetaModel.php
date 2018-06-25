@@ -41,8 +41,8 @@ class tarjetaModel extends Model {
     }
     //terminar de modificar
     public function darDeBajaTarjeta ($id){
-        $sql="UPDATE `vehiculo` SET `estado`= 1 WHERE id=:idvehiculo";
-        $params= array (":idvehiculo"=>$id);
+        $sql="UPDATE vehiculo SET estado = 1 WHERE id=:idTarjeta";
+        $params= array (":idTarjeta"=>$id);
         $this->_db->execute($sql, $params);
         //return $this->db->fetch();
     }

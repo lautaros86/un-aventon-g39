@@ -1,11 +1,32 @@
-<div class="post">
-    <div class="user-block">
-        <div class ="pull-left">
-            <a>Marca: Visa</a>
-            <br><a>Nombre y Apellido Tarjeta</a>
-            <br><a>numero: 1234-5678-9012-3456</a>
-            <br><a>Vencimiento: mm/aaaa</a>
-        </div>
-        <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+<!-- Post -->
+<div class="veiculos">
+    <h3>Listado de Tarjetas   <a class="btn btn-success pull-right" href="/tarjeta/alta">Agregar Tarjeta</a>
+    </h3>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Titular</th>
+                    <th>vto_mes</th>
+                    <th>vto_añio</th>                   
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarjeta in tarjetas %}
+                    <tr>
+                        <td>{{tarjeta.numero}}</td>
+                        <td>{{tarjeta.nombre}}</td>
+                        <td>{{tarjeta.vto_mes}}</td>
+                        <td>{{tarjeta.vto_anio}}</td>                        
+                        <td>
+                            <button type="button" class="btn btn-danger btn-xs remove" id="bajaTarjeta" data-idvehiculo="{{tarjeta.id}}" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
+                                <i class="fa fa-times"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>

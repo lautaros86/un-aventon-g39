@@ -293,6 +293,9 @@ class viajeController extends Controller {
         } elseif ($form['monto'] <= 0) {
             Session::setFormErrors("monto", "El monto debe ser mayor a 0.");
             $errors = true;
+        } elseif (!preg_match('/^[0-9]*$/', $form['monto'])) {
+            Session::setFormErrors("monto", "El monto debe ser un número entero.");
+            $errors = true;
         }
         if ($form['origen'] == "") {
             Session::setFormErrors("origen", "El origen es obligatorio.");

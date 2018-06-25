@@ -1,4 +1,4 @@
-{% extends 'layoutPerfil.html.twig' %}
+{% extends 'layout.html.twig' %}
 {% block title %}
     UnAventon - Viaje
 {% endblock %}
@@ -18,7 +18,7 @@
 
 {% endblock %} 
 
-{% block subContenido %}
+{% block contenido %}
     <div class="box">
         <div class="box-header">
             <h3 class="box-title">Publicar nuevo viaje</h3>
@@ -28,65 +28,86 @@
             <div class="box-body">
                 <div class=" row">
                     <div class=" col-md-6 col-md-offset-3">
-                        <div class="form-group {% if errors.origen is defined  %}has-error{% endif %}">
-                            <label for="origen">Origen: </label>
-                            <input type="text" class="form-control" name="origen" id="origen" placeholder="Origen" {% if form is defined  %}value="{{form.origen}}"{% endif %}>
 
+                        <div class="col-md-12 form-group {% if errors.origen is defined  %}has-error{% endif %}">
+                            <label for="origen">Origen: </label>                                   
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-map"></i> A</span>
+                                <input type="text" class="form-control" name="origen" id="origen" placeholder="Origen" {% if form is defined  %}value="{{form.origen}}"{% endif %}>
+                            </div>
                             {% if errors.origen is defined %}
                                 {% for err_msg in errors.origen %}
                                     <span class="help-block">{{err_msg}}</span>
                                 {% endfor %}
                             {% endif %}
                         </div>
-                        <div class="form-group {% if errors.destino is defined  %}has-error{% endif %}">
+
+                        <div class="col-md-12 form-group {% if errors.destino is defined  %}has-error{% endif %}">
                             <label for="origen">Destino: </label>
-                            <input type="text" class="form-control" name="destino" id="destino"
-                                   placeholder="Destino" {% if form is defined  %}value="{{form.destino}}"{% endif %}>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-map"></i> B</span>
+                                <input type="text" class="form-control" name="destino" id="destino"
+                                       placeholder="Destino" {% if form is defined  %}value="{{form.destino}}"{% endif %}>
+                            </div>
                             {% if errors.destino is defined %}
                                 {% for err_msg in errors.destino %}
                                     <span class="help-block">{{err_msg}}</span>
                                 {% endfor %}
                             {% endif %}
                         </div>
-                        <div class="col-md-12">
-                            <div id="map"></div>
-                            <div id="directions-panel"></div>
-                            <input id="duracion" readonly="" name="duracion" hidden=""/>
-                        </div>
-                        <div class="form-group {% if errors.fecha is defined  %}has-error{% endif %}">
+                        <input id="duracion" readonly="" name="duracion" hidden=""/>
+
+                        <div class="col-md-4 form-group {% if errors.fecha is defined  %}has-error{% endif %}">
                             <label for="origen">Fecha: </label>
-                            <input data-date-start-date="+1d" type="fecha" class="form-control" id="fecha" name="fecha"
-                                   placeholder="Fecha" autocomplete="off" 
-                                   {% if form is defined  %}value="{{form.fecha}}"{% endif %}>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <input data-date-start-date="+1d" type="fecha" class="form-control" id="fecha" name="fecha"
+                                       placeholder="Fecha" autocomplete="off" 
+                                       {% if form is defined  %}value="{{form.fecha}}"{% endif %}>
+                            </div>      
                             {% if errors.fecha is defined %}
                                 {% for err_msg in errors.fecha %}
                                     <span class="help-block">{{err_msg}}</span>
                                 {% endfor %}
                             {% endif %}
-                        </div>      
-                        <div class="bootstrap-timepicker">
-                            <div class="form-group {% if errors.hora is defined  %}has-error{% endif %}">
-                                <label for="origen">Hora: </label>
-                                <input type="text" class="form-control timepicker" 
-                                       name="hora" id="hora" placeholder="Hora" {% if form is defined  %}value="{{form.hora}}"{% endif %}
-                                       placeholder="Ingrese cantidad de hora">
-                                {% if errors.hora is defined %}
-                                    {% for err_msg in errors.hora %}
-                                        <span class="help-block">{{err_msg}}</span>
-                                    {% endfor %}
-                                {% endif %}
+                        </div>    
+
+                        <div class="col-md-4">
+                            <div class="bootstrap-timepicker">
+                                <div class="form-group {% if errors.hora is defined  %}has-error{% endif %}">
+                                    <label for="origen">Hora: </label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                        <input type="text" class="form-control timepicker" 
+                                               name="hora" id="hora" placeholder="Hora" {% if form is defined  %}value="{{form.hora}}"{% endif %}
+                                               placeholder="Ingrese cantidad de hora">
+                                    </div>
+                                    {% if errors.hora is defined %}
+                                        {% for err_msg in errors.hora %}
+                                            <span class="help-block">{{err_msg}}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group {% if errors.monto is defined  %}has-error{% endif %}">
+
+                        <div class="col-md-4 form-group {% if errors.monto is defined  %}has-error{% endif %}">
                             <label for="origen">Monto por asiento: </label>
-                            <input type="text" class="form-control" name="monto" id="monto" placeholder="monto" {% if form is defined  %}value="{{form.monto}}"{% endif %}>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="text" class="form-control" name="monto" id="monto" placeholder="999" {% if form is defined  %}value="{{form.monto}}"{% endif %}>
+                                <span class="input-group-addon">.00</span>
+                            </div>
                             {% if errors.monto is defined %}
                                 {% for err_msg in errors.monto %}
                                     <span class="help-block">{{err_msg}}</span>
                                 {% endfor %}
                             {% endif %}
                         </div>
-                        <div class="form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
+
+                        <div class="col-md-6 form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
                             <label for="origen">Vehiculo: </label>
                             <select class="form-control" name="idVehiculo" id="selectVehiculo" >
                                 {% for vehiculo in params.vehiculos %}
@@ -101,7 +122,8 @@
                                 {% endfor %}
                             {% endif %}
                         </div>
-                        <div class="form-group {% if errors.asientos is defined  %}has-error{% endif %}">
+
+                        <div class="col-md-6 form-group {% if errors.asientos is defined  %}has-error{% endif %}">
                             <label for="origen">Cantidad de asientos: </label>
                             <select class="form-control" name="asientos" id="selectAsientos" >
                                 {% for i in range(1, params.vehiculos[0].asientos) %}
@@ -116,6 +138,7 @@
                                 {% endfor %}
                             {% endif %}
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -124,6 +147,12 @@
                 <a href="/perfil" class="btn btn-danger pull-left" type="button" id="submitform">Cancelar</a>
             </div>
         </form>
+
+        <div>
+            <div id="map"></div>
+            <div id="directions-panel"></div>
+            <br/>
+        </div>
 
     </div>
 </div>
@@ -148,6 +177,19 @@
         var map;
         var verifRuta = false;
         $().ready(function () {
+
+            // Function to validate price
+            var pPrice = /^[0-9]*$/;
+            $("#monto").blur(function () {
+                var priceRound = document.getElementById("monto").value;
+                if (priceRound.trim().search(pPrice) == -1) {
+                    alert("El precio es incorrecto! Solo se aceptan valores enteros.");
+                } else {
+                    var priceHack = parseFloat(priceRound).split();
+                    document.getElementById("monto").value = priceHack;
+                }
+            });
+
 
             $("#selectVehiculo").change(function () {
                 $.ajax({

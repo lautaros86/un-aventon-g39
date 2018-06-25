@@ -25,7 +25,7 @@ class vehiculoModel extends Model {
      * @return type
      */
     public function cantVehiculos($iduser) {
-        $sql = "select * from vehiculo where id_usuario = :id_usuario and estado = 0";
+        $sql = "select * from vehiculo where id_usuario = :id_usuario and id_estado = 0";
         $params = array(":id_usuario"=> $iduser);
         $this->_db->execute($sql, $params);
         return $this->_db->rowCount();

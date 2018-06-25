@@ -11,9 +11,25 @@ class vehiculoModel extends Model {
         return $vehiculo->fetchAll();
     }
 
-    public function getVehiculosByUserId($idusuairo) {
+    public function getVehiculosActivosByUserId($idusuairo) {
         $idusuairo = (int) $idusuairo;
         $sql = "select * from vehiculo where (id_usuario = :idusuario) and (id_estado=1)";
+        $params = array(':idusuario' => $idusuairo);
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getVehiculosTodosByUserId($idusuairo) {
+        $idusuairo = (int) $idusuairo;
+        $sql = "select * from vehiculo where id_usuario = :idusuario";
+        $params = array(':idusuario' => $idusuairo);
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getVehiculosInactivosByUserId($idusuairo) {
+        $idusuairo = (int) $idusuairo;
+        $sql = "select * from vehiculo where (id_usuario = :idusuario)  and (id_estado=2)";
         $params = array(':idusuario' => $idusuairo);
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll(PDO::FETCH_ASSOC);
@@ -40,6 +56,12 @@ class vehiculoModel extends Model {
     }
     public function darDeBaja ($id){
         $sql="UPDATE `vehiculo` SET `id_estado`= 2 WHERE id=:idvehiculo";
+        $params= array (":idvehiculo"=>$id);
+        $this->_db->execute($sql, $params);
+    }
+    
+    public function restoreVehiculo($id){
+        $sql="UPDATE `vehiculo` SET `id_estado`= 1 WHERE id=:idvehiculo";
         $params= array (":idvehiculo"=>$id);
         $this->_db->execute($sql, $params);
     }

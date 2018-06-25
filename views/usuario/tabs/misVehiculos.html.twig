@@ -1,7 +1,6 @@
 <!-- Post -->
 <div class="veiculos">
-    <h3>Listado de vehiculos    <a class="btn btn-success pull-right" href="/vehiculo/alta">Agregar Vehiculo</a>
-</h3>
+    <h3>Listado de vehiculos activos  <a class="btn btn-success pull-right" href="/vehiculo/alta">Agregar Vehiculo</a></h3>
     <hr>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -28,6 +27,42 @@
                                 <i class="fa fa-pencil"></i></button>
                             <button type="button" class="btn btn-danger btn-xs remove removeCar" data-idvehiculo="{{vehiculo.id}}" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
                                 <i class="fa fa-times"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<br/>
+<br/>
+<div class="veiculos">
+    <h3>Listado de vehiculos dados de baja</h3>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Patente</th>
+                    <th>Asientos</th>
+                    <th>Baul</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehiculo in vehiculosInactivos %}
+                    <tr>
+                        <td>{{vehiculo.marca}}</td>
+                        <td>{{vehiculo.modelo}}</td>
+                        <td>{{vehiculo.patente}}</td>
+                        <td>{{vehiculo.asientos}}</td>
+                        <td>{% if vehiculo.baul %}SI{% else %}NO{% endif %}</td>
+                        <td>
+                            <button type="button" class="btn btn-info btn-xs restoreCar" data-idvehiculo="{{vehiculo.id}}" data-widget="recuperar" data-toggle="tooltip" title="" data-original-title="Recuperar">
+                                <i class="fa fa-recycle"></i>
+                            </button>
                         </td>
                     </tr>
                 {% endfor %}

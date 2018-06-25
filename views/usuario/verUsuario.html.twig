@@ -52,8 +52,19 @@
         var bandera = true;
         var banderaP = true;
         $().ready(function () {
+            $(function () {
+                var hash = window.location.hash;
+                hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+                $('.nav-tabs a').click(function (e) {
+                    $(this).tab('show');
+                    var scrollmem = $('body').scrollTop();
+                    window.location.hash = this.hash;
+                    $('html,body').scrollTop(scrollmem);
+                });
+            });
             $(".edit").click(function (event) {
-                 
+
                 var elem = $(event.target);
                 if (elem.is("i")) {
                     elem = $(elem.parent());
@@ -70,6 +81,18 @@
                         elem = $(elem.parent());
                     }
                     $(location).attr('href', '/vehiculo/eliminarVehiculo/' + elem.data('idvehiculo'));
+                } else {
+                    alert("Pedido cancelado");
+                }
+            });
+            $(".restoreCar").click(function (event) {
+                ok = confirm("¿Esta seguro que desea habilitar este vehiculo?");
+                if (ok) {
+                    var elem = $(event.target);
+                    if (elem.is("i")) {
+                        elem = $(elem.parent());
+                    }
+                    $(location).attr('href', '/vehiculo/restoreVehiculo/' + elem.data('idvehiculo'));
                 } else {
                     alert("Pedido cancelado");
                 }
@@ -98,16 +121,16 @@
         });
         $(".removeTarjeta").click(function (event) {
             ok = confirm("¿Esta seguro que desea eliminar esta tarjeta?");
-                if (ok) {
-                    var elem = $(event.target);
-                    if (elem.is("i")) {
-                        elem = $(elem.parent());
-                    }
-                    //$(location).attr('href', 'tarjeta/darDeBajaTarjeta/' + elem.data('idTarjeta'));
-                } else {
-                    alert("Pedido cancelado");
+            if (ok) {
+                var elem = $(event.target);
+                if (elem.is("i")) {
+                    elem = $(elem.parent());
                 }
+                //$(location).attr('href', 'tarjeta/darDeBajaTarjeta/' + elem.data('idTarjeta'));
+            } else {
+                alert("Pedido cancelado");
+            }
         });
-       
+
     </script>
 {% endblock %}

@@ -52,7 +52,7 @@ class tarjetaController extends Controller {
      */
     public function darDeBajaTarjeta($id) {
         $this->_tarjeta->eliminarTarjeta($id);
-        $vehiculos = $vehiculoModel->getVehiculosByUserId(Session::get("id_usuario"));
+        $vehiculos = $vehiculoModel->getVehiculosActivosByUserId(Session::get("id_usuario"));
         if (!(sizeof($vehiculos) > 0)) {
             Session::set('chofer', false);
         }

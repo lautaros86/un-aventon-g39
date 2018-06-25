@@ -82,7 +82,19 @@ class vehiculoController extends Controller {
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $vehiculoModel = new vehiculoModel();
         $vehiculoModel->darDeBaja($id);
-        $vehiculos = $vehiculoModel->getVehiculosByUserId(Session::get("id_usuario"));
+        $vehiculos = $vehiculoModel->getVehiculosActivosByUserId(Session::get("id_usuario"));
+        if(!(sizeof($vehiculos) > 0)){
+            Session::set('chofer', false);
+        }
+        Session::setMessage("Vehiculo dado de baja", SessionMessageType::Success);
+        $this->redireccionar("perfil");
+    }
+        
+    public function restoreVehiculo($id) {
+        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
+        $vehiculoModel = new vehiculoModel();
+        $vehiculoModel->restoreVehiculo($id);
+        $vehiculos = $vehiculoModel->getVehiculosActivosByUserId(Session::get("id_usuario"));
         if(!(sizeof($vehiculos) > 0)){
             Session::set('chofer', false);
         }
@@ -155,7 +167,7 @@ class vehiculoController extends Controller {
             $this->redireccionar();
         }
         $idVehiculo = $this->getPostParam("idVehiculo");
-        $vehiculo = $this->_vehiculo->getVehiculosByUserId($idVehiculo);
+        $vehiculo = $this->_vehiculo->getVehiculosActivosByUserId($idVehiculo);
         echo json_encode(array("vehiculo" => $vehiculo));
     }
 

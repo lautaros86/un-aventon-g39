@@ -53,12 +53,14 @@
         var banderaP = true;
         $().ready(function () {
             $(".edit").click(function (event) {
+                 
                 var elem = $(event.target);
                 if (elem.is("i")) {
                     elem = $(elem.parent());
                 }
                 console.log(elem.data("id"))
-                alert("Modificar vehiculo con id: " + elem.data("id"));
+                alert("Modificar vehiculo con id: " + elem.data("idvehiculo"));
+                $(location).attr('href', 'vehiculo/modificar/' + elem.data('idvehiculo'));
             });
             $(".remove").click(function (event) {
                 ok = confirm("¿Esta seguro que desea eliminar este vehiculo?");

@@ -42,6 +42,42 @@ class vehiculoController extends Controller {
         }
     }
 
+    public function modificar($form){
+        $vehiculoModel = new vehiculoModel();
+        $errors = $this->validarPatente($form);
+        
+//        $errors = 1;
+        if ($errors == 1) {
+            Session::setFormErrors("patente", "Esa patente Ud. la tiene cargada.");
+        }
+        if ($this->validarAltaVehiculo()==TRUE){
+            $error=1;
+        }
+        if (!$errors) {
+            try {
+                require_once ROOT . 'models' . DS . 'vehiculoModel.php';
+                $vehiculoModel->modificar($form);
+                Session::setMessage("Vehiculo Modificado", SessionMessageType::Success);
+                Session::destroy("form");
+                $this->redireccionar("perfil");
+            } catch (PDOException $e) {
+                Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
+                $this->redireccionar("vehiculo/modificar");
+            }
+            } else {
+            $form['marca'] = $this->getAlphaNum('marca');
+            $form['modelo'] = $this->getAlphaNum('modelo');
+            $form['patente'] = $this->getPostParam('patente');
+            $form['asientos'] = $this->getPostParam('asientos');
+            $form['baul'] = $this->getAlphaNum('baul');
+            $form["baul"] = $form["baul"] == "on" ? 1 : 0;
+            Session::set("form", $form);
+            Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
+            $this->redireccionar("vehiculo/modificar");
+        }
+        $this->_view->renderizar('modificar', 'vehiculo', array("form" => $form));
+    }
+        
     public function eliminarVehiculo($id) {
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $vehiculoModel = new vehiculoModel();

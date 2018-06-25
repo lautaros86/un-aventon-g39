@@ -292,10 +292,10 @@ class usuarioController extends Controller {
         $usuario = $this->_usuario->getUsuario(Session::get("id_usuario"));
         $vehiculos = $vehiculoModel->getVehiculosByUserId($usuario['id']);
         $travels = $this->_viajes->getViajesAbiertos();
-        $tarjetas = $this->_tarjeta->getTarjetasDeUnUsuario($usuario["id"]);
+        $tarjetas = $this->_tarjeta->getTarjetasDeUnUsuario($usuario['id']);
         $usuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($usuario['id']);
         $usuario['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($usuario['id']);
-        $this->_view->renderizar('verUsuario', 'usuario', array('tarjetas'=>$tarjetas, 'usuario' => $usuario, "vehiculos" => $vehiculos, "travels" => $travels));
+        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, "vehiculos" => $vehiculos, "travels" => $travels, "tarjetas" =>$tarjetas));
     }
 
     public function verOtroUsuaurio($id_otroUsuario) {

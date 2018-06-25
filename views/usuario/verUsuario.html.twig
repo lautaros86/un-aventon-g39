@@ -62,7 +62,7 @@
                 alert("Modificar vehiculo con id: " + elem.data("idvehiculo"));
                 $(location).attr('href', 'vehiculo/modificar/' + elem.data('idvehiculo'));
             });
-            $(".remove").click(function (event) {
+            $(".removeCar").click(function (event) {
                 ok = confirm("¿Esta seguro que desea eliminar este vehiculo?");
                 if (ok) {
                     var elem = $(event.target);
@@ -88,13 +88,26 @@
                             "language": {
                                 url: "http://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
                             }
-                        });                                
+                        });
                     },
                     error: function () {
                         console.log("todo mal");
                     }
                 });
             }
-        })
+        });
+        $(".removeTarjeta").click(function (event) {
+            ok = confirm("¿Esta seguro que desea eliminar esta tarjeta?");
+                if (ok) {
+                    var elem = $(event.target);
+                    if (elem.is("i")) {
+                        elem = $(elem.parent());
+                    }
+                    //$(location).attr('href', 'tarjeta/darDeBajaTarjeta/' + elem.data('idTarjeta'));
+                } else {
+                    alert("Pedido cancelado");
+                }
+        });
+       
     </script>
 {% endblock %}

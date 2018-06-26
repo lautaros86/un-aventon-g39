@@ -59,51 +59,40 @@ class viajeController extends Controller {
         if (in_array($viaje["id_estado"], [2, 5])) {
             $postulacionesAceptadas = $this->_viaje->getPostulacionesAceptadas($viaje["id"]);
             $destinatarios = array();
-            foreach ($postulantes as $postulante) {
+            foreach ($postulacionesAceptadas as $postulante) {
                 $destinatarios[] = $postulante["id"];
             }
-            if (!in_array(Session::get("id_usuario"), $destinatarios)) {
+            if ( $viaje["id_chofer"] != Session::get("id_usuario") && !in_array(Session::get("id_usuario"), $destinatarios)) {
                 Session::setMessage("El viaje requerido solo puede ser visto por el chofer y los pasajeros.", SessionMessageType::Error);
                 $this->redireccionar("perfil");
             }
         }
         $params["viaje"] = $viaje;
-        $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
-        $usuario = Session::get("usuario");
-        if ($chofer["id"] == $usuario["id"]) {
-            $this->detalleChofer($viaje, $chofer, $usuario);
+        $params["vehiculo"] = $this->_vehiculo->getVehiculosById($viaje["id_vehiculo"]);
+        $params["chofer"] = $this->_usuario->getUsuario($viaje["id_chofer"]);
+        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
+        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
+        $params["usuario"] = Session::get("usuario");
+        $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadasCant($params["viaje"]["id"]);
+        $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
+        if ($params["chofer"]["id"] == $params["usuario"]["id"]) {
+            $params["esChofer"] = true;
+            $this->_view->renderizar('detalle', 'viaje', $params);
         } else {
-            $this->detallePostulante($viaje, $chofer, $usuario);
+            $params["esChofer"] = false;
+            $this->detallePostulante($params);
         }
     }
 
-    private function detallePostulante($viaje, $chofer, $usuario) {
-        $params["viaje"] = $viaje;
-        $params["chofer"] = $chofer;
-        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
-        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
-        $params["esChofer"] = false;
-        $postulaciones = $this->_viaje->getPostulacionesViaje($viaje["id"]);
+    private function detallePostulante($params) {
+        $postulaciones = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
         $params["postulado"] = false;
         foreach ($postulaciones as $postu) {
-            if ($postu["id_pasajero"] == $usuario["id"]) {
+            if ($postu["id_pasajero"] == $params["usuario"]["id"]) {
                 $params["postulacion"] = $postu;
                 $params["postulado"] = true;
             }
         }
-        $this->_view->renderizar('detalle', 'viaje', $params);
-    }
-
-    private function detalleChofer($viaje, $chofer, $usuario) {
-        $params["viaje"] = $viaje;
-        $params["chofer"] = $chofer;
-        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
-        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
-        $params["esChofer"] = true;
-        $params["usuario"] = $usuario;
-        $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
-        $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadasCant($params["viaje"]["id"]);
-        $params["vehiculo"] = $this->_vehiculo->getVehiculosById($viaje["id_vehiculo"]);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
 

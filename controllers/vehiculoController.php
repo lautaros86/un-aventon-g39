@@ -105,12 +105,35 @@ class vehiculoController extends Controller {
         $this->redireccionar("perfil#misVehiculos");
     }
 
+    public function ajaxVerificarPatente($patente) {
+        $vehiculo = $this->_vehiculo->getByPatente($patente);
+        $response = array();
+        $response["ok"] = false;
+        if ($vehiculo) {
+            // solo nueva vinculacion.
+            $duenios = $this->_vehiculo->getDueniosDe($vehiculo["id"]);
+            $idDuenios = array();
+            foreach ($duenios as $duenio) {
+                $idDuenios[] = $duenio["id_usuario"];
+            }
+            if (in_array(Session::get("id_usuario"), $idDuenios)) {
+                $response["mensaje"] = "<p>Esa patente ya esta asociada a su cuenta.</p>";
+                $response["ok"] = true;
+            } else {
+                $response["ok"] = true;
+                $response["mensaje"] = "<p>El sistema detecto que la patente que esta ingresando ya esta cargada por otro/s usuarios.</p>
+                    <p>Si desea asociar este vehiculo a su cuenta, puede enviar el formulario con la patente y este se vinculara con ud.</p>
+                    <p>Caso contrario recomendamos cambie la patente.</p>   ";
+            }
+        }
+        echo json_encode($response);
+    }
+
     public function crear() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
             $this->redireccionar();
         }
-
         $form = array();
         $form['patente'] = $this->getAlphaNum('patente');
         $form['marca'] = $this->getAlphaNum('marca');
@@ -131,10 +154,13 @@ class vehiculoController extends Controller {
             } else {
                 try {
                     $this->_vehiculo->beginTransaction();
-                    $this->_vehiculo->agragerDuenioPara(Session::get("id_usuario"), $vehiculo["id"]);
                     $this->_notificacion->crearNotificacion("El usuario " . Session::get("usuario")["nombre"] . " " . Session::get("usuario")["apellido"] . " agrego el vehiculo con patente " . $form['patente'], $idDuenios);
+                    $this->_vehiculo->agragerDuenioPara(Session::get("id_usuario"), $vehiculo["id"]);
                     Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
+                    $this->_vehiculo->commit();
                 } catch (PDOException $e) {
+                                        echo $e->getMessage();
+
                     $this->_vehiculo->rollback();
                     Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
                     $this->redireccionar("vehiculo/alta");
@@ -152,7 +178,7 @@ class vehiculoController extends Controller {
                     $this->_vehiculo->commit();
                     $this->redireccionar("perfil");
                 } catch (PDOException $e) {
-                    $this->_vehiculo->rollBacks();
+                    $this->_vehiculo->rollBack();
                     Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
                     $this->redireccionar("vehiculo/alta");
                 }

@@ -9,12 +9,12 @@
             <span class="description">{{viaje.fecha | date ("d/m/Y")}} {{viaje.hora}}</span>
         </div>
         <!-- /.user-block -->
-        
-         <p><strong>Origen: </strong>{{viaje.origen}}</p>
-         <p><strong>Destino: </strong>{{viaje.destino}}</p>
-         <p><strong>Monto del viaje: </strong>{{viaje.monto}}$</p>
-         <p><strong>Lugares disponibles: </strong>{{viaje.asientos}}</p>
-        
+
+        <p><strong>Origen: </strong>{{viaje.origen}}</p>
+        <p><strong>Destino: </strong>{{viaje.destino}}</p>
+        <p><strong>Monto del viaje: </strong>{{viaje.monto}}$</p>
+        <p><strong>Lugares disponibles: </strong>{{viaje.asientos}}</p>
+
         <p>
             <a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
                 Ver Detalle
@@ -23,6 +23,31 @@
 
     </div>
 {% endfor %}
+<h4>Viajes propios</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Pasajeros</th>
+            <th>$ Asiento</th>
+            <th>$ Total</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for viaje in travels %}
+            <tr>
+                <td>{{viaje.origen}}</td>
+                <td>{{viaje.destino}}</td>
+                <td>{{viaje.asientos}}</td>
+                <td>{{viaje.monto}}</td>
+                <td>{{viaje.monto * viaje.asientos}}</td>
+                <td>{{viaje.estadonombre}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 <!-- /.post -->
 
 

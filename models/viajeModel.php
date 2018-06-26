@@ -276,6 +276,20 @@ class viajeModel extends Model {
         $this->_db->execute($sql);
         return $this->_db->fetchAll();
     }
+    
+    /**
+     * retorna todos los viajes de un chofer
+     * @return type
+     */
+    public function getViajesDe($idUsuario) {
+        $sql = "select estado_viaje.nombre as estadonombre, viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
+        from viaje 
+        inner join estado_viaje on viaje.id_estado = estado_viaje.id
+        inner join usuarios on viaje.id_chofer = usuarios.id
+        where viaje.id_chofer = :id_chofer";
+        $this->_db->execute($sql, array(":id_chofer" => $idUsuario));
+        return $this->_db->fetchAll();
+    }
 
     public function buscarViaje($search) {
         $sql = "select viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido

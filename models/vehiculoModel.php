@@ -28,8 +28,8 @@ class vehiculoModel extends Model {
     }
 
     public function agragerDuenioPara($id_usuario, $id_vehiculo) {
-        $sql = "INSERT INTO usuario_vehiculo (id_usuario, id_vehiculo, fecha_crea, fecha_modi) 
-            VALUES (:id_usuario, :id_vehiculo, NOW(), NOW())";
+        $sql = "INSERT INTO `usuario_vehiculo`(`id_usuario`, `id_vehiculo`, `fecha_crea`, `fecha_modi`) 
+            VALUES (:id_usuario, :id_vehiculo, NOW(),NOW())";
         $params = array(':id_usuario' => $id_usuario, ':id_vehiculo' => $id_vehiculo);
         $this->_db->execute($sql, $params);
     }

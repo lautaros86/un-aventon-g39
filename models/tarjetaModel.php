@@ -5,6 +5,7 @@ class tarjetaModel extends Model {
     public function __construct() {
         parent::__construct();
     }
+
     /**
      * recibo el id del usuario y retorno todas sus tarjetas de crediro 
      * @param type $id
@@ -12,10 +13,11 @@ class tarjetaModel extends Model {
      */
     public function getTarjetasDeUnUsuario($id) {
         $sql = "select * from tarjeta where id_usuario = :id ";
-        $params = array(":id"=>$id);
+        $params = array(":id" => $id);
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll();
     }
+
     /**
      * retorna con el id de un usuario todas sus tarjetas de credito
      * @param type $id
@@ -23,41 +25,51 @@ class tarjetaModel extends Model {
      */
     public function getTarjetaDeUnUsuario($id) {
         $sql = "select * from tarjeta where id_usuario = :id";
-        $params = array(":id"=> $id);
+        $params = array(":id" => $id);
         $this->_db->execute($sql, $params);
         return $this->_db->fetch();
     }
+
     //terminar de modificar
     public function insertarTarjeta($form, $idUsuario) {
         // VALUES 
-        $sql = "INSERT INTO tarjeta VALUES (NULL,:numero, :nombre, :vtoMes, :vtoAnio, :idUser)";
-               
-        $params = array(":numero"=> $form["numero"], 
-                        ":nombre"=>$form["nombre"], 
-                        ":vtoMes"=>$form["mesVencimiento"],
-                        ":idUser"=>$idUsuario, 
-                        ":vtoAnio"=>$form["anioVencimiento"]);
+        $sql = "INSERT INTO tarjeta VALUES (NULL,:numero, :nombre, :nombreBanco ,:vtoMes, :vtoAnio, :idUser, 1)";
+
+        $params = array(":numero" => $form["numero"],
+            ":nombre" => $form["nombre"],
+            ":vtoMes" => $form["mesVencimiento"],
+            ":idUser" => $idUsuario,
+            ":vtoAnio" => $form["anioVencimiento"],
+            ":nombreBanco" => $form["entidad"]);
+        $this->_db->execute($sql, $params);
+        $idTarjeta = $this->_db->lastInsertId();
+        $sql = "INSERT INTO usuario_tarjeta(id_usuario, id_tarjeta) 
+            VALUES (:id_usuario, :id_tarjeta)";
+        $params = array(":id_usuario" => $idUsuario, "id_tarjeta" => $idTarjeta);
         $this->_db->execute($sql, $params);
     }
+
     //terminar de modificar
-    public function darDeBajaTarjeta ($id){
-        $sql="UPDATE vehiculo SET estado = 1 WHERE id=:idTarjeta";
-        $params= array (":idTarjeta"=>$id);
+    public function darDeBajaTarjeta($id) {
+        $sql = "UPDATE vehiculo SET estado = 1 WHERE id=:idTarjeta";
+        $params = array(":idTarjeta" => $id);
         $this->_db->execute($sql, $params);
         //return $this->db->fetch();
     }
+
     /**
      * consulta por numero de tarjeta recibe el numero de tarjeta y el id de un usuario y verifica si el usuario ya tiene esa tarjeta
-     */  
-    public function consultarPorRepetido ($numeroTarjeta,$idUsuario){
-       
-       $sql= "SELECT COUNT(*) as cantidad FROM tarjeta WHERE (numero=:numero) and (id_usuario=:idUsuario)"; 
-       
-       $params = array(":numero"=>$numeroTarjeta, ":idUsuario" =>$idUsuario);
-       
-       $this->_db->execute($sql, $params);
-       return $this->_db->fetch();
+     */
+    public function consultarPorRepetido($numeroTarjeta, $idUsuario) {
+
+        $sql = "SELECT COUNT(*) as cantidad FROM tarjeta WHERE (numero=:numero) and (id_usuario=:idUsuario)";
+
+        $params = array(":numero" => $numeroTarjeta, ":idUsuario" => $idUsuario);
+
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetch();
     }
+
     /**
      * da de baja una tarjeta con su numero de tarjeta como parametro
      */
@@ -67,4 +79,5 @@ class tarjetaModel extends Model {
         $sql = "UPDATE usuarios SET estado = 2 WHERE id = :id";
         $this->_db->execute($sql, array(':id' => $id));
     }
+
 }

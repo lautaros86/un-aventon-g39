@@ -12,7 +12,10 @@ class tarjetaModel extends Model {
      * @return array
      */
     public function getTarjetasDeUnUsuario($id) {
-        $sql = "select * from tarjeta where id_usuario = :id ";
+        $sql = "select tarjeta.id,tarjeta.numero, tarjeta.nombre, tarjeta.vto_mes, tarjeta.vto_anio from usuario_tarjeta 
+        inner join tarjeta on usuario_tarjeta.id_tarjeta = tarjeta.id 
+        inner join usuarios on usuario_tarjeta.id_usuario = usuarios.id
+        where usuario_tarjeta.estado = 1 and usuarios.id = :id";
         $params = array(":id" => $id);
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll();
@@ -50,11 +53,11 @@ class tarjetaModel extends Model {
     }
 
     //terminar de modificar
-    public function darDeBajaTarjeta($id) {
-        $sql = "UPDATE vehiculo SET estado = 1 WHERE id=:idTarjeta";
-        $params = array(":idTarjeta" => $id);
+    public function darDeBajaTarjeta($idTarjeta, $idUsuario) {
+        (int) $idTarjeta;
+        $sql = "UPDATE usuario_tarjeta SET estado = 0 WHERE id_tarjeta = :id_tarjeta and id_usuario = :id_usuario";
+        $params = array(":id_tarjeta" => $idTarjeta, ":id_usuario" => $idUsuario);
         $this->_db->execute($sql, $params);
-        //return $this->db->fetch();
     }
 
     /**

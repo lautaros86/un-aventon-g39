@@ -126,7 +126,8 @@
                 if (elem.is("i")) {
                     elem = $(elem.parent());
                 }
-                //$(location).attr('href', 'tarjeta/darDeBajaTarjeta/' + elem.data('idTarjeta'));
+                debugger;
+                $(location).attr('href', '/tarjeta/darDeBajaTarjeta/' + elem.data('idtarjeta'));                
             } else {
                 alert("Pedido cancelado");
             }

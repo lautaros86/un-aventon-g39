@@ -50,14 +50,16 @@ class tarjetaController extends Controller {
      * recibe un parametro y da de baja una tarjeta
      * @param type $id
      */
-    public function darDeBajaTarjeta($id) {
-        $this->_tarjeta->eliminarTarjeta($id);
-        $vehiculos = $vehiculoModel->getVehiculosActivosByUserId(Session::get("id_usuario"));
-        if (!(sizeof($vehiculos) > 0)) {
-            Session::set('chofer', false);
+    public function darDeBajaTarjeta($idTarjeta) {
+        $idUsuario = Session::get("id_usuario");
+        try {
+            $this->_tarjeta->darDeBajaTarjeta($idTarjeta,$idUsuario);      
+            Session::setMessage("Tarjeta dada de baja", SessionMessageType::Success);
+            $this->redireccionar("perfil");   
+        } catch (Exception $exc) {
+            Session::setMessage("No se pudo dar de baja la tarjeta", SessionMessageType::Error);
+            $this->redireccionar("perfil");   
         }
-        Session::setMessage("Tarjeta dada de baja", SessionMessageType::Success);
-        $this->redireccionar("perfil");
     }
 
     public function registrar() {

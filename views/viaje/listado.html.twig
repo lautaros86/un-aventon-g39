@@ -1,0 +1,89 @@
+{% extends 'layout.html.twig' %}
+{% block title %}
+    UnAventon - Perfil
+{% endblock %}
+
+{% block contenido %}
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Todos los viajes pendientes</h3>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-12 search-wrap">
+                    <form method="post" class="colorlib-form" action="/viaje/buscarViaje">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="date">Origen:</label>
+                                    <div class="form-field">
+                                        <i class="icon icon-map3"></i>
+                                        <input type="text" id="origen" name="origen" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="date">Destino:</label>
+                                    <div class="form-field">
+                                        <i class="icon icon-map3"></i>
+                                        <input type="text" id="destino" name="destino" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="date">Fecha:</label>
+                                    <div class="form-field">
+                                        <i class="icon icon-calendar2"></i>
+                                        <input type="text" id="fecha" name="fecha" class="form-control date" placeholder="DD/MM/AAAA">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label></label>
+                                    <div class="form-field">                             
+                                        <input type="submit" name="submit" id="submit" value="Buscar" class="btn btn-primary btn-block">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Origen</th>
+                        <th>Destino</th>
+                        <th>Pasajeros</th>
+                        <th>$ Asiento</th>
+                        <th>$ Total</th>
+                        <th>Estado</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for viaje in viajes %}
+                        <tr>
+                            <td>{{viaje.origen}}</td>
+                            <td>{{viaje.destino}}</td>
+                            <td>{{viaje.asientos}}</td>
+                            <td>{{viaje.monto}}</td>
+                            <td>{{viaje.monto * viaje.asientos}}</td>
+                            <td>{{viaje.estadonombre}}</td>
+                            <td>
+                                <a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                                    Ver Detalle
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div> 
+</div>
+
+{% endblock %}

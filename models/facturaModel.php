@@ -11,13 +11,14 @@ class facturaModel extends Model {
      * @param int $tipo Determina el tipo de factura, de chofer(1 int) o pasajero(2 int).
      */
     public function crearFactura($idUsuario, $idViaje, $monto, $descripcion, $tipo) {
-        $sql = "INSERT INTO facturas (id_usuario, id_viaje, monto, descripcion, fecha_crea, fecha_modi) 
-                VALUES (:id_usuario, :id_viaje, :monto, :descripcion, NOW(), NOW())";
+        $sql = "INSERT INTO facturas (id_usuario, id_viaje, monto, descripcion, id_tipo, fecha_crea, fecha_modi) 
+                VALUES (:id_usuario, :id_viaje, :monto, :descripcion, :tipo, NOW(), NOW())";
         $params = array(
             ":id_usuario" => $idUsuario,
             ":id_viaje" => $idViaje,
             ":monto" => $monto,
-            ":descripcion" => $descripcion
+            ":descripcion" => $descripcion,
+            ":tipo" => $tipo,
         );
         $this->_db->execute($sql, $params);
     }
@@ -32,6 +33,20 @@ class facturaModel extends Model {
             ":id_usuario" => $idUsuario
         );
         $this->_db->execute($sql, $params);
+    }    
+        
+    
+    /**
+     * Retorna todas las facturas asociadas a un usuario en estado activo ( que debe pagarse)
+     * @param type $form
+     */
+    public function getFacturasActivasOf($idUsuario) {
+        $sql = "select * from facturas where id_usuario = :id_usuario and id_estado = 2";
+        $params = array(
+            ":id_usuario" => $idUsuario
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll();
     }    
         
     /**

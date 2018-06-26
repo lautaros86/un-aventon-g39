@@ -320,7 +320,7 @@
                     // For each route, display summary information.
                     for (var i = 0; i < route.legs.length; i++) {
                         var routeSegment = i + 1;
-                        summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
+                        {#summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
                         summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
                         summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
                         summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
@@ -328,7 +328,7 @@
                         summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
                         summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
                         summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
-                        summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';
+                        summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';#}
                         $("#duracion").val(route.legs[i].duration.value);
                     }
                 } else {

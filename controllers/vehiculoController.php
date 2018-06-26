@@ -176,7 +176,7 @@ class vehiculoController extends Controller {
                     Session::destroy("form");
                     Session::set('chofer', true);
                     $this->_vehiculo->commit();
-                    $this->redireccionar("perfil");
+                    $this->redireccionar("perfil#misVehiculos");
                 } catch (PDOException $e) {
                     $this->_vehiculo->rollBack();
                     Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);

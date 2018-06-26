@@ -31,8 +31,12 @@ class viajeController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $vehiculoModel = new vehiculoModel();
-        $params["vehiculos"] = $vehiculoModel->getVehiculosActivosByUserId(Session::get("id_usuario"));
+        $validarDeuda = $this->_factura->getFacturasActivasOf(Session::get("id_usuario"));
+        if (sizeof($validarDeuda) > 0) {
+            Session::setMessage("Disculpe, pero para publicar un nuevo viaje primero debe abonar las facutas pendientes. Puede verificar cuales son en la seccion de 'Mis facturas'", SessionMessageType::Error);
+            $this->redireccionar('perfil');
+        }
+        $params["vehiculos"] = $this->_vehiculo->getVehiculosActivosByUserId(Session::get("id_usuario"));
         if (sizeof($params["vehiculos"]) == 0) {
             Session::setMessage("No tienes vehiculos para publicar un viaje.", SessionMessageType::Error);
             $this->redireccionar('perfil');
@@ -40,6 +44,12 @@ class viajeController extends Controller {
         $form = Session::get("form");
         Session::destroy("form");
         $this->_view->renderizar('alta', 'viaje', array("form" => $form, "params" => $params));
+    }
+
+    public function listado() {
+        $params = array();
+        $params["viajes"] = $this->_viaje->getViajesPublicos();
+        $this->_view->renderizar('listado', 'viaje', $params);
     }
 
     public function detalle($idviaje) {
@@ -115,6 +125,10 @@ class viajeController extends Controller {
         $form["asientos"] = $this->verifInt('asientos');
         Session::set("form", $form);
         $errors = $this->validarAltaViaje($form);
+        $validarDeuda = $this->_factura->getFacturasActivasOf(Session::get("id_usuario"));
+        if (sizeof($validarDeuda) > 0) {
+            Session::setMessage("Disculpe, pero para publicar un nuevo viaje primero debe abonar las facutas pendientes. Puede verificar cuales son en la seccion de 'Mis facturas'", SessionMessageType::Error);
+        }
         if (!$errors) {
 
             $date = str_replace('/', '-', $form['fecha']);
@@ -205,14 +219,15 @@ class viajeController extends Controller {
             $this->redireccionar();
         }
         $viaje = $this->_viaje->getViaje($idViaje);
-        $dateViaje = new DateTime($viaje["fecha"] . " " . $viaje["hora"]);
+        $fechaLlegadaEstimada = new DateTime($viaje["fecha"] . " " . $viaje["hora"]);
+        $fechaLlegadaEstimada->add(new DateInterval('PT' . $viaje["duracion"] . 'S')); // adds 674165 secs
         $datenow = new DateTime();
-        $dateViaje->add(new DateInterval('PT' . $viaje["duracion"])); // adds 674165 secs
-        $adelantado = $dateViaje > $datenow;
-        if (!$adelantado) {
-            Session::setMessage("No se puede finalizar el viaje hasta que pase el tiempo definido por el sistema(" . $dateViaje->getTimestamp()  . ").", SessionMessageType::Error);
+        $tiempoAceptable = $fechaLlegadaEstimada < $datenow;
+        if (!$tiempoAceptable) {
+            Session::setMessage("No se puede finalizar el viaje hasta que pase un tiempo prudencial (" . $fechaLlegadaEstimada->format('d/m/Y H:i') . ").", SessionMessageType::Error);
+            $this->redireccionar("viaje/detalle/" . $viaje["id"]);
         }
-        if ($viaje["id_chofer"] == Session::get("usuario")["id"] && !adelantado) {
+        if ($viaje["id_chofer"] == Session::get("usuario")["id"] && $tiempoAceptable) {
             $pasajeros = $this->_viaje->getPasajeros($idViaje);
             try {
                 $this->_viaje->beginTransaction();
@@ -221,7 +236,7 @@ class viajeController extends Controller {
                     $destinatarios[] = $pasajeros["id_pasajero"];
                     $this->_viaje->finalizarPostulacion($pasajero["id_postulacion"]);
                     $this->_factura->crearFactura($pasajeros["id_pasajero"], $idViaje, $viaje["monto"], "por viajar", 2);
-                    $this->_notificacion->crearNotificacionSimple("Tu factura n°" . $this->_viaje->lastInsertId() . "para el viaje n° " . $viaje["id"] . " esta disponible.", $pasajeros["id_pasajero"], "green");
+                    $this->_notificacion->crearNotificacionSimple("Tu factura con n°" . $this->_viaje->lastInsertId() . "para el viaje n° " . $viaje["id"] . " esta disponible.", $pasajeros["id_pasajero"], "green");
                 }
                 $this->_notificacion->crearNotificacion("El viaje n° " . $viaje["id"] . "finalizo.", $destinatarios, "green");
                 $this->_notificacion->crearNotificacion("Recuerda calificar al chofer por el viaje n° " . $viaje["id"] . ".", $destinatarios, "green");

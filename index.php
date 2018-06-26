@@ -1,7 +1,7 @@
 <?php
 
 ini_set('display_errors', 1);
-
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', realpath(dirname(__FILE__)) . DS);
 define('APP_PATH', ROOT . 'application' . DS);

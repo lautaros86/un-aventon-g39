@@ -6,9 +6,13 @@ class viajeModel extends Model {
         parent::__construct();
     }
 
-    public function getViajes() {
-        $viajes = $this->_db->query("select * from viajes");
-        return $viajes->fetchAll();
+    public function getViajesPublicos() {
+        $sql = "select ev.nombre as estadonombre, v.* 
+            from viaje v inner join estado_viaje ev
+            on(v.id_estado = ev.id ) 
+            where id_estado in (1, 4)";
+        $this->_db->execute($sql);
+        return $this->_db->fetchAll();
     }
 
     public function getViaje($id) {
@@ -174,7 +178,7 @@ class viajeModel extends Model {
         $sql = "update postulacion set id_estado = 3 where id = :id";
         $this->_db->execute($sql, array(":id" => $idPostu));
     }
-    
+
     public function finalizarPostulacion($idPostu) {
         $sql = "update postulacion set id_estado = 5 where id = :id";
         $this->_db->execute($sql, array(":id" => $idPostu));
@@ -298,6 +302,7 @@ class viajeModel extends Model {
         $this->_db->execute($sql);
         return $this->_db->fetchAll();
     }
+
     public function getViajesIniciadosDe() {
         $sql = "select estado_viaje.nombre as estadonombre, viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
         from viaje 
@@ -307,6 +312,7 @@ class viajeModel extends Model {
         $this->_db->execute($sql);
         return $this->_db->fetchAll();
     }
+
     public function getViajesFinalizadosDe() {
         $sql = "select estado_viaje.nombre as estadonombre, viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
         from viaje 
@@ -316,6 +322,7 @@ class viajeModel extends Model {
         $this->_db->execute($sql);
         return $this->_db->fetchAll();
     }
+
     public function getViajesCanceladosDe() {
         $sql = "select estado_viaje.nombre as estadonombre, viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
         from viaje 
@@ -325,7 +332,7 @@ class viajeModel extends Model {
         $this->_db->execute($sql);
         return $this->_db->fetchAll();
     }
-    
+
     /**
      * retorna todos los viajes de un chofer
      * @return type

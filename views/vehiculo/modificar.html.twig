@@ -10,7 +10,7 @@
 {% block subContenido %}
 <div class="register-box-body">
                 <p class="login-box-msg">Modificar  vehiculo</p>
-
+                
                 <form action="/vehiculo/modificar" method="post">
                     <div class="form-group {% if errors.marca is defined  %}has-error{% endif %}">
                         <input type="text" class="form-control" name="marca" placeholder="Marca" {% if vehiculo is defined  %}value="{{vehiculo.marca}}"{% endif %}>
@@ -28,6 +28,7 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                     <input type="hidden" id="custId" name="idVehiculo" value={{vehiculo.id}}>
                     <div class="form-group {% if errors.patente is defined  %}has-error{% endif %}">
                         <input type="patente" class="form-control" name="patente" placeholder="Patente" {% if vehiculo is defined  %}value="{{vehiculo.patente}}"{% endif %}>
                         {% if errors.patente is defined %}

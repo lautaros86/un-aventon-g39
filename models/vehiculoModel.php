@@ -122,7 +122,13 @@ class vehiculoModel extends Model {
         $this->_db->execute($sql, $params);
         return $this->_db->fetch();
     }
-
+    public function modificar($form) {
+        $sql="UPDATE `vehiculo` "
+             ."SET `patente`=:patente,`modelo`=:modelo,`marca`=:marca,"
+             . "`asientos`=:asientos,`baul`=:baul,`fecha_modi`= NOW() WHERE id=:id";
+        $params =array (":patente" =>$form["patente"],":modelo" =>$form["modelo"], ":marca"=>$form["marca"], ":asientos"=>$form["asientos"],":id"=>$form["idVehiculo"],":baul"=>$form["baul"]);
+        $this->_db->execute ($sql, $params);
+    }
 }
 ?>
 

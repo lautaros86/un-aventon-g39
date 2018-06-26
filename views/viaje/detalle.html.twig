@@ -39,7 +39,13 @@
                 </li>
             </ul>
             {% if esChofer %}
-                <a class="btn btn-danger btn-block" id="cancelarViaje" href="/viaje/cancelarviaje/{{viaje.id}}"><b>CANCELAR VIAJE</b></a>
+                {% if viaje.id_estado in [1, 4] %}
+                    <a class="btn btn-danger btn-block" id="cancelarViaje" href="/viaje/cancelarviaje/{{viaje.id}}"><b>CANCELAR VIAJE</b></a>
+                {% elseif  viaje.id_estado == 2 %}
+                    <a class="btn btn-danger btn-block" id="finalizarViaje" href="/viaje/finalizarviaje/{{viaje.id}}"><b>FINALIZAR VIAJE</b></a>
+                {% elseif  viaje.id_estado == 5 %}
+                    <b>VIAJE FINALIZADO</b>
+                {% endif %}
             {% else %}
                 <button class="btn btn-info btn-block" id="consultar"><b>CONSULTAR</b></button>
                 <br/>

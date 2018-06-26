@@ -23,7 +23,130 @@
 
     </div>
 {% endfor %}
-<h4>Viajes propios</h4>
+
+
+<h4>Todos mis viajes</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Pasajeros</th>
+            <th>$ Asiento</th>
+            <th>$ Total</th>
+            <th>Estado</th>
+            <th>Detalle</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for viaje in viajes %}
+            <tr>
+                <td>{{viaje.origen}}</td>
+                <td>{{viaje.destino}}</td>
+                <td>{{viaje.asientos}}</td>
+                <td>{{viaje.monto}}</td>
+                <td>{{viaje.monto * viaje.asientos}}</td>
+                <td>{{viaje.estadonombre}}</td>
+                <td><a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                        Ver Detalle
+                    </a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{#
+<h4>Viajes Abiertos</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Pasajeros</th>
+            <th>$ Asiento</th>
+            <th>$ Total</th>
+            <th>Estado</th>
+            <th>Detalle</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for viaje in viajesAbiertos %}
+            <tr>
+                <td>{{viaje.origen}}</td>
+                <td>{{viaje.destino}}</td>
+                <td>{{viaje.asientos}}</td>
+                <td>{{viaje.monto}}</td>
+                <td>{{viaje.monto * viaje.asientos}}</td>
+                <td>{{viaje.estadonombre}}</td>
+                <td><a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                        Ver Detalle
+                    </a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    
+<h4>Viajes Iniciados</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Pasajeros</th>
+            <th>$ Asiento</th>
+            <th>$ Total</th>
+            <th>Estado</th>
+            <th>Detalle</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for viaje in viajesIniciados %}
+            <tr>
+                <td>{{viaje.origen}}</td>
+                <td>{{viaje.destino}}</td>
+                <td>{{viaje.asientos}}</td>
+                <td>{{viaje.monto}}</td>
+                <td>{{viaje.monto * viaje.asientos}}</td>
+                <td>{{viaje.estadonombre}}</td>
+                <td><a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                        Ver Detalle
+                    </a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<h4>Viajes Finalizados</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Pasajeros</th>
+            <th>$ Asiento</th>
+            <th>$ Total</th>
+            <th>Estado</th>
+            <th>Detalle</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for viaje in viajesFinalizados%}
+            <tr>
+                <td>{{viaje.origen}}</td>
+                <td>{{viaje.destino}}</td>
+                <td>{{viaje.asientos}}</td>
+                <td>{{viaje.monto}}</td>
+                <td>{{viaje.monto * viaje.asientos}}</td>
+                <td>{{viaje.estadonombre}}</td>
+                <td><a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                        Ver Detalle
+                    </a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>Viajes cancelados</h4>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -36,7 +159,7 @@
         </tr>
     </thead>
     <tbody>
-        {%for viaje in travels %}
+        {%for viaje in viajesCancelados %}
             <tr>
                 <td>{{viaje.origen}}</td>
                 <td>{{viaje.destino}}</td>
@@ -47,7 +170,7 @@
             </tr>
         {% endfor %}
     </tbody>
-</table>
+</table>#}
 <!-- /.post -->
 
 

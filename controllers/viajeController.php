@@ -62,7 +62,7 @@ class viajeController extends Controller {
             foreach ($postulacionesAceptadas as $postulante) {
                 $destinatarios[] = $postulante["id"];
             }
-            if ( $viaje["id_chofer"] != Session::get("id_usuario") && !in_array(Session::get("id_usuario"), $destinatarios)) {
+            if ($viaje["id_chofer"] != Session::get("id_usuario") && !in_array(Session::get("id_usuario"), $destinatarios)) {
                 Session::setMessage("El viaje requerido solo puede ser visto por el chofer y los pasajeros.", SessionMessageType::Error);
                 $this->redireccionar("perfil");
             }
@@ -189,6 +189,44 @@ class viajeController extends Controller {
                 $this->_viaje->cancelarViaje($idViaje);
                 $this->_notificacion->crearNotificacionSimple("La factura del viaje nº " . $viaje["id"] . " esta lista para ser pagada.", $viaje["id_chofer"]);
                 Session::setMessage("El viaje se cancelo exitosamente.", SessionMessageType::Success);
+                $this->_viaje->commit();
+                $this->redireccionar("perfil");
+            } catch (PDOException $e) {
+                $this->_viaje->rollback();
+                Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            }
+        } else {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+        }
+    }
+
+    public function finalizarviaje($idViaje) {
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $viaje = $this->_viaje->getViaje($idViaje);
+        $dateViaje = new DateTime($viaje["fecha"] . " " . $viaje["hora"]);
+        $datenow = new DateTime();
+        $dateViaje->add(new DateInterval('PT' . $viaje["duracion"])); // adds 674165 secs
+        $adelantado = $dateViaje > $datenow;
+        if (!$adelantado) {
+            Session::setMessage("No se puede finalizar el viaje hasta que pase el tiempo definido por el sistema(" . $dateViaje->getTimestamp()  . ").", SessionMessageType::Error);
+        }
+        if ($viaje["id_chofer"] == Session::get("usuario")["id"] && !adelantado) {
+            $pasajeros = $this->_viaje->getPasajeros($idViaje);
+            try {
+                $this->_viaje->beginTransaction();
+                $destinatarios = array();
+                foreach ($pasajeros as $pasajero) {
+                    $destinatarios[] = $pasajeros["id_pasajero"];
+                    $this->_viaje->finalizarPostulacion($pasajero["id_postulacion"]);
+                    $this->_factura->crearFactura($pasajeros["id_pasajero"], $idViaje, $viaje["monto"], "por viajar", 2);
+                    $this->_notificacion->crearNotificacionSimple("Tu factura n°" . $this->_viaje->lastInsertId() . "para el viaje n° " . $viaje["id"] . " esta disponible.", $pasajeros["id_pasajero"], "green");
+                }
+                $this->_notificacion->crearNotificacion("El viaje n° " . $viaje["id"] . "finalizo.", $destinatarios, "green");
+                $this->_notificacion->crearNotificacion("Recuerda calificar al chofer por el viaje n° " . $viaje["id"] . ".", $destinatarios, "green");
+                $this->_viaje->finaizarViaje($idViaje);
+                Session::setMessage("El viaje se finalizo exitosamente.", SessionMessageType::Success);
                 $this->_viaje->commit();
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {

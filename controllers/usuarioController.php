@@ -293,7 +293,11 @@ class usuarioController extends Controller {
         $params["usuario"] = $this->_usuario->getUsuario(Session::get("id_usuario"));
         $params["vehiculos"]= $vehiculoModel->getVehiculosActivosByUserId($params["usuario"]['id']);
         $params["vehiculosInactivos"] = $vehiculoModel->getVehiculosInactivosByUserId($params["usuario"]['id']);
-        $params["travels"]= $this->_viajes->getViajesDe(Session::get("id_usuario"));
+        $params["viajes"]= $this->_viajes->getViajesDe(Session::get("id_usuario"));
+        $params["viajesAbiertos"]= $this->_viajes->getViajesAbiertosDe(Session::get("id_usuario"));
+        $params["viajesIniciados"]= $this->_viajes->getViajesIniciadosDe(Session::get("id_usuario"));
+        $params["viajesCancelados"]= $this->_viajes->getViajesCanceladosDe(Session::get("id_usuario"));
+        $params["viajesFinalizados"]= $this->_viajes->getViajesFinalizadosDe(Session::get("id_usuario"));
         $params["tarjetas"]= $this->_tarjeta->getTarjetasDeUnUsuario($params["usuario"]['id']);
         $params["usuario"]['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($params["usuario"]['id']);
         $params["usuario"]['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($params["usuario"]['id']);

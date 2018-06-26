@@ -95,6 +95,22 @@ class viajeModel extends Model {
 
     /**
      * 
+     * Retorna los pasajeros de un viaje
+     * 
+     * @param type $idviaje
+     * @return type
+     */
+    public function getPasajeros($idViaje) {
+        $sql = "select p.id as id_postulacion, p.id_pasajero 
+                from postulacion p
+                inner join usuarios u on (p.id_pasajero = u.id)
+                where id_viaje = :id_viaje and id_estado = 2";
+        $this->_db->execute($sql, array(":id_viaje" => $idviaje));
+        return $this->_db->fetchAll();
+    }
+
+    /**
+     * 
      * Retorna la cantidad de viajes que hay superpuestos para una postulacion.
      * 
      * @param string $fecha formato "YYYY-DD-MM"
@@ -130,10 +146,6 @@ class viajeModel extends Model {
      * @return type
      */
     public function getPostulacion($idPostulacion) {
-//        $sql = "select p.id id_postulacion, p.id_pasajero, p.id_viaje, p.id_estado estado_postulacion, u.*, v.* from postulacion p 
-//            inner join usuarios u on(p.id_pasajero = u.id) 
-//            inner join viaje v on (p.id_viaje = v.id)
-//            where p.id = :id_postu";
         $sql = "select * from postulacion where id = :id_postu";
         $this->_db->execute($sql, array(":id_postu" => $idPostulacion));
         return $this->_db->fetch();
@@ -160,6 +172,11 @@ class viajeModel extends Model {
      */
     public function rechazarPostulacion($idPostu) {
         $sql = "update postulacion set id_estado = 3 where id = :id";
+        $this->_db->execute($sql, array(":id" => $idPostu));
+    }
+    
+    public function finalizarPostulacion($idPostu) {
+        $sql = "update postulacion set id_estado = 5 where id = :id";
         $this->_db->execute($sql, array(":id" => $idPostu));
     }
 
@@ -263,16 +280,48 @@ class viajeModel extends Model {
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
     }
 
+    public function finaizarViaje($idviaje) {
+        $sql = "UPDATE viaje SET id_estado = 5 WHERE id = :id_viaje";
+        $this->_db->execute($sql, array(":id_viaje" => $idviaje));
+    }
+
     /**
      * retorna todos los viajes con estado abierto
      * @return type
      */
-    public function getViajesAbiertos() {
-        $sql = "select viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
+    public function getViajesAbiertosDe() {
+        $sql = "select estado_viaje.nombre as estadonombre, viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
         from viaje 
         inner join estado_viaje on viaje.id_estado = estado_viaje.id
         inner join usuarios on viaje.id_chofer = usuarios.id
-        where viaje.id_estado = 1";
+        where viaje.id_estado in (1, 4)";
+        $this->_db->execute($sql);
+        return $this->_db->fetchAll();
+    }
+    public function getViajesIniciadosDe() {
+        $sql = "select estado_viaje.nombre as estadonombre, viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
+        from viaje 
+        inner join estado_viaje on viaje.id_estado = estado_viaje.id
+        inner join usuarios on viaje.id_chofer = usuarios.id
+        where viaje.id_estado = 2";
+        $this->_db->execute($sql);
+        return $this->_db->fetchAll();
+    }
+    public function getViajesFinalizadosDe() {
+        $sql = "select estado_viaje.nombre as estadonombre, viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
+        from viaje 
+        inner join estado_viaje on viaje.id_estado = estado_viaje.id
+        inner join usuarios on viaje.id_chofer = usuarios.id
+        where viaje.id_estado = 5";
+        $this->_db->execute($sql);
+        return $this->_db->fetchAll();
+    }
+    public function getViajesCanceladosDe() {
+        $sql = "select estado_viaje.nombre as estadonombre, viaje.id, viaje.asientos,viaje.fecha, viaje.hora, viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido, usuarios.foto
+        from viaje 
+        inner join estado_viaje on viaje.id_estado = estado_viaje.id
+        inner join usuarios on viaje.id_chofer = usuarios.id
+        where viaje.id_estado = 3";
         $this->_db->execute($sql);
         return $this->_db->fetchAll();
     }

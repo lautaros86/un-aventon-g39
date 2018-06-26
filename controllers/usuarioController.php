@@ -287,17 +287,21 @@ class usuarioController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
+        $params = array();
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $vehiculoModel = new vehiculoModel();
-        $usuario = $this->_usuario->getUsuario(Session::get("id_usuario"));
-        $vehiculos = $vehiculoModel->getVehiculosActivosByUserId($usuario['id']);
-        $vehiculosInactivos = $vehiculoModel->getVehiculosInactivosByUserId($usuario['id']);
-        $travels = $this->_viajes->getViajesAbiertos();
-        $tarjetas = $this->_tarjeta->getTarjetasDeUnUsuario($usuario['id']);
-        $usuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($usuario['id']);
-        $usuario['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($usuario['id']);
-        $this->_view->renderizar('verUsuario', 'usuario', array('usuario' => $usuario, 
-            "vehiculos" => $vehiculos, "travels" => $travels, "tarjetas" =>$tarjetas, 'vehiculosInactivos' => $vehiculosInactivos));
+        $params["usuario"] = $this->_usuario->getUsuario(Session::get("id_usuario"));
+        $params["vehiculos"]= $vehiculoModel->getVehiculosActivosByUserId($params["usuario"]['id']);
+        $params["vehiculosInactivos"] = $vehiculoModel->getVehiculosInactivosByUserId($params["usuario"]['id']);
+        $params["viajes"]= $this->_viajes->getViajesDe(Session::get("id_usuario"));
+        $params["viajesAbiertos"]= $this->_viajes->getViajesAbiertosDe(Session::get("id_usuario"));
+        $params["viajesIniciados"]= $this->_viajes->getViajesIniciadosDe(Session::get("id_usuario"));
+        $params["viajesCancelados"]= $this->_viajes->getViajesCanceladosDe(Session::get("id_usuario"));
+        $params["viajesFinalizados"]= $this->_viajes->getViajesFinalizadosDe(Session::get("id_usuario"));
+        $params["tarjetas"]= $this->_tarjeta->getTarjetasDeUnUsuario($params["usuario"]['id']);
+        $params["usuario"]['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($params["usuario"]['id']);
+        $params["usuario"]['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($params["usuario"]['id']);
+        $this->_view->renderizar('verUsuario', 'usuario', $params);
     }
 
     public function verOtroUsuaurio($id_otroUsuario) {
@@ -308,8 +312,6 @@ class usuarioController extends Controller {
         $otroUsuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($id_otroUsuario);
         $otroUsuario['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($id_otroUsuario);
         $otroUsuario['cantViajesTotal'] = $otroUsuario['cantViajesPasajero'] + $otroUsuario['cantViajesChofer'];
-
-
         $this->_view->renderizar('perfilAjeno', 'usuario', array('usuario' => $otroUsuario));
     }
 

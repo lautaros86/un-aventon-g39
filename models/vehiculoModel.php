@@ -18,12 +18,36 @@ class vehiculoModel extends Model {
         return $this->_db->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getDueniosDe($idVehiculo) {
+        $sql = "select * from vehiculo v inner join usuario_vehiculo uv on(v.id = uv.id_vehiculo)
+            where v.id = :id_vehiculo";
+        $params = array(':id_vehiculo' => $idVehiculo);
+        $this->_db->execute($sql, $params);
+        $result = $this->_db->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function agragerDuenioPara($id_usuario, $id_vehiculo) {
+        $sql = "INSERT INTO `usuario_vehiculo`(`id_usuario`, `id_vehiculo`, `fecha_crea`, `fecha_modi`) 
+            VALUES (:id_usuario, :id_vehiculo, NOW(),NOW())";
+        $params = array(':id_usuario' => $id_usuario, ':id_vehiculo' => $id_vehiculo);
+        $this->_db->execute($sql, $params);
+    }
+
+    public function getByPatente($patente) {
+        $sql = "select * from vehiculo where patente = :patente";
+        $params = array(':patente' => $patente);
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getViajesByVehiculoId($idVehiculo) {
         $sql = "select * from viaje where id_vehiculo = :id_vehiculo and id_estado = 1";
         $params = array(':id_vehiculo' => $idVehiculo);
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function getVehiculosActivosByUserId($idusuairo) {
         $idusuairo = (int) $idusuairo;
         $sql = "select * from usuario_vehiculo uv inner join vehiculo v on(uv.id_vehiculo = v.id) 
@@ -59,7 +83,7 @@ class vehiculoModel extends Model {
     public function cantVehiculos($iduser) {
         $sql = "select * from usuario_vehiculo uv inner join vehiculo v on(uv.id_vehiculo = v.id)
             where uv.id_usuario = :id_usuario and uv.id_estado = 1";
-        $params = array(":id_usuario"=> $iduser);
+        $params = array(":id_usuario" => $iduser);
         $this->_db->execute($sql, $params);
         return $this->_db->rowCount();
     }
@@ -67,33 +91,36 @@ class vehiculoModel extends Model {
     public function insertarVehiculo($form, $idUser) {
         $sql = "INSERT INTO vehiculo(patente, modelo, marca, asientos, baul, fecha_crea, fecha_modi) 
             VALUES (:patente, :modelo, :marca, :asientos, :baul, NOW(), NOW())";
-        $params = array(":patente"=> $form["patente"], "modelo"=>$form["modelo"], "marca"=>$form["marca"],
-                 "asientos"=>$form["asientos"], "baul"=>$form["baul"]);
+        $params = array(":patente" => $form["patente"], "modelo" => $form["modelo"], "marca" => $form["marca"],
+            "asientos" => $form["asientos"], "baul" => $form["baul"]);
         $this->_db->execute($sql, $params);
         $idVehiculo = $this->_db->lastInsertId();
         $sql = "INSERT INTO usuario_vehiculo(id_usuario, id_vehiculo, fecha_crea, fecha_modi) 
             VALUES (:id_usuario, :id_vehiculo, NOW(), NOW())";
-        $params = array(":id_usuario"=> $idUser, "id_vehiculo"=>$idVehiculo);
+        $params = array(":id_usuario" => $idUser, "id_vehiculo" => $idVehiculo);
         $this->_db->execute($sql, $params);
     }
-    
-    public function darDeBaja ($idVehiculo){
-        $sql="UPDATE usuario_vehiculo SET `id_estado`= 2 WHERE id_vehiculo = :idvehiculo and id_usuario = :id_usuario";
-        $params= array (":idvehiculo"=>$idVehiculo, ":id_usuario" => Session::get("id_usuario"));
+
+    public function darDeBaja($idVehiculo) {
+        $sql = "UPDATE usuario_vehiculo SET `id_estado`= 2, fecha_modi = NOW() WHERE id_vehiculo = :idvehiculo and id_usuario = :id_usuario";
+        $params = array(":idvehiculo" => $idVehiculo, ":id_usuario" => Session::get("id_usuario"));
         $this->_db->execute($sql, $params);
     }
-    
-    public function restoreVehiculo($id){
-        $sql="UPDATE usuario_vehiculo SET `id_estado`= 1 WHERE id_vehiculo = :idvehiculo and id_usuario = :id_usuario";
-        $params= array (":idvehiculo"=>$idVehiculo, ":id_usuario" => Session::get("id_usuario"));
+
+    public function restoreVehiculo($id) {
+        $sql = "UPDATE usuario_vehiculo SET `id_estado`= 1, fecha_modi = NOW()
+            WHERE id_vehiculo = :idvehiculo 
+            and id_usuario = :id_usuario";
+        $params = array(":idvehiculo" => $id,
+            ":id_usuario" => Session::get("id_usuario"));
         $this->_db->execute($sql, $params);
     }
-    
-    public function consultarPatente ($form){
-       $sql= "SELECT COUNT(*) as cantidad FROM vehiculo v inner join usuario_vehiculo uv on (v.id = uv.id_vehiculo)WHERE (v.patente=:patente) and (uv.id_usuario=:idusuario)"; 
-       $params = array(":patente"=> $form["patente"], ":idusuario" =>Session::get("id_usuario"));
-       $this->_db->execute($sql, $params);
-       return $this->_db->fetch();
+
+    public function consultarPatente($form) {
+        $sql = "SELECT COUNT(*) as cantidad FROM vehiculo v inner join usuario_vehiculo uv on (v.id = uv.id_vehiculo)WHERE (v.patente=:patente) and (uv.id_usuario=:idusuario)";
+        $params = array(":patente" => $form["patente"], ":idusuario" => Session::get("id_usuario"));
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetch();
     }
 
 }

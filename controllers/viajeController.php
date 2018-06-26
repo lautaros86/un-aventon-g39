@@ -31,8 +31,12 @@ class viajeController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $vehiculoModel = new vehiculoModel();
-        $params["vehiculos"] = $vehiculoModel->getVehiculosActivosByUserId(Session::get("id_usuario"));
+        $validarDeuda = $this->_factura->getFacturasActivasOf(Session::get("id_usuario"));
+        if (sizeof($validarDeuda) > 0) {
+            Session::setMessage("Disculpe, pero para publicar un nuevo viaje primero debe abonar las facutas pendientes. Puede verificar cuales son en la seccion de 'Mis facturas'", SessionMessageType::Error);
+            $this->redireccionar('perfil');
+        }
+        $params["vehiculos"] = $this->_vehiculo->getVehiculosActivosByUserId(Session::get("id_usuario"));
         if (sizeof($params["vehiculos"]) == 0) {
             Session::setMessage("No tienes vehiculos para publicar un viaje.", SessionMessageType::Error);
             $this->redireccionar('perfil');
@@ -40,6 +44,12 @@ class viajeController extends Controller {
         $form = Session::get("form");
         Session::destroy("form");
         $this->_view->renderizar('alta', 'viaje', array("form" => $form, "params" => $params));
+    }
+
+    public function listado() {
+        $params = array();
+        $params["viajes"] = $this->_viaje->getViajesPublicos();
+        $this->_view->renderizar('listado', 'viaje', $params);
     }
 
     public function detalle($idviaje) {
@@ -59,51 +69,40 @@ class viajeController extends Controller {
         if (in_array($viaje["id_estado"], [2, 5])) {
             $postulacionesAceptadas = $this->_viaje->getPostulacionesAceptadas($viaje["id"]);
             $destinatarios = array();
-            foreach ($postulantes as $postulante) {
+            foreach ($postulacionesAceptadas as $postulante) {
                 $destinatarios[] = $postulante["id"];
             }
-            if (!in_array(Session::get("id_usuario"), $destinatarios)) {
+            if ($viaje["id_chofer"] != Session::get("id_usuario") && !in_array(Session::get("id_usuario"), $destinatarios)) {
                 Session::setMessage("El viaje requerido solo puede ser visto por el chofer y los pasajeros.", SessionMessageType::Error);
                 $this->redireccionar("perfil");
             }
         }
         $params["viaje"] = $viaje;
-        $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
-        $usuario = Session::get("usuario");
-        if ($chofer["id"] == $usuario["id"]) {
-            $this->detalleChofer($viaje, $chofer, $usuario);
+        $params["vehiculo"] = $this->_vehiculo->getVehiculosById($viaje["id_vehiculo"]);
+        $params["chofer"] = $this->_usuario->getUsuario($viaje["id_chofer"]);
+        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
+        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
+        $params["usuario"] = Session::get("usuario");
+        $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadasCant($params["viaje"]["id"]);
+        $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
+        if ($params["chofer"]["id"] == $params["usuario"]["id"]) {
+            $params["esChofer"] = true;
+            $this->_view->renderizar('detalle', 'viaje', $params);
         } else {
-            $this->detallePostulante($viaje, $chofer, $usuario);
+            $params["esChofer"] = false;
+            $this->detallePostulante($params);
         }
     }
 
-    private function detallePostulante($viaje, $chofer, $usuario) {
-        $params["viaje"] = $viaje;
-        $params["chofer"] = $chofer;
-        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
-        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
-        $params["esChofer"] = false;
-        $postulaciones = $this->_viaje->getPostulacionesViaje($viaje["id"]);
+    private function detallePostulante($params) {
+        $postulaciones = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
         $params["postulado"] = false;
         foreach ($postulaciones as $postu) {
-            if ($postu["id_pasajero"] == $usuario["id"]) {
+            if ($postu["id_pasajero"] == $params["usuario"]["id"]) {
                 $params["postulacion"] = $postu;
                 $params["postulado"] = true;
             }
         }
-        $this->_view->renderizar('detalle', 'viaje', $params);
-    }
-
-    private function detalleChofer($viaje, $chofer, $usuario) {
-        $params["viaje"] = $viaje;
-        $params["chofer"] = $chofer;
-        $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
-        $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
-        $params["esChofer"] = true;
-        $params["usuario"] = $usuario;
-        $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
-        $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadasCant($params["viaje"]["id"]);
-        $params["vehiculo"] = $this->_vehiculo->getVehiculosById($viaje["id_vehiculo"]);
         $this->_view->renderizar('detalle', 'viaje', $params);
     }
 
@@ -126,6 +125,10 @@ class viajeController extends Controller {
         $form["asientos"] = $this->verifInt('asientos');
         Session::set("form", $form);
         $errors = $this->validarAltaViaje($form);
+        $validarDeuda = $this->_factura->getFacturasActivasOf(Session::get("id_usuario"));
+        if (sizeof($validarDeuda) > 0) {
+            Session::setMessage("Disculpe, pero para publicar un nuevo viaje primero debe abonar las facutas pendientes. Puede verificar cuales son en la seccion de 'Mis facturas'", SessionMessageType::Error);
+        }
         if (!$errors) {
 
             $date = str_replace('/', '-', $form['fecha']);
@@ -200,6 +203,45 @@ class viajeController extends Controller {
                 $this->_viaje->cancelarViaje($idViaje);
                 $this->_notificacion->crearNotificacionSimple("La factura del viaje nº " . $viaje["id"] . " esta lista para ser pagada.", $viaje["id_chofer"]);
                 Session::setMessage("El viaje se cancelo exitosamente.", SessionMessageType::Success);
+                $this->_viaje->commit();
+                $this->redireccionar("perfil");
+            } catch (PDOException $e) {
+                $this->_viaje->rollback();
+                Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            }
+        } else {
+            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+        }
+    }
+
+    public function finalizarviaje($idViaje) {
+        if (!Session::get('autenticado')) {
+            $this->redireccionar();
+        }
+        $viaje = $this->_viaje->getViaje($idViaje);
+        $fechaLlegadaEstimada = new DateTime($viaje["fecha"] . " " . $viaje["hora"]);
+        $fechaLlegadaEstimada->add(new DateInterval('PT' . $viaje["duracion"] . 'S')); // adds 674165 secs
+        $datenow = new DateTime();
+        $tiempoAceptable = $fechaLlegadaEstimada < $datenow;
+        if (!$tiempoAceptable) {
+            Session::setMessage("No se puede finalizar el viaje hasta que pase un tiempo prudencial (" . $fechaLlegadaEstimada->format('d/m/Y H:i') . ").", SessionMessageType::Error);
+            $this->redireccionar("viaje/detalle/" . $viaje["id"]);
+        }
+        if ($viaje["id_chofer"] == Session::get("usuario")["id"] && $tiempoAceptable) {
+            $pasajeros = $this->_viaje->getPasajeros($idViaje);
+            try {
+                $this->_viaje->beginTransaction();
+                $destinatarios = array();
+                foreach ($pasajeros as $pasajero) {
+                    $destinatarios[] = $pasajeros["id_pasajero"];
+                    $this->_viaje->finalizarPostulacion($pasajero["id_postulacion"]);
+                    $this->_factura->crearFactura($pasajeros["id_pasajero"], $idViaje, $viaje["monto"], "por viajar", 2);
+                    $this->_notificacion->crearNotificacionSimple("Tu factura con n°" . $this->_viaje->lastInsertId() . "para el viaje n° " . $viaje["id"] . " esta disponible.", $pasajeros["id_pasajero"], "green");
+                }
+                $this->_notificacion->crearNotificacion("El viaje n° " . $viaje["id"] . "finalizo.", $destinatarios, "green");
+                $this->_notificacion->crearNotificacion("Recuerda calificar al chofer por el viaje n° " . $viaje["id"] . ".", $destinatarios, "green");
+                $this->_viaje->finaizarViaje($idViaje);
+                Session::setMessage("El viaje se finalizo exitosamente.", SessionMessageType::Success);
                 $this->_viaje->commit();
                 $this->redireccionar("perfil");
             } catch (PDOException $e) {

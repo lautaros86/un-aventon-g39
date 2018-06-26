@@ -33,7 +33,7 @@
                             <i class="fa fa-edit"></i> Editar
                         </a>
                         <br/>
-                        {% if (tarjetas is empty) or (session.get('chofer') == 0) %} 
+                        {% if (tarjetas is empty) or (vehiculos is empty) %} 
                             <span class="d-inline-block" placement="top" data-toggle="popover" style="pointer-events: none;" title="Requisitos para publicar" data-container="body" data-content="Para publicar viajes, debe tener al menos un vehiculo y una tarjeta de credito valida">
                                 <button class="btn btn-success btn-block"disabled="">
                                     <b>PUBLICAR VIAJE </b>

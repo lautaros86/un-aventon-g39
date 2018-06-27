@@ -88,9 +88,9 @@ class facturaModel extends Model {
      * @param type $form
      */
     public function getFactura($idFactura) {
-        $sql = "select * from facturas 
-            inner join viaje on facturas.id_viaje = viaje.id
-            where facturas.id = :id_factura";
+        $sql = "select f.monto as montofactura, v.*, f.* from facturas f
+            inner join viaje v on f.id_viaje = v.id
+            where f.id = :id_factura";
         $params = array(
             ":id_factura" => $idFactura
         );

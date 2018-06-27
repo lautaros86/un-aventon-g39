@@ -38,16 +38,15 @@ class facturaController extends Controller {
     public function pagarWallet($idFactura) {
         $saldo = $this->_wallet->getSaldo(Session::get("id_usuario"));
         $factura = $this->_factura->getFactura($idFactura);
-        if ($saldo < $factura["monto"]) {
+        if ($saldo < $factura["montofactura"]) {
             Session::setMessage("Su saldo es insuficiente para le pago de la factura. Por favor intente con otro medio de pago.", SessionMessageType::Error);
         } else {
             try {
                 $this->_factura->beginTransaction();
                 if ($factura["id_tipo"] == 2) {
-                    $this->_wallet->extraer(Session::get("id_usuario"), $factura["monto"]);
-                    $this->_wallet->depositar($factura["id_chofer"], $factura["monto"]);
+                    $this->_wallet->depositar($factura["id_chofer"], $factura["montofactura"]);
                 }
-                $this->_wallet->extraer(Session::get("id_usuario"), $factura["monto"]);
+                $this->_wallet->extraer(Session::get("id_usuario"), $factura["montofactura"]);
                 $this->_factura->pagarFactura($idFactura, "wallet");
                 $this->_notificacion->crearNotificacionSimple("Se pago la factura nº " . $idFactura . ".", Session::get("id_usuario"), "green");
                 Session::setMessage("La factura se pago correctamente.", SessionMessageType::Success);

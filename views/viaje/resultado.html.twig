@@ -19,7 +19,7 @@
                         <div class="user-block">
                             <img class="img-circle img-bordered-sm" src="{% if viaje.foto %}{{viaje.foto}}{% else %}/img/anonimo.png{% endif %}" alt="user image">
                             <span class="username">
-                                <a href="usuario/verOtroUsuaurio/{{viaje.id}}">{{viaje.nombre}} {{viaje.apellido}}</a>
+                                <a href="/usuario/verOtroUsuaurio/{{viaje.id}}">{{viaje.nombre}} {{viaje.apellido}}</a>
 
                             </span>
                             <span class="description">{{viaje.fecha | date ("d/m/Y")}} {{viaje.hora}}</span>
@@ -32,7 +32,7 @@
                         <p><strong>Lugares disponibles: </strong>{{viaje.asientos}}</p>
 
                         <p>
-                            <a href="Viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                            <a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
                                 Ver Detalle
                             </a>
                         </p>

@@ -53,10 +53,6 @@ class viajeController extends Controller {
     }
 
     public function detalle($idviaje) {
-        // $this->blockMinutesRound(gmdate("H:i:s", 758946), 1);
-        if (!Session::get('autenticado')) {
-            $this->redireccionar();
-        }
         $viaje = $this->_viaje->getViaje($idviaje);
         if (empty($viaje)) {
             Session::setMessage("El viaje requerido no existe.", SessionMessageType::Error);
@@ -398,7 +394,9 @@ class viajeController extends Controller {
         $param = array();
         $param['origen'] = $this->getPostParam('origen');
         $param['destino'] = $this->getPostParam('destino');
-        $param['fecha'] = date('Y-m-d', strtotime($this->getPostParam('fecha')));
+        $date = $this->getPostParam('fecha');
+        $date = str_replace('/', '-', $date);
+        $param['fecha'] = date('Y-m-d', strtotime($date));
         $viajes = $this->_viaje->buscarViaje($param);
         //pregunto si el array no esta vacio 
         if (!empty($viajes)) {

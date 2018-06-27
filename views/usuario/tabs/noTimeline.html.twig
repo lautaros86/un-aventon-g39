@@ -1,7 +1,7 @@
-<div>
 
+<div>
     <p class="h1  text-center" >Por el momento no tenes viajes para mostrar. Anímate, pedí <strong>UnAventon!</strong></p>
-<hr>
+    <hr>
     <div class="row">
         <div class="col-md-12 search-wrap">
             <form method="post" class="colorlib-form" action="/viaje/buscarViaje">
@@ -47,5 +47,18 @@
     </div>
 </div>
 
-                    
-             
+
+
+<script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+<script>
+    $().ready(function () {
+
+        $('#fecha').datepicker({
+            autoclose: true,
+            language: 'es',
+            orientation: 'bottom',
+            maxViewMode: 0
+        });
+    });
+</script>             

@@ -66,10 +66,11 @@ class viajeModel extends Model {
     public function getPostulacionesViaje($idviaje) {
         $sql = "select p.id id_postulacion, p.id_pasajero, p.id_viaje, p.id_estado estado_postulacion, u.* from postulacion p 
             inner join usuarios u on(p.id_pasajero = u.id)            
-            where id_viaje = :id_viaje and id_estado in (1, 2)";
+            where id_viaje = :id_viaje and id_estado in (1, 2, 5)";
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
         return $this->_db->fetchAll();
     }
+
     /**
      * 
      * Retorna las los ids de usuarios postulados a un id de viaje.
@@ -108,7 +109,7 @@ class viajeModel extends Model {
      * @return type
      */
     public function getPostulacionesAceptadas($idviaje) {
-        $sql = "select * from postulacion where id_viaje = :id_viaje and id_estado = 2";
+        $sql = "select * from postulacion where id_viaje = :id_viaje and id_estado IN ( 2, 5)";
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
         return $this->_db->fetchAll();
     }

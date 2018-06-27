@@ -1,0 +1,51 @@
+<!-- Post -->
+<div class="notificaciones">
+    <h3>Listado de Facturas</h3>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Viaje</th>
+                    <th>Descripcion</th>
+                    <th>Monto</th>
+                    <th>Fecha Pago</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Viaje</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for factura in facturas %}
+                    <tr>
+                        <td>{{factura.id}}</td>
+                        <td>{{factura.id_viaje}}</td>
+                        <td>{{factura.descripcion | raw}}</td>
+                        <td>${{factura.monto}}</td>
+                        <td>{{factura.fecha_pago}}</td>
+                        <td>           
+                           {{factura.tipofactura}}
+                        </td>
+                        <td>           
+                            {{factura.estadofactura}}
+                        </td>
+                        <td>           
+                            {{factura.estadoviaje}}
+                        </td>
+                        <td>
+                            {% if factura.estadofactura == 'PENDIENTE'%}
+                                <button class="btn btn-success pagarFactura" data-idfactura="{{factura.id}}">PAGAR</button>
+                            {% elseif factura.estadofactura == 'ACTIVA'%}
+                                <button class="btn btn-warning pagarFactura"  data-idfactura="{{factura.id}}">PAGAR</button>
+                            {% elseif factura.estadofactura == 'PAGA' %}
+                                <button class="btn btn-default" disabled="">PAGADA</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

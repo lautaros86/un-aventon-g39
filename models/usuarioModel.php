@@ -39,23 +39,6 @@ class usuarioModel extends Model {
 
     /**
      * 
-     * Genera una calificacion negativa para un usuario determinado sin 
-     * setear id de viaje ni usuario calificante
-     * por lo que se interpreta como calificaciond el sistema.
-     * 
-     * @param type $idUsuario
-     * @param type $valor
-     */
-    public function calificacionAutomatica($idUsuario, $valor) {
-        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`) VALUES (:idusuario, :valor)";
-        $this->_db->execute($sql, array(
-            ':idusuario' => $idUsuario,
-            ':valor' => $valor
-                )
-        );
-    }
-    /**
-     * 
      * Actualiza la reputacion para un usuario determinado con el valor recibido.
      * 
      * @param type $idUsuario
@@ -113,6 +96,79 @@ class usuarioModel extends Model {
         $sql = "UPDATE usuarios SET password = :pass WHERE id = :id";
         $params = array(':id' => $id, ':pass' => Hash::getHash('sha256', $pass, HASH_KEY));
         $this->_db->execute($sql, $params);
+    }
+
+    /**
+     * 
+     * Genera una calificacion negativa para un usuario determinado sin 
+     * setear id de viaje ni usuario calificante
+     * por lo que se interpreta como calificaciond el sistema.
+     * 
+     * @param type $idUsuario
+     * @param type $valor
+     */
+    public function calificacionAutomatica($idUsuario, $valor) {
+        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`) VALUES (:idusuario, :valor)";
+        $this->_db->execute($sql, array(
+            ':idusuario' => $idUsuario,
+            ':valor' => $valor
+                )
+        );
+    }
+
+    /**
+     * Retorna todas las calificaciones hechas o por hacer de un usuario
+     * @param type $idUsusario
+     * @return type
+     */
+    public function getCalificacionesOf($idUsusario) {
+        $sql = "select * 
+            from calificaciones 
+            where id_calificante = :id_calificante
+            order by fecha_crea";
+        $params = array(
+            ":id_calificante" => $idUsusario
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll();
+    }
+
+    /**
+     * Retorna todas las calificaciones hechas a un usuario
+     * @param type $idUsusario
+     * @return type
+     */
+    public function getCalificacionesFor($idUsusario) {
+        $sql = "select * 
+            from calificaciones 
+            where id_calificado = :id_calificado
+            order by fecha_crea";
+        $params = array(
+            ":id_calificado" => $idUsuario
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll();
+    }
+
+    /**
+     * crea una calificacion asociada a un viaje donde el calificante puntua al calificado.
+     * @param type $idUsusario
+     * @return type
+     */
+    public function crearCalificacion($idviaje, $calificante = null, $calificado = null) {
+        $sql = "insert INTO calificaciones (id_viaje, id_calificante, id_calificado, fecha_crea, fecha_modi)
+            VALUES (:id_viaje, :id_calificante, :id_calificado, NOW(), NOW())";
+        $params = array(
+            ":id_viaje" => $idviaje,
+            ":id_calificante" => $calificante,
+            ":id_calificado" => $calificado
+        );
+        $this->_db->execute($sql, $params);
+    }
+
+    public function calificar($idCali, $value) {
+        $sql = "UPDATE calificaciones SET calificacion = :value WHERE id = :id";
+        $this->_db->execute($sql, array(':id' => $idCali, ':value' => $value));
     }
 
 }

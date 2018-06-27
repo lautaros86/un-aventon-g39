@@ -1,0 +1,21 @@
+<!-- Post -->
+<div class="notificaciones">
+    <h3>Listado de Notificaciones</h3>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Notificaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for noti in misNotificaciones %}
+                    <tr>
+                        <td>{{noti.mensaje | raw}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

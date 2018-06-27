@@ -13,6 +13,13 @@ class notificacionModel extends Model {
         return $this->_db->fetchAll();
     }
 
+    public function getNotificacionesOf($idPersona) {
+        $sql = "select * from notificacion where idusuario = :idusuario order by estado, fecha";
+        $params = array(":idusuario" => $idPersona);
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll();
+    }
+
     public function crearNotificacion($mensaje, $destinatarios, $color) {
         $this->_db->prepare("INSERT INTO notificacion(mensaje, color, idusuario, fecha) VALUES (:mensaje, :color, :idusuario, now())");
         $fallo = false;

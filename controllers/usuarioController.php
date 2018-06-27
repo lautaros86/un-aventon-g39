@@ -6,6 +6,8 @@ class usuarioController extends Controller {
     private $_usuario;
     private $_viajes;
     private $_tarjeta;
+    private $_facturas;
+    private $_calificacion;
 
     public function __construct() {
         parent::__construct();
@@ -13,10 +15,14 @@ class usuarioController extends Controller {
         require_once ROOT . 'models' . DS . 'usuarioModel.php';
         require_once ROOT . 'models' . DS . 'viajeModel.php';
         require_once ROOT . 'models' . DS . 'tarjetaModel.php';
+        require_once ROOT . 'models' . DS . 'facturaModel.php';
+        require_once ROOT . 'models' . DS . 'calificacionModel.php';
         $this->_registro = new registroModel();
         $this->_usuario = new usuarioModel();
         $this->_viajes = new viajeModel();
         $this->_tarjeta = new tarjetaModel();
+        $this->_facturas = new facturaModel();
+        $this->_calificacion = new calificacionModel();
     }
 
     public function index() {
@@ -291,16 +297,20 @@ class usuarioController extends Controller {
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $vehiculoModel = new vehiculoModel();
         $params["usuario"] = $this->_usuario->getUsuario(Session::get("id_usuario"));
-        $params["vehiculos"]= $vehiculoModel->getVehiculosActivosByUserId($params["usuario"]['id']);
+        $params["vehiculos"] = $vehiculoModel->getVehiculosActivosByUserId($params["usuario"]['id']);
         $params["vehiculosInactivos"] = $vehiculoModel->getVehiculosInactivosByUserId($params["usuario"]['id']);
-        $params["viajes"]= $this->_viajes->getViajesDe(Session::get("id_usuario"));
-        $params["viajesAbiertos"]= $this->_viajes->getViajesAbiertosDe(Session::get("id_usuario"));
-        $params["viajesIniciados"]= $this->_viajes->getViajesIniciadosDe(Session::get("id_usuario"));
-        $params["viajesCancelados"]= $this->_viajes->getViajesCanceladosDe(Session::get("id_usuario"));
-        $params["viajesFinalizados"]= $this->_viajes->getViajesFinalizadosDe(Session::get("id_usuario"));
-        $params["tarjetas"]= $this->_tarjeta->getTarjetasDeUnUsuario($params["usuario"]['id']);
+        $params["viajes"] = $this->_viajes->getViajesDe(Session::get("id_usuario"));
+        $params["viajesPostulados"] = $this->_viajes->getViajesPostuladosOf(Session::get("id_usuario"));
+        $params["viajesAbiertos"] = $this->_viajes->getViajesAbiertosDe(Session::get("id_usuario"));
+        $params["viajesIniciados"] = $this->_viajes->getViajesIniciadosDe(Session::get("id_usuario"));
+        $params["viajesCancelados"] = $this->_viajes->getViajesCanceladosDe(Session::get("id_usuario"));
+        $params["viajesFinalizados"] = $this->_viajes->getViajesFinalizadosDe(Session::get("id_usuario"));
+        $params["tarjetas"] = $this->_tarjeta->getTarjetasDeUnUsuario($params["usuario"]['id']);
         $params["usuario"]['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($params["usuario"]['id']);
         $params["usuario"]['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($params["usuario"]['id']);
+        $params["misNotificaciones"] = $this->_notificacion->getNotificacionesOf($params["usuario"]["id"]);
+        $params["facturas"] = $this->_facturas->getFacturasOf($params["usuario"]["id"]);
+        $params["calificaciones"] = $this->_usuario->getCalificacionesOf($params["usuario"]["id"]);
         $this->_view->renderizar('verUsuario', 'usuario', $params);
     }
 
@@ -427,6 +437,15 @@ class usuarioController extends Controller {
         }
 
         return $errors;
+    }
+
+    public function calificar($idCalificacion, $tipo) {
+        if ($tipo == "positivo") {
+            $this->_usuario->calificar($idCalificacion, 1);
+        } else {
+            $this->_usuario->calificar($idCalificacion, -1);
+        }
+        $this->redireccionar("/perfil#calificaciones");
     }
 
 }

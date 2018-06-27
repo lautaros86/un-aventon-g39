@@ -28,28 +28,27 @@ class usuarioController extends Controller {
     public function index() {
         
     }
-    public function recuperarPass(){
+
+    public function recuperarPass() {
         $email = $this->getPostParam("confirmEmail");
         $result = $this->_usuario->getUsuarioByEmail($email);
-        if ($result > 0){
-        try {
-            $pass = 123;
-            $newPass= Hash::getHash('sha256', $pass, HASH_KEY);
-            $this->_usuario->setearContraseña($email, $newPass);
-            Session::setMessage("Se envio un email a tu casilla con los pasos a seguir.", SessionMessageType::Success);
-            $this->redireccionar("index"); 
-        }catch (Exception $e) {
-            Session::setMessage("Ocurrio un error vuelve a intentarlo.", SessionMessageType::Error);
-            $this->redireccionar("index");
-            
-        }            
-        }else{
+        if ($result > 0) {
+            try {
+                $pass = 123;
+                $newPass = Hash::getHash('sha256', $pass, HASH_KEY);
+                $this->_usuario->setearContraseña($email, $newPass);
+                Session::setMessage("Se envio un email a tu casilla con los pasos a seguir.", SessionMessageType::Success);
+                $this->redireccionar("index");
+            } catch (Exception $e) {
+                Session::setMessage("Ocurrio un error vuelve a intentarlo.", SessionMessageType::Error);
+                $this->redireccionar("index");
+            }
+        } else {
             Session::setMessage("Ups! email no encontrado.", SessionMessageType::Error);
             $this->redireccionar("index");
         }
-
-            
     }
+
     public function eliminarCuenta() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
@@ -348,23 +347,32 @@ class usuarioController extends Controller {
     }
 
     public function postular() {
+        if (!Session::get('autenticado')) {
+            echo json_encode(array("ok" => false, "mensaje" => "Debes estar registrado para poder postularte"));
+            exit();
+        }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
-            $this->redireccionar();
+            echo json_encode(array("ok" => false, "mensaje" => "Peticion incorrecta"));
+            exit();
         }
         $usuario = Session::get('usuario');
         $idViaje = $this->getAlphaNum("idViaje");
         $idChofer = $this->getAlphaNum("idChofer");
-        try {
-            $this->_usuario->beginTransaction();
-            $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " se postulo a tu viaje con nº " . $idViaje, $idChofer);
-            $this->_usuario->postular($usuario["id"], $idViaje);
-            $this->_usuario->commit();
-            Session::setMessage("Ud. se postulo exitosamente.", SessionMessageType::Success);
-            echo json_encode(array("ok" => true));
-        } catch (PDOException $e) {
-            $this->_usuario->rollback();
-            echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
+        $viaje = $this->_viajes->getViaje($idViaje);
+        if (!in_array($viaje["id_estado"], [1, 4])) {
+            echo json_encode(array("ok" => false, "mensaje" => "solo pueden postularse a un viaje que este ABIERTO o LLENO"));
+        } else {
+            try {
+                $this->_usuario->beginTransaction();
+                $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " se postulo a tu viaje con nº " . $idViaje, $idChofer);
+                $this->_usuario->postular($usuario["id"], $idViaje);
+                $this->_usuario->commit();
+                Session::setMessage("Ud. se postulo exitosamente.", SessionMessageType::Success);
+                echo json_encode(array("ok" => true));
+            } catch (PDOException $e) {
+                $this->_usuario->rollback();
+                echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
+            }
         }
     }
 
@@ -377,21 +385,26 @@ class usuarioController extends Controller {
         $idViaje = $this->getAlphaNum("idViaje");
         $idChofer = $this->getAlphaNum("idChofer");
         $idPostu = $this->getAlphaNum("idPostu");
-        try {
-            $this->_usuario->beginTransaction();
-            $postulacion = $this->_viajes->getPostulacion($idPostu);
-            if ($postulacion["id_estado"] == 2) {
-                $this->_notificacion->crearNotificacionSimple("Haz sido penalizado con -1 punto de reputacion por cancelar una postulacion aceptada al viaje nº " . $idViaje, $postulacion["id_pasajero"]);
-                $this->_usuario->calificacionAutomatica($postulacion["id_pasajero"], -1);
-                $this->_usuario->actualizarReputacion($postulacion["id_pasajero"], -1);
+        $viaje = $this->_viajes->getViaje($idViaje);
+        if (!in_array($viaje["id_estado"], [1, 4])) {
+            echo json_encode(array("ok" => false, "mensaje" => "solo pueden cancelarse postulaciones de un viaje ABIERTO o LLENO"));
+        } else {
+            try {
+                $this->_usuario->beginTransaction();
+                $postulacion = $this->_viajes->getPostulacion($idPostu);
+                if ($postulacion["id_estado"] == 2) {
+                    $this->_notificacion->crearNotificacionSimple("Haz sido penalizado con -1 punto de reputacion por cancelar una postulacion aceptada al viaje nº " . $idViaje, $postulacion["id_pasajero"]);
+                    $this->_usuario->calificacionAutomatica($postulacion["id_pasajero"], -1);
+                    $this->_usuario->actualizarReputacion($postulacion["id_pasajero"], -1);
+                }
+                $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " cancelo su postulacion al viaje nº " . $idViaje, $idChofer);
+                $this->_usuario->cancelarPostulacion($usuario["id"], $idViaje);
+                $this->_usuario->commit();
+                echo json_encode(array("ok" => true));
+            } catch (PDOException $e) {
+                $this->_usuario->rollback();
+                echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
             }
-            $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " cancelo su postulacion al viaje nº " . $idViaje, $idChofer);
-            $this->_usuario->cancelarPostulacion($usuario["id"], $idViaje);
-            $this->_usuario->commit();
-            echo json_encode(array("ok" => true));
-        } catch (PDOException $e) {
-            $this->_usuario->rollback();
-            echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
         }
     }
 

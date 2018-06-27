@@ -82,46 +82,76 @@
         </div>
     </div>
     {% if chofer.id == session.get('usuario').id %}
-        <!-- Tabla de postulantes -->          
-        <div class="box box-info">
-            <div class="box-header">
-                <h3 class="profile-username text-center">Postulantes al viaje</h3>
-            </div>
-            <!-- /.box-body -->
+        {% if viaje.id_estado in [1, 4] %}
+            <!-- Tabla de postulantes -->          
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="profile-username text-center">Postulantes al viaje</h3>
+                </div>
+                <!-- /.box-body -->
 
 
-            <div class="box-body">
+                <div class="box-body">
 
-                <table class="table text-center">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Reputacion</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for postu in postulaciones %}
+                    <table class="table text-center">
+                        <thead>
                             <tr>
-                                <td>{{postu.nombre}}, {{postu.apellido}}</td>
-                                <td>{{postu.reputacion}}</td>
-                                {% if viaje.id_estado not in [2, 3, 5] %}
-                                    <td>
-                                        {% if postu.estado_postulacion == 1 %}
-                                            <a href="/viaje/aceptarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-success aceptarPostulacion">Aceptar</a>
-                                            <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-warning rechazarPostulacion">Rechazar</a>
-                                        {% elseif postu.estado_postulacion == 2 %}
-                                            <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-danger rechazarPostulacion">Rechazar</a>
-                                        {% endif %}
-                                    </td>
-                                {% endif %}
+                                <th>Usuario</th>
+                                <th>Reputacion</th>
+                                <th>Acciones</th>
                             </tr>
-                        {% endfor%}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for postu in postulaciones %}
+                                <tr>
+                                    <td>{{postu.nombre}}, {{postu.apellido}}</td>
+                                    <td>{{postu.reputacion}}</td>
+                                    {% if viaje.id_estado not in [2, 3, 5] %}
+                                        <td>
+                                            {% if postu.estado_postulacion == 1 %}
+                                                <a href="/viaje/aceptarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-success aceptarPostulacion">Aceptar</a>
+                                                <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-warning rechazarPostulacion">Rechazar</a>
+                                            {% elseif postu.estado_postulacion == 2 %}
+                                                <a href="/viaje/rechazarPostulacion/{{postu.id_postulacion}}" data-postulacion="{{postu.id_postulacion}}" class="btn btn-danger rechazarPostulacion">Rechazar</a>
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor%}
+                        </tbody>
+                    </table>
 
+                </div>
             </div>
-        </div>
+        {% else %}
+            <!-- Tabla de pasajeros-->          
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="profile-username text-center">Pasajeros del viaje</h3>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-body">
+                    <table class="table text-center">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Reputacion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for postu in pasajeros %}
+                                <tr>
+                                    <td>{{postu.nombre}}, {{postu.apellido}}</td>
+                                    <td>{{postu.reputacion}}</td>
+                                </tr>
+                            {% endfor%}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        {% endif %}
+
     {% elseif postulado %}
         {% if postulacion.estado_postulacion == 2 %}
             <div class="callout callout-success">
@@ -141,6 +171,8 @@
             <p>No estas postulado a este viaje. Animate a viajar!!! Postulate Ya!!!</p>
         </div>  
     {% endif %}
+
+
     <div class="box box-info">
 
         <div class="box-body">
@@ -472,7 +504,7 @@
                                         if (resp.ok) {
                                             location.reload();
                                         } else {
-                                            alert("error al anular la postulacion.")
+                                            alert("error al registrar la postulacion.\n" + resp.mensaje)
                                         }
                                     }
                                 });
@@ -489,7 +521,7 @@
                                 if (resp.ok) {
                                     location.reload();
                                 } else {
-                                    alert("error al registrar la postulacion.")
+                                    alert("error al registrar la postulacion.\n" + resp.mensaje)
                                 }
                             }
                         });

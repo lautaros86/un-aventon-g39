@@ -1,3 +1,4 @@
+
 <!-- Post -->
 <div class="notificaciones">
     <h3>Listado de Facturas</h3>
@@ -23,10 +24,10 @@
                         <td>{{factura.id_factura}}</td>
                         <td>{{factura.id_viaje}}</td>
                         <td>{{factura.descripcion | raw}}</td>
-                        <td>${{factura.monto}}</td>
-                        <td>{{factura.fecha_pago}}</td>
+                        <td>${{factura.factura_monto}}</td>
+                        <td>{{factura.fecha_pago | date('d/m/Y H:i:s')}}</td>
                         <td>           
-                           {{factura.tipofactura}}
+                            {{factura.tipofactura}}
                         </td>
                         <td>           
                             {{factura.estadofactura}}
@@ -47,5 +48,25 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="modal" id="pagoModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="titulo">Elija su medio de pago</h4>
+            </div>
+            <div class="modal-body" id="mensaje">
+                <p>[[Aqui iria un select de sus tarjetas]]</p>
+                <p>[[Aqui iria el monto de la wallet]]</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success pull-left" id="pagoTarjeta">TARJETA</button>
+                <button class="btn btn-success" id="pagoWallet">WALLET</button>
+            </div>
+        </div>
     </div>
 </div>

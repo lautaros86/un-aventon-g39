@@ -8,6 +8,7 @@ class usuarioController extends Controller {
     private $_tarjeta;
     private $_facturas;
     private $_calificacion;
+    private $_wallet;
 
     public function __construct() {
         parent::__construct();
@@ -17,12 +18,14 @@ class usuarioController extends Controller {
         require_once ROOT . 'models' . DS . 'tarjetaModel.php';
         require_once ROOT . 'models' . DS . 'facturaModel.php';
         require_once ROOT . 'models' . DS . 'calificacionModel.php';
+        require_once ROOT . 'models' . DS . 'walletModel.php';
         $this->_registro = new registroModel();
         $this->_usuario = new usuarioModel();
         $this->_viajes = new viajeModel();
         $this->_tarjeta = new tarjetaModel();
         $this->_facturas = new facturaModel();
         $this->_calificacion = new calificacionModel();
+        $this->_wallet = new walletModel();
     }
 
     public function index() {
@@ -332,6 +335,7 @@ class usuarioController extends Controller {
         $params["facturas"] = $this->_facturas->getFacturasOf($params["usuario"]["id"]);
         $params["calificaciones"] = $this->_usuario->getCalificacionesOf($params["usuario"]["id"]);
         $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular($params["usuario"]["id"]);
+        $params["saldoWallet"] = $this->_wallet->getSaldo($params["usuario"]["id"]);
         $this->_view->renderizar('verUsuario', 'usuario', $params);
     }
 

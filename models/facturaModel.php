@@ -30,7 +30,7 @@ class facturaModel extends Model {
      */
     public function getFacturasOf($idUsuario) {
         $sql = "select f.id as id_factura, ef.nombre as estadofactura, ev.nombre as estadoviaje, 
-            tf.nombre as tipofactura, f.*, v.* 
+            tf.nombre as tipofactura, v.monto as monto_viaje, f.monto as factura_monto, f.*, v.* 
             from facturas f inner join viaje v on (f.id_viaje = v.id)
             inner join estado_factura ef on (f.id_estado = ef.id)
             inner join tipo_factura tf on (f.id_tipo = tf.id)
@@ -79,6 +79,23 @@ class facturaModel extends Model {
             ":id_usuario" => $idUsuario
         );
         $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll();
+    }
+    
+    
+    /**
+     * Retorna todas las facturas 
+     * @param type $form
+     */
+    public function getFactura($idFactura) {
+        $sql = "select * from facturas 
+            inner join viaje on facturas.id_viaje = viaje.id
+            where facturas.id = :id_factura";
+        $params = array(
+            ":id_factura" => $idFactura
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetch();
     }
     
     
@@ -99,10 +116,11 @@ class facturaModel extends Model {
      * cambia el estado de una factua a PAGA(3) 
      * @param type $form
      */
-    public function pagarFactura($idFactura) {
-        $sql = "update facturas set id_estado = 3 where id = :id_factura";
+    public function pagarFactura($idFactura, $medio = "indefinido") {
+        $sql = "update facturas set id_estado = 3, medio = :medio, fecha_pago = NOW()  where id = :id_factura";
         $params = array(
-            ":id_factura" => $idFactura
+            ":id_factura" => $idFactura,
+            ":medio" => $medio
         );
         $this->_db->execute($sql, $params);
     }

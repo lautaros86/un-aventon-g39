@@ -7,6 +7,67 @@
 {% block style %}
     {{parent()}}
         <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+
+    <style>
+        /* The Modal (background) */
+
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            padding-top: 100px;
+            /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        input {
+            text-transform: uppercase;
+        }
+
+        .small,
+        small { 
+            font-size: 82% !important;
+        }
+    </style>
 {% endblock %}
 
 
@@ -140,22 +201,36 @@
                     elem = $(elem.parent());
                 }
                 debugger;
-                $(location).attr('href', '/tarjeta/darDeBajaTarjeta/' + elem.data('idtarjeta'));                
+                $(location).attr('href', '/tarjeta/darDeBajaTarjeta/' + elem.data('idtarjeta'));
             } else {
                 alert("Pedido cancelado");
             }
         });
         $(".pagarFactura").click(function (event) {
-            ok = confirm("¿Esta seguro que desea pagar esta factura?");
-            if (ok) {
-                var elem = $(event.target);
-                if (elem.is("i")) {
-                    elem = $(elem.parent());
-                }
-                $(location).attr('href', 'factura/pagar/' + elem.data('idfactura'));
-            } else {
-                alert("Pedido cancelado");
+            $('#pagoModal').show();
+            var elem = $(event.target);
+            if (elem.is("i")) {
+                elem = $(elem.parent());
             }
+            $("#pagoTarjeta").data("idfactura", elem.data("idfactura"));
+            $("#pagoWallet").data("idfactura", elem.data("idfactura"));
+        });
+        $("#pagoTarjeta").click(function (event) {
+            var elem = $(event.target);
+            if (elem.is("i")) {
+                elem = $(elem.parent());
+            }
+            $(location).attr('href', 'factura/pagarTarjeta/' + elem.data('idfactura'));
+        });
+        $("#pagoWallet").click(function (event) {
+            var elem = $(event.target);
+            if (elem.is("i")) {
+                elem = $(elem.parent());
+            }
+            $(location).attr('href', 'factura/pagarWallet/' + elem.data('idfactura'));
+        });
+        $(".close").click(function () {
+            $('#pagoModal').hide();
         });
 
     </script>

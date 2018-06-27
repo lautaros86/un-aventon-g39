@@ -16,16 +16,19 @@
                         <p class="text-muted text-center">{{session.get('usuario').email}}</p>
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
-                                <b>Total de Viajes</b> <a class="pull-right">{{usuario.cantViajesPasajero + usuario.cantViajesChofer}}</a>
+                                <b>Total de Viajes</b> <p class="pull-right">{{usuario.cantViajesPasajero + usuario.cantViajesChofer}}</p>
                             </li>
                             <li class="list-group-item">
-                                <b>Chofer</b> <a class="pull-right">{{usuario.cantViajesChofer}}</a>
+                                <b>Chofer</b> <p class="pull-right">{{usuario.cantViajesChofer}}</p>
                             </li>
                             <li class="list-group-item">
-                                <b>Pasajero</b> <a class="pull-right">{{usuario.cantViajesPasajero}}</a>
+                                <b>Pasajero</b> <p class="pull-right">{{usuario.cantViajesPasajero}}</p>
                             </li>
                             <li class="list-group-item">
-                                <b>Reputacion</b> <a class="pull-right">{{usuario.reputacion}}</a>
+                                <b>Reputacion</b> <p class="pull-right">{{usuario.reputacion}}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Wallet: </b> <p class="pull-right">${{saldoWallet}}</p>
                             </li>
                         </ul>
 

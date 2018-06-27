@@ -222,7 +222,8 @@ class viajeModel extends Model {
                 -- El fin de otro viaje este entre el principio y fin de mi nuevo viaje
                     (DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') + INTERVAL duracion SECOND BETWEEN :dateTime AND :dateTime + INTERVAL :segundos SECOND )
                 )
-                and id_chofer = :id_chofer";
+                and id_chofer = :id_chofer
+                and viaje.id_estado in (1, 2, 4)";
         $chofer = Session::get("id_usuario");
         $this->_db->execute($sql, array(
             ":segundos" => $segundos,
@@ -253,7 +254,8 @@ class viajeModel extends Model {
                 -- El fin de otro viaje este entre el principio y fin de mi nuevo viaje
                     (DATE_FORMAT(concat(fecha, ' ', hora), '%Y-%m-%d %H:%i:%s') + INTERVAL duracion SECOND BETWEEN :dateTime AND :dateTime + INTERVAL :segundos SECOND )
                 )
-                and id_vehiculo = :id_vehiculo";
+                and id_vehiculo = :id_vehiculo
+                and viaje.id_estado in (1, 2, 4)";
         $this->_db->execute($sql, array(
             ":segundos" => $segundos,
             ":dateTime" => $datetime,
@@ -287,7 +289,8 @@ class viajeModel extends Model {
                 )
                 -- que la postulacion este aceptada
                 and postulacion.id_estado = 2
-                and id_pasajero = :id_pasajero";
+                and id_pasajero = :id_pasajero
+                and viaje.id_estado in (1, 2, 4)";
         $this->_db->execute($sql, array(
             ":segundos" => $segundos,
             ":dateTime" => $datetime,

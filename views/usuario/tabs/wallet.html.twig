@@ -1,0 +1,112 @@
+<style>
+    /* The Modal (background) */
+
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    /* The Close Button */
+
+    .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    input {
+        text-transform: uppercase;
+    }
+
+    .small,
+    small { 
+        font-size: 82% !important;
+    }
+</style>
+<h3>Monto actual de la wallet <b class="montovisual">${{saldoWallet}}</b></h3>
+<button class="btn btn-warning btn-block" id="extraerDinero">
+    Quiero extraer
+</button>
+
+<div class="modal" id="extraccionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Por favor, ingrese el monto que desea extraer.</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formextraccion">
+                    <div class="form-group">
+                        <input type="number" name="montoextraccion" id="montoextraccion"  class="form-control" autocomplete="off"/>
+                    </div>   
+                </form>            
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="cancelar">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarExtraer">Extrae</button>  
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="mensajeModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="tituloeextraccion"></h4>
+            </div>
+            <div class="modal-body" id="mensajeextraccion">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="loadingModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Cargando... Por favor espere.</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>
+            </div>
+        </div>
+    </div>
+</div>

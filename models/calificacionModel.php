@@ -24,6 +24,22 @@ class calificacionModel extends Model {
     }
 
     /**
+     * Retorna una calificacion
+     * @param type $idUsusario
+     * @return type
+     */
+    public function getCalificacion($idCali){
+        $sql = "select * 
+            from calificaciones 
+            where id = :id_cali";
+        $params = array(
+            ":id_cali" => $idCali
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetch();
+    }
+
+    /**
      * crea una calificacion
      * @param type $idUsusario
      * @return type

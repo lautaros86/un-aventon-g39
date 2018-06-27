@@ -37,22 +37,6 @@ class usuarioModel extends Model {
         ));
     }
 
-    /**
-     * 
-     * Actualiza la reputacion para un usuario determinado con el valor recibido.
-     * 
-     * @param type $idUsuario
-     * @param type $valor
-     */
-    public function actualizarReputacion($idUsuario, $valor) {
-        $sql = "UPDATE `usuarios` set reputacion = reputacion + :valor where id = :idusuario";
-        $this->_db->execute($sql, array(
-            ':idusuario' => $idUsuario,
-            ':valor' => $valor
-                )
-        );
-    }
-
     public function postular($idUsuario, $idViaje) {
         $sql = "INSERT INTO postulacion (id_pasajero, id_viaje) VALUES (:idusuario, :idviaje)";
         $this->_db->execute($sql, array(
@@ -169,6 +153,19 @@ class usuarioModel extends Model {
     public function calificar($idCali, $value) {
         $sql = "UPDATE calificaciones SET calificacion = :value WHERE id = :id";
         $this->_db->execute($sql, array(':id' => $idCali, ':value' => $value));
+    }
+
+    /**
+     * 
+     * Actualiza la reputacion para un usuario determinado con el valor recibido.
+     * 
+     * @param type $idUsuario
+     * @param type $valor
+     */
+    public function actualizarReputacion($idUsuario, $valor) {
+        $sql = "UPDATE `usuarios` set reputacion = reputacion + :valor where id = :idusuario";
+        $params = array(':idusuario' => $idUsuario,':valor' => $valor);
+        $this->_db->execute($sql,$params);
     }
 
 }

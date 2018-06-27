@@ -440,11 +440,27 @@ class usuarioController extends Controller {
     }
 
     public function calificar($idCalificacion, $tipo) {
-        if ($tipo == "positivo") {
-            $this->_usuario->calificar($idCalificacion, 1);
+        $calificacion = $this->_calificacion->getCalificacion($idCalificacion);
+        if ($calificacion["calificacion"] == 0) {
+            if ($tipo == "positivo") {
+                $puntaje = 1;
+            } else {
+                $puntaje = -1;
+            }
+            try {
+                $this->_usuario->beginTransaction();
+                $this->_usuario->calificar($idCalificacion, $puntaje);
+                $this->_usuario->actualizarReputacion($calificacion["id_calificado"], $puntaje);
+                $this->_usuario->commit();
+                Session::setMessage("La calificación se puntuo correctamente con " . $puntaje . " punto", SessionMessageType::Success);
+            } catch (PDOException $e) {
+                $this->_usuario->rollback();
+                Session::setMessage("Hubo un error al calificar al usuario. Por favor intente de nuevo mas tarde.", SessionMessageType::Success);
+            }
         } else {
-            $this->_usuario->calificar($idCalificacion, -1);
+            Session::setMessage("La calificación ya fue puntuada", SessionMessageType::Error);
         }
+
         $this->redireccionar("/perfil#calificaciones");
     }
 

@@ -6,7 +6,7 @@
 
 {% block style %}
     {{parent()}}
-        <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="../../bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
 
     <style>
         /* The Modal (background) */
@@ -81,6 +81,7 @@
             <li ><a href="#notificaciones" data-toggle="tab">Notificaciones</a></li>
             <li ><a href="#facturas" data-toggle="tab">Facturas</a></li>
             <li ><a href="#calificaciones" data-toggle="tab">Calificaciones</a></li>
+            <li ><a href="#wallet" data-toggle="tab">Wallet</a></li>
         </ul>
         <div class="tab-content">
             <div class="active tab-pane" id="activity">
@@ -108,6 +109,9 @@
             </div>
             <div class="tab-pane" id="calificaciones">
                 {% include 'usuario/tabs/calificaciones.html.twig' %}
+            </div>
+            <div class="tab-pane" id="wallet">
+                {% include 'usuario/tabs/wallet.html.twig' %}
             </div>
             <!-- /.nav-tabs-custom -->
         </div>
@@ -232,6 +236,38 @@
         $(".close").click(function () {
             $('#pagoModal').hide();
         });
+///////////////////////////////para extraccion //////////////////
+        $("#extraerDinero").click(function () {
+            $('#extraccionModal').show();
+            $("#montoextraccion").focus();
+        });
+        $(".close").click(function () {
+            $('#extraccionModal').hide();
+            $("#montoextraccion").val("");
+        });
+        $("#cancelar").click(function () {
+            $('#extraccionModal').hide();
+            $("#montoextraccion").val("");
+        });
 
+        function sumbitForm(form) {
+
+        }
+        $("#confirmarExtraer").click(function () {
+            $("#formextraccion").attr("action", "/wallet/cobrar/" + $("#montoextraccion").val());
+            $("#formextraccion").submit();
+        });
+        $(window).click(function (event) {
+            if (event.target == $('#extraccionModal')[0] || event.target == $('#mensajeModal')[0]) {
+                $('#extraccionModal').hide();
+                $('#mensajeModal').hide();
+            }
+        });
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
     </script>
 {% endblock %}

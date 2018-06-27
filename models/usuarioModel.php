@@ -139,6 +139,26 @@ class usuarioModel extends Model {
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll();
     }
+    
+    /**
+     * Retorna todas las calificaciones hechas o por hacer de un usuario
+     * @param type $idUsusario
+     * @return type
+     */
+    public function calcularPuedePublicarPostular($idUsusario) {
+        $sql = "select * 
+                from usuarios u 
+                left join facturas f on f.id_usuario = u.id
+                left join calificaciones c on u.id = c.id_calificante
+                where u.id = :id_usuario
+                and (f.id_estado = 2
+                or c.calificacion = 0)";
+        $params = array(
+            ":id_usuario" => $idUsusario
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->rowCount();
+    }
 
     /**
      * Retorna todas las calificaciones hechas a un usuario

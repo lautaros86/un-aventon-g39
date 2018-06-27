@@ -10,15 +10,16 @@ class facturaModel extends Model {
      * Crea una nueva factura
      * @param int $tipo Determina el tipo de factura, de chofer(1 int) o pasajero(2 int).
      */
-    public function crearFactura($idUsuario, $idViaje, $monto, $descripcion, $tipo) {
-        $sql = "INSERT INTO facturas (id_usuario, id_viaje, monto, descripcion, id_tipo, fecha_crea, fecha_modi) 
-                VALUES (:id_usuario, :id_viaje, :monto, :descripcion, :tipo, NOW(), NOW())";
+    public function crearFactura($idUsuario, $idViaje, $monto, $descripcion, $tipo, $estado = 1) {
+        $sql = "INSERT INTO facturas (id_usuario, id_viaje, monto, descripcion, id_tipo, id_estado, fecha_crea, fecha_modi) 
+                VALUES (:id_usuario, :id_viaje, :monto, :descripcion, :tipo, :estado, NOW(), NOW())";
         $params = array(
             ":id_usuario" => $idUsuario,
             ":id_viaje" => $idViaje,
             ":monto" => $monto,
             ":descripcion" => $descripcion,
             ":tipo" => $tipo,
+            ":estado" => $estado,
         );
         $this->_db->execute($sql, $params);
     }

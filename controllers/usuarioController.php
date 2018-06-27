@@ -336,9 +336,6 @@ class usuarioController extends Controller {
     }
 
     public function verOtroUsuaurio($id_otroUsuario) {
-        if (!Session::get('autenticado')) {
-            $this->redireccionar();
-        }
         $otroUsuario = $this->_usuario->getUsuario($id_otroUsuario);
         $otroUsuario['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($id_otroUsuario);
         $otroUsuario['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($id_otroUsuario);

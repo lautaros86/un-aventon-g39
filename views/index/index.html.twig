@@ -64,6 +64,7 @@
              folder instead of downloading all of them to reduce the load. -->
         <link rel="stylesheet" href="../../bower_components/admin-lte/dist/css/skins/_all-skins.min.css">
 
+        <link rel="stylesheet" href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
     </head>
     <body class="hold-transition skin-blue layout-top-nav">
 
@@ -156,7 +157,8 @@
                                             <label for="date">Fecha:</label>
                                             <div class="form-field">
                                                 <i class="icon icon-calendar2"></i>
-                                                <input type="text" id="fecha" name="fecha" class="form-control date" placeholder="DD/MM/AAAA">
+                                                <input data-date-start-date="+1d" type="fecha" class="form-control" id="fecha" name="fecha"
+                                                       placeholder="Fecha" autocomplete="off" >
                                             </div>
                                         </div>
                                     </div>
@@ -266,7 +268,7 @@
                             </ul>
                             </p>
                             <a href="paginaEstatica/preguntasFrecuentes">Preguntas frecuentes</a>
-                            
+
                         </div>
                         <div class="col-md-6 col-md-push-1">
                             <h4>Informacion de contacto</h4>
@@ -315,6 +317,19 @@
         <script src="libs/landing/js/main.js"></script>
         <script src="libs/custom/notificaciones.js"></script>
 
+        <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+        <script src="bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>s
+        <script>
+                                        $().ready(function () {
+
+                                            $('#fecha').datepicker({
+                                                autoclose: true,
+                                                language: 'es',
+                                                orientation: 'bottom',
+                                                maxViewMode: 0
+                                            });
+                                        });
+        </script>
     </body>
 </html>
 

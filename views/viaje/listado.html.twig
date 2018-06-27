@@ -36,7 +36,8 @@
                                     <label for="date">Fecha:</label>
                                     <div class="form-field">
                                         <i class="icon icon-calendar2"></i>
-                                        <input type="text" id="fecha" name="fecha" class="form-control date" placeholder="DD/MM/AAAA">
+                                        <input data-date-start-date="+1d" type="fecha" class="form-control" id="fecha" name="fecha"
+                                               placeholder="Fecha" autocomplete="off" >
                                     </div>
                                 </div>
                             </div>
@@ -85,5 +86,22 @@
         </div>
     </div> 
 </div>
+{% endblock %}
+
+{% block script %}
+    {{parent()}}
+    <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="../../bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+    <script>
+        $().ready(function () {
+
+            $('#fecha').datepicker({
+                autoclose: true,
+                language: 'es',
+                orientation: 'bottom',
+                maxViewMode: 0
+            });
+        });
+    </script>
 
 {% endblock %}

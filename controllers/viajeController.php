@@ -66,8 +66,8 @@ class viajeController extends Controller {
             Session::setMessage("El viaje requerido fue eliminado.", SessionMessageType::Error);
             $this->redireccionar("perfil");
         }
+        $postulacionesAceptadas = $this->_viaje->getPostulacionesAceptadas($viaje["id"]);
         if (in_array($viaje["id_estado"], [2, 5])) {
-            $postulacionesAceptadas = $this->_viaje->getPostulacionesAceptadas($viaje["id"]);
             $destinatarios = array();
             foreach ($postulacionesAceptadas as $postulante) {
                 $destinatarios[] = $postulante["id_pasajero"];
@@ -77,6 +77,7 @@ class viajeController extends Controller {
                 $this->redireccionar("perfil");
             }
         }
+        $params["pasajeros"] = $this->_viaje->getPasajeros($viaje["id"]);
         $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular(Session::get("id_usuario"));
         $params["viaje"] = $viaje;
         $params["vehiculo"] = $this->_vehiculo->getVehiculosById($viaje["id_vehiculo"]);
@@ -84,7 +85,6 @@ class viajeController extends Controller {
         $params["chofer"]["cantViajesChofer"] = $this->_viaje->getCantViajesChofer($params["viaje"]["id_chofer"]);
         $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
         $params["usuario"] = Session::get("usuario");
-        $params["postulacionesAceptadas"] = $this->_viaje->getPostulacionesAceptadasCant($params["viaje"]["id"]);
         $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
         if ($params["chofer"]["id"] == $params["usuario"]["id"]) {
             $params["esChofer"] = true;
@@ -272,6 +272,10 @@ class viajeController extends Controller {
             $error = true;
             Session::setMessage("No puede aceptarse esta postulacion, el viaje esta lleno.", SessionMessageType::Error);
         }
+        if (!in_array($viaje["id_estado"], [1, 4])) {
+            $error = true;
+            Session::setMessage("Solo puede aceptar postulaciones cuando el viaje esta ABIERTO o LLENO.", SessionMessageType::Error);
+        }
         // TODO: Validar que el pasajero de la postulacion no tenga otra postulacion aceptada para un viaje en el mismo dia y rango de 2 horas del que se lo esta aceptando.
         $timestamp = strtotime($viaje["hora"]) + 120 * 60;
         $horaFin = date('H:i' . ':00', $timestamp);
@@ -315,6 +319,10 @@ class viajeController extends Controller {
         $pasajero = $this->_usuario->getUsuario($postulacion["id_pasajero"]);
         $viaje = $this->_viaje->getViaje($postulacion["id_viaje"]);
         $chofer = $this->_usuario->getUsuario($viaje["id_chofer"]);
+        if (!in_array($viaje["id_estado"], [1, 4])) {
+            Session::setMessage("Solo puede rechazar postulaciones cuando el viaje esta ABIERTO o LLENO.", SessionMessageType::Error);
+            $this->redireccionar("/viaje/detalle/" . $postulacion["id_viaje"]);
+        }
         if ($viaje["id_chofer"] == Session::get("id_usuario") && $postulacion["id_estado"] != 3) {
             try {
                 $this->_viaje->beginTransaction();

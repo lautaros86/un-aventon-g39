@@ -123,10 +123,10 @@ class viajeModel extends Model {
      * @return type
      */
     public function getPasajeros($idViaje) {
-        $sql = "select p.id as id_postulacion, p.id_pasajero 
+        $sql = "select p.id as id_postulacion, p.id_pasajero, u.*
                 from postulacion p
                 inner join usuarios u on (p.id_pasajero = u.id)
-                where id_viaje = :id_viaje and id_estado = 2";
+                where p.id_viaje = :id_viaje and p.id_estado in (2, 5)";
         $this->_db->execute($sql, array(":id_viaje" => $idViaje));
         return $this->_db->fetchAll();
     }

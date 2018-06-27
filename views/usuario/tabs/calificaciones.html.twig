@@ -1,0 +1,34 @@
+<!-- Post -->
+<div class="notificaciones">
+    <h3>Calificaciones pendientes</h3>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Viaje</th>
+                    <th>Calificado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for calificacion in calificaciones %}
+                    <tr>
+                        <td>{{calificacion.id}}</td>
+                        <td>{{calificacion.id_viaje}}</td>
+                        <td>{{calificacion.id_calificado}}</td>
+                        <td>
+                            {% if calificacion.calificacion == 0 %}
+                                <a class="btn btn-success calificarBien" href="/usuario/calificar/{{calificacion.id}}/positivo">+1</a>
+                                <a class="btn btn-danger calificarMal" href="/usuario/calificar/{{calificacion.id}}/negativo">-1</a>
+                            {% else%}
+                                {{calificacion.calificacion}}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

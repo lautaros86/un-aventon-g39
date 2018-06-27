@@ -18,6 +18,10 @@ class notificacionController extends Controller {
         echo json_encode($notificaciones);
     }
 
+    public function getNotificacionesOf($idUsuario) {
+        return $this->_notificacionModel->getNotificaciones($idUsuario);
+    }
+
     public function limpiarNotificaciones() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);

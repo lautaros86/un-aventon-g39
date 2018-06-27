@@ -25,7 +25,7 @@
 {% endfor %}
 
 
-<h4>Todos mis viajes</h4>
+<h4>Viajes Publicados</h4>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -48,6 +48,38 @@
                 <td>{{viaje.monto * viaje.asientos}}</td>
                 <td>{{viaje.estadonombre}}</td>
                 <td><a href="/viaje/detalle/{{viaje.id}}" class="btn btn-success btn-sm ad-click-event">
+                        Ver Detalle
+                    </a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>Postulaciones</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+            <th>Detalle</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for postulacion in viajesPostulados %}
+            <tr>
+                <td>{{postulacion.id}}</td>
+                <td>{{postulacion.origen}}</td>
+                <td>{{postulacion.destino}}</td>
+                <td>${{postulacion.monto}}</td>
+                <td>{{postulacion.fecha | date("d/m/Y")}}</td>
+                <td>{{postulacion.hora | date("H:i")}}</td>
+                <td>{{postulacion.estadopostulacion}}</td>
+                <td><a href="/viaje/detalle/{{postulacion.id_viaje}}" class="btn btn-success btn-sm ad-click-event">
                         Ver Detalle
                     </a></td>
             </tr>

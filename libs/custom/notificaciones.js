@@ -21,9 +21,8 @@ $().ready(function () {
                     liTag.addClass("noVista");
                     liTag.addClass("list-group-item-info");
                 }
-                var aTag = $('<a>');
+                var aTag = $('<a>').html(noti.mensaje);;
                 var iTag = $('<i>').addClass("fa fa-circle-o text-" + noti.color);
-                aTag.text(noti.mensaje);
                 aTag.prepend(iTag);
                 liTag.append(aTag);
                 $("#menuNotif").append(liTag);

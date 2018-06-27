@@ -12,10 +12,13 @@
 {% block subContenido %}
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#activity" data-toggle="tab">Viajes publicados</a></li>
+            <li class="active"><a href="#activity" data-toggle="tab">Viajes</a></li>
             <li><a href="#timeline" id="historial"data-toggle="tab" >Historial</a></li>
-            <li ><a href="#misVehiculos" data-toggle="tab">Mis Vehiculos</a></li>
-            <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas de credito</a></li>
+            <li ><a href="#misVehiculos" data-toggle="tab">Vehiculos</a></li>
+            <li ><a href="#tarjetaCredito" data-toggle="tab">Tarjetas</a></li>
+            <li ><a href="#notificaciones" data-toggle="tab">Notificaciones</a></li>
+            <li ><a href="#facturas" data-toggle="tab">Facturas</a></li>
+            <li ><a href="#calificaciones" data-toggle="tab">Calificaciones</a></li>
         </ul>
         <div class="tab-content">
             <div class="active tab-pane" id="activity">
@@ -34,6 +37,15 @@
             </div>
             <div class="tab-pane" id="tarjetaCredito">
                 {% include 'usuario/tabs/tarjetaCredito.html.twig' %}
+            </div>
+            <div class="tab-pane" id="notificaciones">
+                {% include 'usuario/tabs/notificaciones.html.twig' %}
+            </div>
+            <div class="tab-pane" id="facturas">
+                {% include 'usuario/tabs/facturas.html.twig' %}
+            </div>
+            <div class="tab-pane" id="calificaciones">
+                {% include 'usuario/tabs/calificaciones.html.twig' %}
             </div>
             <!-- /.nav-tabs-custom -->
         </div>
@@ -128,6 +140,18 @@
                 }
                 debugger;
                 $(location).attr('href', '/tarjeta/darDeBajaTarjeta/' + elem.data('idtarjeta'));                
+            } else {
+                alert("Pedido cancelado");
+            }
+        });
+        $(".pagarFactura").click(function (event) {
+            ok = confirm("¿Esta seguro que desea eliminar esta tarjeta?");
+            if (ok) {
+                var elem = $(event.target);
+                if (elem.is("i")) {
+                    elem = $(elem.parent());
+                }
+                $(location).attr('href', 'factura/pagar/' + elem.data('idfactura'));
             } else {
                 alert("Pedido cancelado");
             }

@@ -70,6 +70,22 @@ class viajeModel extends Model {
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
         return $this->_db->fetchAll();
     }
+    /**
+     * 
+     * Retorna las los ids de usuarios postulados a un id de viaje.
+     * 
+     * @param type $idviaje
+     * @return type
+     */
+    public function getViajesPostuladosOf($idUsuario) {
+        $sql = "select p.id id_postulacion, ep.nombre as estadopostulacion, v.id as id_viaje, v.* from postulacion p 
+            inner join viaje v on(p.id_viaje = v.id) 
+            inner join estado_postulacion ep on (p.id_estado = ep.id)
+            where p.id_pasajero = :id_pasajero
+            and p.id_estado in (1, 2)";
+        $this->_db->execute($sql, array(":id_pasajero" => $idUsuario));
+        return $this->_db->fetchAll();
+    }
 
     /**
      * 
@@ -109,7 +125,7 @@ class viajeModel extends Model {
                 from postulacion p
                 inner join usuarios u on (p.id_pasajero = u.id)
                 where id_viaje = :id_viaje and id_estado = 2";
-        $this->_db->execute($sql, array(":id_viaje" => $idviaje));
+        $this->_db->execute($sql, array(":id_viaje" => $idViaje));
         return $this->_db->fetchAll();
     }
 

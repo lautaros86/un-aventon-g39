@@ -70,7 +70,7 @@ class viajeController extends Controller {
             $postulacionesAceptadas = $this->_viaje->getPostulacionesAceptadas($viaje["id"]);
             $destinatarios = array();
             foreach ($postulacionesAceptadas as $postulante) {
-                $destinatarios[] = $postulante["id"];
+                $destinatarios[] = $postulante["id_pasajero"];
             }
             if ($viaje["id_chofer"] != Session::get("id_usuario") && !in_array(Session::get("id_usuario"), $destinatarios)) {
                 Session::setMessage("El viaje requerido solo puede ser visto por el chofer y los pasajeros.", SessionMessageType::Error);
@@ -235,11 +235,15 @@ class viajeController extends Controller {
                 foreach ($pasajeros as $pasajero) {
                     $destinatarios[] = $pasajeros["id_pasajero"];
                     $this->_viaje->finalizarPostulacion($pasajero["id_postulacion"]);
-                    $this->_factura->crearFactura($pasajeros["id_pasajero"], $idViaje, $viaje["monto"], "por viajar", 2);
-                    $this->_notificacion->crearNotificacionSimple("Tu factura con n°" . $this->_viaje->lastInsertId() . "para el viaje n° " . $viaje["id"] . " esta disponible.", $pasajeros["id_pasajero"], "green");
+                    $this->_factura->crearFactura($pasajero["id_pasajero"], $idViaje, $viaje["monto"], "por viajar", 2);
+                    $this->_notificacion->crearNotificacionSimple("Tu factura con n°" . $this->_viaje->lastInsertId() . "para el viaje n° " . $viaje["id"] . " esta disponible.", $pasajero["id_pasajero"], "green");
+                    $this->_usuario->crearCalificacion($idViaje, $viaje["id_chofer"], $pasajero["id_pasajero"]);
+                    $this->_usuario->crearCalificacion($idViaje, $pasajero["id_pasajero"], $viaje["id_chofer"]);
                 }
-                $this->_notificacion->crearNotificacion("El viaje n° " . $viaje["id"] . "finalizo.", $destinatarios, "green");
+                $this->_notificacion->crearNotificacion("El viaje <a href='/viaje/detalle/" . $viaje["id"] . "'>n°  " . $viaje["id"] . "</a> finalizo.", $destinatarios, "green");
                 $this->_notificacion->crearNotificacion("Recuerda calificar al chofer por el viaje n° " . $viaje["id"] . ".", $destinatarios, "green");
+                $this->_notificacion->crearNotificacionSimple("El viaje <a href='/viaje/detalle/" . $viaje["id"] . "'>n°  " . $viaje["id"] . "</a> finalizo.", $viaje["id_chofer"], "green");
+                $this->_notificacion->crearNotificacionSimple("Recuerda calificar a los pasajeros/as de tu viaje n° " . $viaje["id"] . ".", $viaje["id_chofer"], "green");
                 $this->_viaje->finaizarViaje($idViaje);
                 Session::setMessage("El viaje se finalizo exitosamente.", SessionMessageType::Success);
                 $this->_viaje->commit();

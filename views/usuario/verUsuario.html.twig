@@ -71,7 +71,7 @@
                 }
                 console.log(elem.data("id"))
                 alert("Modificar vehiculo con id: " + elem.data("idvehiculo"));
-                $(location).attr('href', 'vehiculo/modificar/' + elem.data('idvehiculo'));
+                $(location).attr('href', 'vehiculo/irModificar/' + elem.data('idvehiculo'));
             });
             $(".removeCar").click(function (event) {
                 ok = confirm("¿Esta seguro que desea eliminar este vehiculo?");

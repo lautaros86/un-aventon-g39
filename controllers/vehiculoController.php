@@ -42,21 +42,29 @@ class vehiculoController extends Controller {
         }
     }
 
-    public function modificar($form) {
-        $vehiculoModel = new vehiculoModel();
-        $errors = $this->validarPatente($form);
+    public function irModificar($id) {
+        $form = $this->_vehiculo->getVehiculosById($id);
+        //$form['idvehiculo']= $id;
+        $this->_view->renderizar('modificar', 'vehiculo', array("vehiculo" => $form));
+    }
 
-//        $errors = 1;
-        if ($errors == 1) {
+    public function modificar() {
+        $form['idVehiculo'] = $this->getAlphaNum('idVehiculo');
+        $form['marca'] = $this->getAlphaNum('marca');
+        $form['modelo'] = $this->getAlphaNum('modelo');
+        $form['patente'] = $this->getPostParam('patente');
+        $form['asientos'] = $this->getPostParam('asientos'); //falta esto
+        $form['baul'] = $this->getAlphaNum('baul'); //falta esto
+        $form["baul"] = $form["baul"] == "on" ? 1 : 0;
+        Session::set("form", $form);
+        $errors = $this->validarPatente($form);
+        if ($errors == true) {
             Session::setFormErrors("patente", "Esa patente Ud. la tiene cargada.");
         }
-        if ($this->validarAltaVehiculo() == TRUE) {
-            $error = 1;
-        }
+        $this->validarAltaVehiculo();
         if (!$errors) {
             try {
-                require_once ROOT . 'models' . DS . 'vehiculoModel.php';
-                $vehiculoModel->modificar($form);
+                $this->_vehiculo->modificar($form);
                 Session::setMessage("Vehiculo Modificado", SessionMessageType::Success);
                 Session::destroy("form");
                 $this->redireccionar("perfil");
@@ -65,12 +73,12 @@ class vehiculoController extends Controller {
                 $this->redireccionar("vehiculo/modificar");
             }
         } else {
-            $form['marca'] = $this->getAlphaNum('marca');
-            $form['modelo'] = $this->getAlphaNum('modelo');
-            $form['patente'] = $this->getPostParam('patente');
-            $form['asientos'] = $this->getPostParam('asientos');
-            $form['baul'] = $this->getAlphaNum('baul');
-            $form["baul"] = $form["baul"] == "on" ? 1 : 0;
+//            $form['marca'] = $this->getAlphaNum('marca');
+//            $form['modelo'] = $this->getAlphaNum('modelo');
+//            $form['patente'] = $this->getPostParam('patente');
+//            $form['asientos'] = $this->getPostParam('asientos');
+//            $form['baul'] = $this->getAlphaNum('baul');
+//            $form["baul"] = $form["baul"] == "on" ? 1 : 0;
             Session::set("form", $form);
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
             $this->redireccionar("vehiculo/modificar");

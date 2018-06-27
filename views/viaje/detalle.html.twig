@@ -246,7 +246,15 @@
     <div class="box box-warning">
         <div class="box-header">
             <h3 class="profile-username text-center">Preguntas al conductor</h3>
-
+            {# muestro esto si y solo si no soy el chofer #}
+            <form method="post" action="#">
+                <div class="input-group">
+                    <input type="texarea" class="form-control" name="pregunta" placeholder="escribí tu pregunta">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-success">preguntar</button>
+                    </div>
+                </div>
+            </form>   
             <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
 
             </div>
@@ -259,22 +267,20 @@
                 <p class="message">
                     <a href="#" class="name">
                         <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-                        Mike Doe
+                        Alex Velasquez
                     </a>
-                    I would like to meet you to discuss the latest news about
-                    the arrival of the new theme. They say it is going to be one the
-                    best themes on the market
+                    Hola que tal me gustaria saber de que calle estaría saliendo el viaje.
+                    Gracias.
+
                 </p>
                 <div class="attachment item">
                     <img src="/img/anonimo.png" alt="user image" class="online">
                     <a href="#" class="name">
                         <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-                        Mike Doe
+                        Pedro Gonzalez
                     </a>
                     <p>
-                        I would like to meet you to discuss the latest news about
-                        the arrival of the new theme. They say it is going to be one the
-                        best themes on the market
+                        Hola Alex, el viaje sale desde plaza moreno y termina calle florida al 610
                     </p>
                 </div>
                 <!-- /.attachment -->
@@ -282,66 +288,16 @@
             <!-- /.item -->
             <!-- chat item -->
             <div class="item">
-                <img src="/img/anonimo.png" alt="user image" class="offline">
+                <img src="/img/anonimo.png" alt="user image" class="online">
 
                 <p class="message">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:15</small>
-                        Alexander Pierce
-                    </a>
-                    I would like to meet you to discuss the latest news about
-                    the arrival of the new theme. They say it is going to be one the
-                    best themes on the market
-                </p>
-                <div class="input-group">
-                    <input class="form-control" placeholder="Type message...">
-
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-success">Responder</button>
-                    </div>
-                </div>
-            </div>
-            <!-- /.item -->
-            <!-- chat item -->
-            <div class="item">
-                <img src="/img/anonimo.png" alt="user image" class="offline">
-
-                <p class="message">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:30</small>
-                        Susan Doe
-                    </a>
-                    I would like to meet you to discuss the latest news about
-                    the arrival of the new theme. They say it is going to be one the
-                    best themes on the market
-                </p>
-                <div class="attachment item">
-                    <img src="/img/anonimo.png" alt="user image" class="online">
                     <a href="#" class="name">
                         <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-                        Mike Doe
+                        Maria Sanchez
                     </a>
-                    <p class="message">
-                        I would like to meet you to discuss the latest news about
-                        the arrival of the new theme. They say it is going to be one the
-                        best themes on the market
-                    </p>
-                </div>
-            </div>
-            <!-- /.item -->
+                    Hola que tal me gustaria saber de que calle estaría saliendo el viaje.
+                    Gracias.
 
-            <!-- chat item -->
-            <div class="item">
-                <img src="/img/anonimo.png" alt="user image" class="offline">
-
-                <p class="message">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:30</small>
-                        Susan Doe
-                    </a>
-                    I would like to meet you to discuss the latest news about
-                    the arrival of the new theme. They say it is going to be one the
-                    best themes on the market
                 </p>
                 <div class="input-group">
                     <input class="form-control" placeholder="Type message...">
@@ -349,59 +305,10 @@
                     <div class="input-group-btn">
                         <button type="button" class="btn btn-success">Responder</button>
                     </div>
-                </div>
-            </div>
-            <!-- /.item -->
+                </div>              
+                <!-- /.attachment -->
+            </div>  
 
-            <!-- chat item -->
-            <div class="item">
-                <img src="/img/anonimo.png" alt="user image" class="offline">
-
-                <p class="message">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:30</small>
-                        Susan Doe
-                    </a>
-                    I would like to meet you to discuss the latest news about
-                    the arrival of the new theme. They say it is going to be one the
-                    best themes on the market
-                </p>
-                <div class="input-group">
-                    <input class="form-control" placeholder="Type message...">
-
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-success">Responder</button>
-                    </div>
-                </div>
-            </div>
-            <!-- /.item -->
-
-            <!-- chat item -->
-            <div class="item">
-                <img src="/img/anonimo.png" alt="user image" class="offline">
-
-                <p class="message">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 5:30</small>
-                        Susan Doe
-                    </a>
-                    I would like to meet you to discuss the latest news about
-                    the arrival of the new theme. They say it is going to be one the
-                    best themes on the market
-                </p>
-                <div class="attachment item">
-                    <img src="/img/anonimo.png" alt="user image" class="online">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-                        Mike Doe
-                    </a>
-                    <p class="message">
-                        I would like to meet you to discuss the latest news about
-                        the arrival of the new theme. They say it is going to be one the
-                        best themes on the market
-                    </p>
-                </div>
-            </div>
             <!-- /.item -->
         </div>
     </div>

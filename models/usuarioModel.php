@@ -10,14 +10,37 @@ class usuarioModel extends Model {
         $usuario = $this->_db->query("select * from usuarios");
         return $usuario->fetchAll();
     }
-
     public function getUsuario($id) {
         $id = (int) $id;
         $sql = "SELECT * FROM usuarios WHERE id = :id";
         $user = $this->_db->execute($sql, array(':id' => $id));
         return $this->_db->fetch(PDO::FETCH_ASSOC);
     }
-
+//----------- Consultas para la HU recuperar contraseña---------------------------
+    /**
+     * este metodo tiene como objetivo setear el password de correspondiente de un email con la pass 123
+     * @param type $email
+     * @param type $newPass
+     */
+    public function setearContraseña($email, $newPass) {
+        $sql = "UPDATE usuarios SET password = :newPass WHERE email = :email";
+        $params = array(':email' => $email,
+                        ':newPass' => $newPass
+                        );
+        $this->_db->execute($sql, $params);
+    }
+    /**
+     * retorna la informacion de un usuario apartir del email
+     * @param type $email
+     * @return type
+     */
+    public function getUsuarioByEmail($email) {
+        $id = (int) $id;
+        $sql = "SELECT * FROM usuarios WHERE email = :email";
+        $this->_db->execute($sql, array(':email' => $email));
+        return $this->_db->fetch(PDO::FETCH_ASSOC);
+    }
+//----------- Consultas para la HU recuperar contraseña---------------------------
     public function getDatosChofer($id) {
         $id = (int) $id;
         $sql = "SELECT * 

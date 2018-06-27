@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block contenido %}  
-    
+
     <div class="register-box">
         <div class="register-logo">
             <a href="/">Un<b>Aventon</b></a>
@@ -36,9 +36,9 @@
                     <input type="email" class="form-control" name="email" placeholder="Email">
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
- 
 
- 
+
+
                 <div class="form-group has-feedback">
                     <input type="password" class="form-control" name="pass" placeholder="Contraseña" required>
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
@@ -60,12 +60,34 @@
                                 Google+</a>
                         </div>
             #}
-            <a href="login.html" class="text-center">No recordas tu contraseña?</a>
+            <a href="#" class="text-center" id="missPass">No recordas tu contraseña?</a>
         </div>
         <!-- /.form-box -->
     </div>
     <!-- /.register-box -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Recupera tu contraseña.</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/usuario/recuperarPass" method="POST">
+                        <div class="form-group">
+                            <input type="text" name="confirmEmail" id="confirmPassword"  class="form-control" placeholder="Ingresa tu Email por favor"/>
+                        </div>   
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-default" id="cancelar">Cancelar</button>
+                            <button type="submit" class="btn btn-danger" id="confirmEliminar">Confirmar</button>  
+                        </div>
+                    </form>            
+                </div>
 
+            </div>
+        </div>
+    </div>
     {% block script %}
         {{ parent() }}
         <!-- iCheck -->
@@ -77,6 +99,11 @@
                     checkboxClass: 'icheckbox_square-blue',
                     radioClass: 'iradio_square-blue',
                     increaseArea: '20%' /* optional */
+                });
+            });
+            $().ready(function () {
+                $("#missPass").click(function () {
+                    $('#confirmModal').show();
                 });
             });
         </script>

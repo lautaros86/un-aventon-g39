@@ -28,7 +28,28 @@ class usuarioController extends Controller {
     public function index() {
         
     }
+    public function recuperarPass(){
+        $email = $this->getPostParam("confirmEmail");
+        $result = $this->_usuario->getUsuarioByEmail($email);
+        if ($result > 0){
+        try {
+            $pass = 123;
+            $newPass= Hash::getHash('sha256', $pass, HASH_KEY);
+            $this->_usuario->setearContraseña($email, $newPass);
+            Session::setMessage("Se envio un email a tu casilla con los pasos a seguir.", SessionMessageType::Success);
+            $this->redireccionar("index"); 
+        }catch (Exception $e) {
+            Session::setMessage("Ocurrio un error vuelve a intentarlo.", SessionMessageType::Error);
+            $this->redireccionar("index");
+            
+        }            
+        }else{
+            Session::setMessage("Ups! email no encontrado.", SessionMessageType::Error);
+            $this->redireccionar("index");
+        }
 
+            
+    }
     public function eliminarCuenta() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);

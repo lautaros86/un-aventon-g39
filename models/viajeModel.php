@@ -16,7 +16,8 @@ class viajeModel extends Model {
     }
 
     public function getViaje($id) {
-        $sql = "select * from viaje where id = :idviaje";
+        $sql = "select * from viaje v inner join estado_viaje ev on (v.id_estado = ev.id)
+            where v.id = :idviaje";
         $this->_db->execute($sql, array(":idviaje" => $id));
         return $this->_db->fetch();
     }

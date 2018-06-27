@@ -68,11 +68,15 @@
     </div>
 {% endblock %}
 {% block subContenido %}
-
+    <div class="box box-info">
+        <div class="box-header">
+            <h3 class="profile-username text-center">ESTADO {{viaje.nombre}}</h3>
+        </div>
+    </div>
     {% if chofer.id == session.get('usuario').id %}
         <!-- Tabla de postulantes -->          
         <div class="box box-info">
-            <div class="box-body">
+            <div class="box-header">
                 <h3 class="profile-username text-center">Postulantes al viaje</h3>
             </div>
             <!-- /.box-body -->

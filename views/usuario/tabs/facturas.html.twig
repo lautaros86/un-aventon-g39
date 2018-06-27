@@ -20,7 +20,7 @@
             <tbody>
                 {% for factura in facturas %}
                     <tr>
-                        <td>{{factura.id}}</td>
+                        <td>{{factura.id_factura}}</td>
                         <td>{{factura.id_viaje}}</td>
                         <td>{{factura.descripcion | raw}}</td>
                         <td>${{factura.monto}}</td>
@@ -36,9 +36,9 @@
                         </td>
                         <td>
                             {% if factura.estadofactura == 'PENDIENTE'%}
-                                <button class="btn btn-success pagarFactura" data-idfactura="{{factura.id}}">PAGAR</button>
+                                <button class="btn btn-success pagarFactura" data-idfactura="{{factura.id_factura}}">PAGAR</button>
                             {% elseif factura.estadofactura == 'ACTIVA'%}
-                                <button class="btn btn-warning pagarFactura"  data-idfactura="{{factura.id}}">PAGAR</button>
+                                <button class="btn btn-warning pagarFactura"  data-idfactura="{{factura.id_factura}}">PAGAR</button>
                             {% elseif factura.estadofactura == 'PAGA' %}
                                 <button class="btn btn-default" disabled="">PAGADA</button>
                             {% endif %}

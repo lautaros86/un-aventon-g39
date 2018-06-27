@@ -38,7 +38,9 @@
                     <b>Reputacion</b> <a class="pull-right">{{chofer.reputacion}}</a>
                 </li>
             </ul>
-            {% if  viaje.id_estado != 5 %}
+            {% if  viaje.id_estado == 5 %}
+                VIAJE FINALIZADO
+            {% else %}
                 {% if esChofer %}
                     {% if viaje.id_estado in [1, 4] %}
                         <a class="btn btn-danger btn-block" id="cancelarViaje" href="/viaje/cancelarviaje/{{viaje.id}}"><b>CANCELAR VIAJE</b></a>
@@ -48,20 +50,26 @@
                         <b>VIAJE FINALIZADO</b>
                     {% endif %}
                 {% else %}
-                    <button class="btn btn-info btn-block" id="consultar"><b>CONSULTAR</b></button>
-                    <br/>
                     {% if postulado %}
                         {% if postulacion.estado_postulacion == 2 %}
                             <button class="btn btn-danger btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
                         {% else %}
                             <button class="btn btn-warning btn-block" id="anularPostulacion"><b>ANULAR POSTULACIÓN</b></button>
                         {% endif %}
-                    {% else %}
+                    {% elseif puedePublicarPostular == 0 %}
                         <button class="btn btn-success btn-block" id="postularse"><b>POSTULARME</b></button>
+                    {% else %}
+                        <div class="d-inline-block" 
+                             data-toggle="popover" 
+                             title="Requisitos para postularse" 
+                             data-container="body" 
+                             data-content="Para postularse a viajes, no debe facturas impagas ni calificaciones pendientes.">
+                            <button class="btn btn-success btn-block disabled">
+                                <b>POSTULARME</b>
+                            </button>
+                        </div>
                     {% endif %}
                 {% endif %}
-            {% else %}
-                VIAJE FINALIZADO
             {% endif %}
         </div>
         <!-- /.box-body -->
@@ -427,6 +435,7 @@
         }
 
         $().ready(function () {
+            $('[data-toggle="popover"]').popover()
             $(".aceptarPostulacion").click(function () {
                 var ok = confirm("Seguro que desea aceptar esta postulación?");
                 if (!ok) {

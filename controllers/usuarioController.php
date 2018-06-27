@@ -332,6 +332,7 @@ class usuarioController extends Controller {
         $params["misNotificaciones"] = $this->_notificacion->getNotificacionesOf($params["usuario"]["id"]);
         $params["facturas"] = $this->_facturas->getFacturasOf($params["usuario"]["id"]);
         $params["calificaciones"] = $this->_usuario->getCalificacionesOf($params["usuario"]["id"]);
+        $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular($params["usuario"]["id"]);
         $this->_view->renderizar('verUsuario', 'usuario', $params);
     }
 
@@ -482,7 +483,7 @@ class usuarioController extends Controller {
             Session::setMessage("La calificación ya fue puntuada", SessionMessageType::Error);
         }
 
-        $this->redireccionar("/perfil#calificaciones");
+        $this->redireccionar("perfil#calificaciones");
     }
 
 }

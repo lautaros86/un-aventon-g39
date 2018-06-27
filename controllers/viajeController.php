@@ -77,6 +77,7 @@ class viajeController extends Controller {
                 $this->redireccionar("perfil");
             }
         }
+        $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular(Session::get("id_usuario"));
         $params["viaje"] = $viaje;
         $params["vehiculo"] = $this->_vehiculo->getVehiculosById($viaje["id_vehiculo"]);
         $params["chofer"] = $this->_usuario->getUsuario($viaje["id_chofer"]);
@@ -157,7 +158,7 @@ class viajeController extends Controller {
                     $facturaModel = new facturaModel();
                     $montoTotal = ($form['monto'] * $form['asientos']) * 0.05;
                     $descripcion = "Derecho a publicación del viaje nº " . $idViajeInsertado . " con origen: " . $form['origen'] . " y destino: " . $form['destino'] . ". Con cantidad de asientos: " . $form["asientos"] . " y costo por cada uno de: $" . $form['monto'];
-                    $facturaModel->crearFactura(Session::get("id_usuario"), $idViajeInsertado, number_format((float) $montoTotal, 2, '.', ''), $descripcion, 1);
+                    $facturaModel->crearFactura(Session::get("id_usuario"), $idViajeInsertado, number_format((float) $montoTotal, 2, '.', ''), $descripcion, 1, 1);
                     Session::setMessage("Viaje publicado", SessionMessageType::Success);
                     Session::destroy("form");
                     $this->_viaje->commit();
@@ -235,7 +236,7 @@ class viajeController extends Controller {
                 foreach ($pasajeros as $pasajero) {
                     $destinatarios[] = $pasajeros["id_pasajero"];
                     $this->_viaje->finalizarPostulacion($pasajero["id_postulacion"]);
-                    $this->_factura->crearFactura($pasajero["id_pasajero"], $idViaje, $viaje["monto"], "por viajar", 2);
+                    $this->_factura->crearFactura($pasajero["id_pasajero"], $idViaje, $viaje["monto"], "por viajar", 2, 2);
                     $this->_notificacion->crearNotificacionSimple("Tu factura con n°" . $this->_viaje->lastInsertId() . "para el viaje n° " . $viaje["id"] . " esta disponible.", $pasajero["id_pasajero"], "green");
                     $this->_usuario->crearCalificacion($idViaje, $viaje["id_chofer"], $pasajero["id_pasajero"]);
                     $this->_usuario->crearCalificacion($idViaje, $pasajero["id_pasajero"], $viaje["id_chofer"]);

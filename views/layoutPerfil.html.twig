@@ -33,12 +33,16 @@
                             <i class="fa fa-edit"></i> Editar
                         </a>
                         <br/>
-                        {% if (tarjetas is empty) or (vehiculos is empty) %} 
-                            <span class="d-inline-block" placement="top" data-toggle="popover" style="pointer-events: none;" title="Requisitos para publicar" data-container="body" data-content="Para publicar viajes, debe tener al menos un vehiculo y una tarjeta de credito valida">
-                                <button class="btn btn-success btn-block"disabled="">
+                        {% if (tarjetas is empty) or (vehiculos is empty) or (puedePublicarPostular > 0)%} 
+                            <div class="d-inline-block" 
+                                 data-toggle="popover" 
+                                 title="Requisitos para publicar" 
+                                 data-container="body" 
+                                 data-content="Para publicar viajes, debe tener al menos un vehiculo y una tarjeta de credito valida y no adeudar facturas o calificaciones.">
+                                <button class="btn btn-success btn-block disabled">
                                     <b>PUBLICAR VIAJE </b>
                                 </button>
-                            </span>
+                            </div>
                         {% else %} 
                             <button class="btn btn-success btn-block" id="publicarViaje">
                                 <b>PUBLICAR VIAJE </b>
@@ -72,9 +76,7 @@
                 console.log("asd");
                 $(location).attr('href', "/viaje/alta")
             });
-            $(function () {
-                $('[data-toggle="popover"]').popover()
-            })
+            $('[data-toggle="popover"]').popover()
         });
     </script>
 {% endblock %}

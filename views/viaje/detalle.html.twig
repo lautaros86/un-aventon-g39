@@ -246,71 +246,63 @@
     <div class="box box-warning">
         <div class="box-header">
             <h3 class="profile-username text-center">Preguntas al conductor</h3>
-            {# muestro esto si y solo si no soy el chofer #}
-            <form method="post" action="#">
-                <div class="input-group">
-                    <input type="texarea" class="form-control" name="pregunta" placeholder="escribí tu pregunta">
-                    <div class="input-group-btn">
-                        <button type="submit" class="btn btn-success">preguntar</button>
+            {% if not esChofer and viaje.id_estado == 1 or viaje.id_estado == 4 %}
+                <form method="post" action="/pregunta/preguntar/{{usuario.id}}/{{viaje.id}}">
+                    <div class="input-group">
+                        <input type="texarea" class="form-control" name="pregunta" placeholder="escribí tu pregunta">
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-success">preguntar</button>
+                        </div>
                     </div>
+                </form>   
+                <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
+
                 </div>
-            </form>   
-            <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
-
-            </div>
+            {% endif %}
         </div>
-        <div class="box-body chat" id="chat-box">
-            <!-- chat item -->
-            <div class="item">
-                <img src="/img/anonimo.png" alt="user image" class="online">
+        {% for rp in QA %}
+            <div class="box-body chat" id="chat-box">
+                <!-- chat item -->
+                <div class="item">
+                    </br>
+{#                    <img src="/img/anonimo.png" alt="user image" class="online">#}
 
-                <p class="message">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-                        Alex Velasquez
-                    </a>
-                    Hola que tal me gustaria saber de que calle estaría saliendo el viaje.
-                    Gracias.
+                    <p class="message">
+{#                        <a href="#" class="name">
 
-                </p>
-                <div class="attachment item">
-                    <img src="/img/anonimo.png" alt="user image" class="online">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-                        Pedro Gonzalez
-                    </a>
-                    <p>
-                        Hola Alex, el viaje sale desde plaza moreno y termina calle florida al 610
+                            Alex Velasquez
+                        </a>#}
+                        {{rp.pregunta}}
+
                     </p>
-                </div>
-                <!-- /.attachment -->
-            </div>
-            <!-- /.item -->
-            <!-- chat item -->
-            <div class="item">
-                <img src="/img/anonimo.png" alt="user image" class="online">
+                    <div class="attachment item">
+{#                        <img src="/img/anonimo.png" alt="user image" class="online">
+                        <a href="#" class="name">
 
-                <p class="message">
-                    <a href="#" class="name">
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-                        Maria Sanchez
-                    </a>
-                    Hola que tal me gustaria saber de que calle estaría saliendo el viaje.
-                    Gracias.
+                            Pedro Gonzalez
+                        </a>#}
+                        <p> 
 
-                </p>
-                <div class="input-group">
-                    <input class="form-control" placeholder="Type message...">
+                            {{rp.respuesta}}
 
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-success">Responder</button>
+                        </p>
                     </div>
-                </div>              
-                <!-- /.attachment -->
-            </div>  
+                    {% if esChofer and viaje.id_estado in [1, 4] and rp.respuesta is empty  %}
+                        <form method ="post" action="/pregunta/responder/{{rp.id_pregunta}}/{{viaje.id}}">
+                            <div class="input-group">
+                                <input type="texarea" class="form-control" name="respuesta">
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-success">Responder</button>
+                                </div>
+                            </div>
+                        </form>    
+                    {% endif %}
 
-            <!-- /.item -->
-        </div>
+                    <!-- /.attachment -->
+                </div>
+            </div>
+        {% endfor %}
+        
     </div>
     <!-- /.box (chat box) -->
 </div>

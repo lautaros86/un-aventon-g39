@@ -7,20 +7,26 @@ class viajeController extends Controller {
     private $_viaje;
     private $_vehiculo;
     private $_factura;
+    private $_preguntas;
+    private $_QA;
 
     public function __construct() {
         parent::__construct();
         require_once ROOT . 'models' . DS . 'registroModel.php';
+        require_once ROOT . 'models' . DS . 'preguntaModel.php';
         require_once ROOT . 'models' . DS . 'usuarioModel.php';
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         require_once ROOT . 'models' . DS . 'viajeModel.php';
         require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         require_once ROOT . 'models' . DS . 'facturaModel.php';
+        require_once ROOT . 'controllers' . DS . 'preguntaController.php';
         $this->_usuario = new usuarioModel();
         $this->_registro = new vehiculoModel();
         $this->_viaje = new viajeModel();
         $this->_vehiculo = new vehiculoModel();
         $this->_factura = new facturaModel();
+        $this->_preguntas = new preguntaModel();
+        $this->_QA = new preguntaController();
     }
 
     public function index() {
@@ -73,6 +79,8 @@ class viajeController extends Controller {
                 $this->redireccionar("perfil");
             }
         }
+        $QA = $this->_QA->verPreguntasYRespuestas($viaje["id"]);
+        $params["QA"] = $QA;
         $params["pasajeros"] = $this->_viaje->getPasajeros($viaje["id"]);
         $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular(Session::get("id_usuario"));
         $params["viaje"] = $viaje;

@@ -24,9 +24,29 @@ class preguntaModel extends Model {
         return $this->_db->fetch();
     }
 
-    public function eliminarPregunta() {
+    public function getPreguntasYRespuestas($idViaje) {
+        $sql = "SELECT 
+            respuesta.id as idRespuesta,
+            respuesta.id_pregunta,
+            respuesta.mensaje as respuesta,
+            respuesta.fecha_crea as fechaRespuesta,
+            preguntas.id as idPregunta,
+            preguntas.estado,
+            preguntas.mensaje as pregunta,
+            preguntas.id_requester,
+            preguntas.id_viaje,
+            preguntas.fecha_crea as fechaPregunta
+            FROM preguntas 
+            INNER JOIN respuesta ON respuesta.id_pregunta = preguntas.id
+            WHERE preguntas.id_viaje = :id";
+            $params = array(":id" => $idViaje);
+            $this->_db->execute($sql, $params);
+            return $this->_db->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function eliminarPregunta($idPregunta) {
         $sql = "UPDATE pregunta SET estado = 0, WHERE id = :id";
-        $params = array(":id" => $id);
+        $params = array(":id" => $idPregunta);
         $this->_db->execute($sql, $params);
     }
 
@@ -35,19 +55,18 @@ class preguntaModel extends Model {
                 VALUES (:id_pregunta, :mensaje, NOW())";
         $params = array(
             ":id_pregunta" => $param['id_pregunta'],
-            ":mensaje" => $param['mensaje'],
+            ":mensaje" => $param['respuesta'],
         );
         $this->_db->execute($sql, $params);
     }
 
     public function preguntar($param) {
         $sql = "INSERT INTO preguntas (estado, mensaje, id_requester, id_viaje, fecha_crea) 
-                VALUES (:estado, :mensaje, :id_requester, :id_viaje, NOW())";
+                VALUES (1, :mensaje, :id_requester, :id_viaje, NOW())";
         $params = array(
-            ":estado" => $param['estado'],
-            ":mensaje" => $param['mensaje'],
-            ":id_requester" => $param['id_requester'],
-            ":id_viaje" => $param['id_viaje'],
+            ":mensaje" => $param['pregunta'],
+            ":id_requester" => $param['idRequester'],
+            ":id_viaje" => $param['idViaje'],
         );
         $this->_db->execute($sql, $params);
     }

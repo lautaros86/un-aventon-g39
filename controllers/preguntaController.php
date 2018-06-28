@@ -11,24 +11,65 @@ class preguntaController extends Controller {
     public function index() {
         
     }
-    public function preguntar() {
+    public function preguntar($idRequester, $idViaje) {
         Session::set('autenticado', true);
-        if (!Session::get('autenticado')) {
-            
+        if (!Session::get('autenticado')) {            
             $this->redireccionar();
         }
-        //cuerpo de preguntar
+        $pregunta = $this->getPostParam('pregunta');
+        $error = $this->validarDatos($pregunta); 
+        if (!$error){
+            try {
+                $param['pregunta'] = $pregunta;
+                $param['idRequester']=$idRequester;
+                $param['idViaje']=$idViaje;
+                $this->_pregunta->preguntar($param);
+                Session::setMessage("Tu pregunta fue publicada.", SessionMessageType::Success);                
+                $this->redireccionar("/viaje/detalle/".$idViaje);
+            } catch (Exception $e) {
+                Session::setMessage("Lo sentimos ocurrio un error vuelva intentarlo", SessionMessageType::Error);
+                $this->redireccionar("perfil");
+            }
+        }else {
+            Session::setMessage("Por favor ingrese un mensaje", SessionMessageType::Error);
+            $this->redireccionar("/viaje/detalle/".$idViaje);
+        }        
+    }
+    public function responder($idPregunta,$idViaje) {
+        $respuesta = $this->getPostParam('respuesta');
+        $error = $this->validarDatos($respuesta); 
+        if (!$error){
+            try {
+                $param['respuesta'] = $respuesta;
+                $param['id_pregunta']=$idPregunta;
+                $this->_pregunta->responder($param);
+                Session::setMessage("Tu respuesta fue publicada.", SessionMessageType::Success);                
+                $this->redireccionar("/viaje/detalle/".$idViaje);
+            } catch (Exception $e) {
+                Session::setMessage("Lo sentimos ocurrio un error vuelva intentarlo", SessionMessageType::Error);
+                $this->redireccionar("/viaje/detalle/".$idViaje);
+            }
+            Session::setMessage("Por favor ingrese un mensaje", SessionMessageType::Error);
+            $this->redireccionar("/viaje/detalle/".$idViaje);
+        }
     }
     public function darDeBajaPregunta($idPregunta) {
         $idPregunta;
 
     }
 
-    public function responder() {
-      
+    public function verPreguntasYRespuestas($idViaje){
+                $qa = $this->_pregunta->getPreguntasYRespuestas($idViaje);               
+                if ($qa < 0){
+                    return null;
+                }else{
+                    return $qa;
+                }
     }
-
-    private function validarDatos() {
-     
+    private function validarDatos($campo) {
+        $errors = false;
+        if ($campo == "") {            
+             return $errors = true;
+        }
     }
 }

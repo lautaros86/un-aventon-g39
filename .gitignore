@@ -4,3 +4,4 @@ nbproject/private/private.xml
 vendor/
 bower_components/
 img/usuarios
+node_modules/

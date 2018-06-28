@@ -120,9 +120,10 @@ class viajeController extends Controller {
             $this->redireccionar();
         }
         $form = array();
+        $fechas = $this->getPostParam('fechas');
+        $form['fecha'] = $fechas[1][0];;
+        $form['hora'] = $fechas[1][1];
         $form['monto'] = $this->getPostParam('monto');
-        $form['fecha'] = $this->getPostParam('fecha');
-        $form['hora'] = $this->getPostParam('hora');
         $form['duracion'] = $this->getPostParam('duracion');
         $form['origen'] = $this->getPostParam('origen');
         $form['destino'] = $this->getPostParam('destino');

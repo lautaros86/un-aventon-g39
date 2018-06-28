@@ -56,7 +56,6 @@
                             {% endif %}
                         </div>
                         <input id="duracion" readonly="" name="duracion" hidden=""/>
-                        <input id="duracionH" readonly="" name="duracion" hidden=""/>
 
 
                         <div class="col-md-6 form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
@@ -142,7 +141,7 @@
                         </div>
                         <div style="margin-top: 25px;" class="col-md-4 form-group {% if errors.fecha is defined  %}has-error{% endif %}">
                             <div class="input-group">
-                                <button type="button" id="add_row" class="btn btn-success pull-right">+</button>
+                                <button type="button" id="add_row" class="btn btn-success pull-right" >+</button>
                             </div>      
                         </div>   
                         <div class="col-md-4">
@@ -160,7 +159,6 @@
                                                 <th>N°</th>
                                                 <th>Fecha</th>
                                                 <th>Hora</th>
-                                                <th>Duracion</th>
                                                 <th>Qutiar</th>
                                             </tr>
                                         </thead>
@@ -217,6 +215,7 @@
     <script src="../../bower_components/moment/moment.js"></script>
 
     <script src="../../bower_components/moment/locale/es.js"></script>
+    <script src="../../node_modules/moment-range/dist/moment-range.js"></script>
 
     <script>
         var geocoder;
@@ -224,48 +223,68 @@
         var verifRuta = false;
         $().ready(function () {
             moment.locale('es');
-
+            function validarSuperposicion(inicio, hora, cb) {
+                var duracion = $("#duracion").val();
+                var fin = inicio.add(duracion, 'seconds')
+                console.log(duracion)
+                console.log(inicio)
+                console.log(fin)
+                cb(false)
+            }
             var i = 1;
             var hora;
+            var fechas = Array();
             $("#add_row").click(function () {
-                var trs = $('#tablafechas').find("tr");
-                fecha = moment($("#fecha").val(), 'DD/MM/YYYY')
-                var hora = moment($("#hora").val(), 'H:s');
+                fecha = moment($("#fecha").val() + " " + $("#hora").val(), 'DD/MM/YYYY H:mm:ms')
+                var duracion = $("#duracion").val();
+                var fin = fecha.clone().add(duracion, 'seconds')
                 if (!fecha.isValid()) {
                     alert("la fecha es incorrecta.");
                     return false;
                 }
-                console.log(i)
                 disable = i > 0;
-                console.log(disable)
-                $("#hora").attr("disabled", disable);
-                $("#fecha").val("");
-                var tr = $("<tr>").attr("id", "fecha-" + i);
-                var nFecha = $("<td>").text(i);
-                var tdFecha = $("<td>").append($("<input>").attr("name", "['fechas'][" + i + "]['fecha']").addClass("form-control").attr("readonly", true).val(fecha.format('DD/MM/YYYY')));
-                var tdhora = $("<td>").append($("<input>").attr("name", "['fechas'][" + i + "]['hora]").addClass("form-control").attr("readonly", true).val(hora.format('H:s')));
-                var tdduracion = $("<td>").append($("<input>").attr("name", "['fechas'][" + i + "]['duracion]").addClass("form-control").attr("readonly", true).val($("duracionH").val()));
-                var btnBorrar = $("<button>")
-                        .data("idrow", i)
-                        .attr("type", "button")
-                        .addClass("btn btn-danger")
-                        .text("X")
-                        .on("click", function () {
-                            $("#fecha-" + $(this).data("idrow")).remove()
-                            i--
-                            console.log(i)
-                            disable = (i > 1);
-                            console.log(disable)
-                            $("#hora").attr("disabled", disable);
-                        });
-                tr.append(nFecha);
-                tr.append(tdFecha);
-                tr.append(tdhora);
-                tr.append(tdduracion);
-                tr.append(btnBorrar);
-                $('#tablafechas').append(tr);
-                i++;
+                $("#hora").attr("readonly", disable);
+                $("#origen").attr("readonly", disable);
+                $("#destino").attr("readonly", disable);
+                var superpuesta = false;
+                $.each(fechas, function (i, elem) {
+                    if (fecha.isBetween(elem.ini, elem.fin)) {
+                        alert("Se detecto una superposicion de horarios");
+                        superpuesta = true;
+                    }
+                });
+                if (!superpuesta) {
+                    fechas[i - 1] = {ini: fecha, fin: fin}
+                    $("#fecha").val("");
+                    var tr = $("<tr>").attr("id", "fecha-" + i);
+                    var nFecha = $("<td>").text(i);
+                    var tdFecha = $("<td>").append($("<input>").attr("name", "fechas[" + i + "][0]").addClass("form-control").attr("readonly", true).val(fecha.format('DD/MM/YYYY')));
+                    var tdhora = $("<td>").append($("<input>").attr("name", "fechas[" + i + "][1]").addClass("form-control").attr("readonly", true).val(fecha.format('HH:mm')));
+                    var btnBorrar = $("<button>")
+                            .data("idrow", i)
+                            .attr("type", "button")
+                            .addClass("btn btn-danger")
+                            .text("X")
+                            .on("click", function () {
+                                $("#fecha-" + $(this).data("idrow")).remove()
+                                i--
+                                console.log(i)
+                                disable = (i > 1);
+                                $("#hora").attr("readonly", disable);
+                                $("#origen").attr("readonly", disable);
+                                $("#destino").attr("readonly", disable);
+                            });
+                    tr.append(nFecha);
+                    tr.append(tdFecha);
+                    tr.append(tdhora);
+                    tr.append(btnBorrar);
+                    $('#tablafechas').append(tr);
+                    i++;
+                }
+
+
             });
+
 
             // Function to validate price
             var pPrice = /^[0-9]*$/;
@@ -313,7 +332,9 @@
             $("#submitform").click(function () {
                 var origen = document.getElementById('origen');
                 var destino = document.getElementById('destino');
-                if (origen.value == "" || destino.value == "") {
+                if (i == 1) {
+                    alert("Debe ingresar al menos una fecha.");
+                } else if (origen.value == "" || destino.value == "") {
                     alert("Las dos direcciones son requeridas.");
                 } else {
                     var d1 = $.Deferred();
@@ -366,6 +387,7 @@
             $.each(searchBoxes, function (i, sb) {
                 sb.addListener('places_changed', function () {
                     if (origen.value == "" || destino.value == "") {
+                        $("#add_row").attr("readonly", true);
                         return;
                     } else {
                         calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
@@ -374,6 +396,7 @@
             });
             directionsDisplay.setMap(map);
             if (origen.value == "" || destino.value == "") {
+                $("#add_row").attr("readonly", true);
                 return;
             } else {
                 calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
@@ -400,6 +423,7 @@
                 travelMode: 'DRIVING'
             }, function (response, status) {
                 if (status === 'OK') {
+                    $("#add_row").attr("readonly", false);
                     verifRuta = true;
                     directionsDisplay.setDirections(response);
                     var route = response.routes[0];
@@ -419,9 +443,10 @@
         summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
         summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';#}
                             $("#duracion").val(route.legs[i].duration.value);
-                            $("#duracionH").val(route.legs[i].duration.value);
                         }
+
                     } else {
+                        $("#add_row").attr("readonly", true);
                         verifRuta = false;
                         alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor verifique los campos.");
                     }

@@ -15,7 +15,8 @@
     "documentation"
   ],
   "dependencies": {
-    "admin-lte": "^2.4.*"
+    "admin-lte": "^2.4.*",
+    "moment": "^2.22.2"
   },
   "resolutions": {
     "jquery": "^3.2.1"

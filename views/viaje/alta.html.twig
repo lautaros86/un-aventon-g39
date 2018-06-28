@@ -56,6 +56,54 @@
                             {% endif %}
                         </div>
                         <input id="duracion" readonly="" name="duracion" hidden=""/>
+                        <input id="duracionH" readonly="" name="duracion" hidden=""/>
+
+
+                        <div class="col-md-6 form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
+                            <label for="origen">Vehiculo: </label>
+                            <select class="form-control" name="idVehiculo" id="selectVehiculo" >
+                                {% for vehiculo in params.vehiculos %}
+                                    <option value="{{vehiculo.id}}" {% if (form is defined) and (form.vehiculo.id == vehiculo.id) %}selected="selected"{% endif %}>
+                                        {{vehiculo.marca}} - {{vehiculo.modelo}} - {{vehiculo.patente}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if errors.vehiculo is defined %}
+                                {% for err_msg in errors.vehiculo %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-2 form-group {% if errors.asientos is defined  %}has-error{% endif %}">
+                            <label for="origen">Asientos: </label>
+                            <select class="form-control" name="asientos" id="selectAsientos" >
+                                {% for i in range(1, params.vehiculos[0].asientos) %}
+                                    <option value="{{i}}" {% if (form is defined) and (form.asientos == i) %}selected="selected"{% endif %}>
+                                        {{i}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if errors.asientos is defined %}
+                                {% for err_msg in errors.asientos %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 form-group {% if errors.monto is defined  %}has-error{% endif %}">
+                            <label for="origen">Monto por asiento: </label>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="text" class="form-control" name="monto" id="monto" placeholder="999" {% if form is defined  %}value="{{form.monto}}"{% endif %}>
+                                <span class="input-group-addon">.00</span>
+                            </div>
+                            {% if errors.monto is defined %}
+                                {% for err_msg in errors.monto %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
 
                         <div class="col-md-4 form-group {% if errors.fecha is defined  %}has-error{% endif %}">
                             <label for="origen">Fecha: </label>
@@ -63,7 +111,7 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
-                                <input data-date-start-date="+1d" type="fecha" class="form-control" id="fecha" name="fecha"
+                                <input data-date-start-date="+1d" type="fecha" class="form-control fecha" id="fecha" name="fecha"
                                        placeholder="Fecha" autocomplete="off" 
                                        {% if form is defined  %}value="{{form.fecha}}"{% endif %}>
                             </div>      
@@ -92,51 +140,46 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-md-4 form-group {% if errors.monto is defined  %}has-error{% endif %}">
-                            <label for="origen">Monto por asiento: </label>
+                        <div style="margin-top: 25px;" class="col-md-4 form-group {% if errors.fecha is defined  %}has-error{% endif %}">
                             <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                                <input type="text" class="form-control" name="monto" id="monto" placeholder="999" {% if form is defined  %}value="{{form.monto}}"{% endif %}>
-                                <span class="input-group-addon">.00</span>
+                                <button type="button" id="add_row" class="btn btn-success pull-right">+</button>
+                            </div>      
+                        </div>   
+                        <div class="col-md-4">
+                            <div class="form-group">
                             </div>
-                            {% if errors.monto is defined %}
-                                {% for err_msg in errors.monto %}
-                                    <span class="help-block">{{err_msg}}</span>
-                                {% endfor %}
-                            {% endif %}
                         </div>
 
-                        <div class="col-md-6 form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
-                            <label for="origen">Vehiculo: </label>
-                            <select class="form-control" name="idVehiculo" id="selectVehiculo" >
-                                {% for vehiculo in params.vehiculos %}
-                                    <option value="{{vehiculo.id}}" {% if (form is defined) and (form.vehiculo.id == vehiculo.id) %}selected="selected"{% endif %}>
-                                        {{vehiculo.marca}} - {{vehiculo.modelo}} - {{vehiculo.patente}}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            {% if errors.vehiculo is defined %}
-                                {% for err_msg in errors.vehiculo %}
-                                    <span class="help-block">{{err_msg}}</span>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                <div id="seccionfechas" class="col-md-12 form-group {% if errors.asientos is defined  %}has-error{% endif %}" >
+                                    <label for="fechas">Fechas definidas: </label>
+                                    <table id="tablafechas" class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>N°</th>
+                                                <th>Fecha</th>
+                                                <th>Hora</th>
+                                                <th>Duracion</th>
+                                                <th>Qutiar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
 
-                        <div class="col-md-6 form-group {% if errors.asientos is defined  %}has-error{% endif %}">
-                            <label for="origen">Cantidad de asientos: </label>
-                            <select class="form-control" name="asientos" id="selectAsientos" >
-                                {% for i in range(1, params.vehiculos[0].asientos) %}
-                                    <option value="{{i}}" {% if (form is defined) and (form.asientos == i) %}selected="selected"{% endif %}>
-                                        {{i}}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            {% if errors.asientos is defined %}
-                                {% for err_msg in errors.asientos %}
-                                    <span class="help-block">{{err_msg}}</span>
-                                {% endfor %}
-                            {% endif %}
+                                    {#{% for i in range(1, params.vehiculos[0].asientos) %}
+                                        <option value="{{i}}" {% if (form is defined) and (form.asientos == i) %}selected="selected"{% endif %}>
+                                            {{i}}
+                                        </option>
+                                    {% endfor %}#}
+                                    {% if errors.seccionfechas is defined %}
+                                        {% for err_msg in errors.seccionfechas %}
+                                            <span class="help-block">{{err_msg}}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -171,12 +214,58 @@
     <!-- bootstrap time picker -->
     <script src="../../bower_components/admin-lte/plugins/timepicker/bootstrap-timepicker.js"></script>
 
+    <script src="../../bower_components/moment/moment.js"></script>
+
+    <script src="../../bower_components/moment/locale/es.js"></script>
 
     <script>
         var geocoder;
         var map;
         var verifRuta = false;
         $().ready(function () {
+            moment.locale('es');
+
+            var i = 1;
+            var hora;
+            $("#add_row").click(function () {
+                var trs = $('#tablafechas').find("tr");
+                fecha = moment($("#fecha").val(), 'DD/MM/YYYY')
+                var hora = moment($("#hora").val(), 'H:s');
+                if (!fecha.isValid()) {
+                    alert("la fecha es incorrecta.");
+                    return false;
+                }
+                console.log(i)
+                disable = i > 0;
+                console.log(disable)
+                $("#hora").attr("disabled", disable);
+                $("#fecha").val("");
+                var tr = $("<tr>").attr("id", "fecha-" + i);
+                var nFecha = $("<td>").text(i);
+                var tdFecha = $("<td>").append($("<input>").attr("name", "['fechas'][" + i + "]['fecha']").addClass("form-control").attr("readonly", true).val(fecha.format('DD/MM/YYYY')));
+                var tdhora = $("<td>").append($("<input>").attr("name", "['fechas'][" + i + "]['hora]").addClass("form-control").attr("readonly", true).val(hora.format('H:s')));
+                var tdduracion = $("<td>").append($("<input>").attr("name", "['fechas'][" + i + "]['duracion]").addClass("form-control").attr("readonly", true).val($("duracionH").val()));
+                var btnBorrar = $("<button>")
+                        .data("idrow", i)
+                        .attr("type", "button")
+                        .addClass("btn btn-danger")
+                        .text("X")
+                        .on("click", function () {
+                            $("#fecha-" + $(this).data("idrow")).remove()
+                            i--
+                            console.log(i)
+                            disable = (i > 1);
+                            console.log(disable)
+                            $("#hora").attr("disabled", disable);
+                        });
+                tr.append(nFecha);
+                tr.append(tdFecha);
+                tr.append(tdhora);
+                tr.append(tdduracion);
+                tr.append(btnBorrar);
+                $('#tablafechas').append(tr);
+                i++;
+            });
 
             // Function to validate price
             var pPrice = /^[0-9]*$/;
@@ -208,7 +297,7 @@
             });
             var minDate = new Date(2019, 1, 1);
             $(function () {
-                $('#fecha').datepicker({
+                $('.fecha').datepicker({
                     autoclose: true,
                     language: 'es',
                     orientation: 'bottom',
@@ -320,23 +409,24 @@
                     // For each route, display summary information.
                     for (var i = 0; i < route.legs.length; i++) {
                         var routeSegment = i + 1;
-                        {#summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
-                        summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
-                        summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
-                        summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
-                        summaryPanel.innerHTML += route.legs[i].duration.text + '<br><br>';
-                        summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
-                        summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
-                        summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
-                        summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';#}
-                        $("#duracion").val(route.legs[i].duration.value);
+        {#summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
+        summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
+        summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+        summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].duration.text + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';#}
+                            $("#duracion").val(route.legs[i].duration.value);
+                            $("#duracionH").val(route.legs[i].duration.value);
+                        }
+                    } else {
+                        verifRuta = false;
+                        alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor verifique los campos.");
                     }
-                } else {
-                    verifRuta = false;
-                    alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor verifique los campos.");
-                }
-            });
-        }
+                });
+            }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&libraries=places&callback=initAutocomplete"
     async defer></script>

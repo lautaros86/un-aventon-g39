@@ -53,8 +53,19 @@ class preguntaController extends Controller {
             $this->redireccionar("/viaje/detalle/".$idViaje);
         }
     }
-    public function removeQuestion($idPregunta) {
-        $idPregunta;
+    public function removeQuestion($idPregunta, $idViaje) {
+        if (!Session::get('autenticado')) {            
+            $this->redireccionar();
+        }
+        try{
+            $this->_pregunta->eliminarPregunta($idPregunta);
+            Session::setMessage("La pregunta fue eliminada.", SessionMessageType::Success);                
+            $this->redireccionar("/viaje/detalle/".$idViaje);
+        } catch (Exception $ex) {
+            Session::setMessage("Ocurrio un error, vuelva a intentarlo.", SessionMessageType::Error);                
+            $this->redireccionar("/viaje/detalle/".$idViaje);
+        }
+        
 
     }
 

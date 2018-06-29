@@ -30,14 +30,14 @@ class preguntaModel extends Model {
             p.id_requester, p.id_viaje, p.fecha_crea as fechaPregunta
             FROM preguntas p
             left JOIN respuesta r ON p.id = r.id_pregunta
-            WHERE p.id_viaje = :id";
+            WHERE p.id_viaje = :id and p.estado = 1";
             $params = array(":id" => $idViaje);
             $this->_db->execute($sql, $params);
             return $this->_db->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function eliminarPregunta($idPregunta) {
-        $sql = "UPDATE pregunta SET estado = 0, WHERE id = :id";
+        $sql = "UPDATE preguntas SET estado = 0 WHERE id = :id";
         $params = array(":id" => $idPregunta);
         $this->_db->execute($sql, $params);
     }

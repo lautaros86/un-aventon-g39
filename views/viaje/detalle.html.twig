@@ -289,8 +289,8 @@
                 <div class="item">
                     </br>
 {#                    <img src="/img/anonimo.png" alt="user image" class="online">#}
-                    {% if rp.respuesta is not empty %}    
-                        <button type="button" class="btn btn-danger btn-xs remove removeComentario" id="bajaTarjeta" data-idtarjeta="{{pr.id_pregunta}}">
+                    {% if rp.pregunta is not empty and esChofer%}    
+                        <button type="button" class="btn btn-danger btn-xs remove removeComentario"  data-idpregunta="{{rp.id_pregunta}}" data-idviaje="{{viaje.id}}">
                                 <i class="fa fa-times"></i>
                         </button>
                     {% endif %}            
@@ -398,19 +398,21 @@
                     return false;
                 }
             });
-            $(".removeComentario").click(function (event) {
-{#                ok = confirm("¿Esta seguro que desea eliminar este comentario?");
+            $(".removeComentario").click(function (event) {                                                             
+                ok = confirm("¿Esta seguro que desea eliminar este vehiculo?");
                 if (ok) {
                     var elem = $(event.target);
                     if (elem.is("i")) {
                         elem = $(elem.parent());
                     }
-                    debugger;#}
-                    $(location).attr('href', '/pregunta/removeQuestion/' + elem.data('idPregunta'));
-  {#              } else {
-                    alert("Pedido cancelado");#}
+                    alert(elem.data('idpregunta'));
+                    alert(elem.data('idviaje'));
+                    $(location).attr('href', '/pregunta/removeQuestion/' + elem.data('idpregunta') + '/' + elem.data('idviaje'));
+                } else {
+                    alert("Pedido cancelado");
                 }
-        });            
+                               
+            });            
             $(".rechazarPostulacion").click(function () {
                 var ok = confirm("Seguro que desea rechazar esta postulación?");
                 if (!ok) {

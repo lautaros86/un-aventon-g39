@@ -306,11 +306,14 @@ class viajeController extends Controller {
             $error = true;
             Session::setMessage("Solo puede aceptar postulaciones cuando el viaje esta ABIERTO o LLENO.", SessionMessageType::Error);
         }
-        // TODO: Validar que el pasajero de la postulacion no tenga otra postulacion aceptada para un viaje en el mismo dia y rango de 2 horas del que se lo esta aceptando.
-        $timestamp = strtotime($viaje["hora"]) + 120 * 60;
-        $horaFin = date('H:i' . ':00', $timestamp);
-        $viajesSuperpuestos = $this->_viaje->validarSuperposicionDeViajesConPostulaciones($pasajero["id"], $viaje["fecha"], $viaje["hora"], $horaFin, $idPostu, $viaje["id"]);
-        if ($viajesSuperpuestos > 0) {
+        $postulacionesSuperpuestas = array();
+        foreach ($viaje["fechas"] as $key => $value) {
+            $date = str_replace('/', '-', $value["fecha"]);
+            $datetime = date("Y-m-d", strtotime($date)) . ' ' . $value["hora"];
+            $tmpArray = $this->_viaje->getPostulacionesSupuerpuestos($datetime, $viaje['duracion'], Session::get("usuario")["id"]);
+            $postulacionesSuperpuestas = array_merge($postulacionesSuperpuestas, $tmpArray);
+        }
+        if (sizeof($postulacionesSuperpuestas) > 0) {
             $error = true;
             Session::setMessage("No puede aceptarse esta postulacion porque al usuario se le acepto otra postulacion en un viaje que se superpone con este, si desea puede rechazarlo.", SessionMessageType::Error);
         }
@@ -331,6 +334,11 @@ class viajeController extends Controller {
                 $this->_viaje->beginTransaction();
                 $this->_notificacion->crearNotificacionSimple("El usuario " . $chofer["nombre"] . " " . $chofer["apellido"] . " acepto tu postulacion al viaje nº " . $postulacion["id_viaje"], $pasajero["id"]);
                 $this->_viaje->aceptarPostulacion($idPostu);
+                $lleno = $this->_viaje->getPostulacionesAceptadasCant($viaje["id"]) >= $viaje["asientos"];
+                if ($lleno) {
+                    $this->_viaje->llenarViaje($viaje["id"]);
+                    Session::setMessage("El viaje esta lleno.", SessionMessageType::Success);
+                }
                 $this->_viaje->commit();
                 Session::setMessage("La postulacion se acepto correctamente.", SessionMessageType::Success);
             } catch (PDOException $e) {
@@ -357,7 +365,16 @@ class viajeController extends Controller {
             try {
                 $this->_viaje->beginTransaction();
                 $this->_notificacion->crearNotificacionSimple("El usuario " . $chofer["nombre"] . " " . $chofer["apellido"] . " rechazo tu postulacion al viaje nº " . $postulacion["id_viaje"], $pasajero["id"]);
+                if ($postulacion["id_estado"] == 2) {
+                    $this->_usuario->calificacionAutomatica(Session::get("id_usuario"), -1);
+                    $this->_usuario->actualizarReputacion(Session::get("id_usuario"), -1);
+                }
                 $this->_viaje->rechazarPostulacion($idPostu);
+                $lleno = $this->_viaje->getPostulacionesAceptadasCant($viaje["id"]) >= $viaje["asientos"];
+                if ($lleno) {
+                    $this->_viaje->desllenarViaje($viaje["id"]);
+                    Session::setMessage("El viaje esta lleno.", SessionMessageType::Success);
+                }
                 $this->_viaje->commit();
                 Session::setMessage("La postulacion se rechazo correctamente.", SessionMessageType::Success);
             } catch (PDOException $e) {

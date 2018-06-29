@@ -295,6 +295,16 @@ class viajeModel extends Model {
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));
     }
 
+    public function llenarViaje($idviaje) {
+        $sql = "UPDATE viaje SET id_estado = 4 WHERE id = :id_viaje";
+        $this->_db->execute($sql, array(":id_viaje" => $idviaje));
+    }
+
+    public function desllenarViaje($idviaje) {
+        $sql = "UPDATE viaje SET id_estado = 2 WHERE id = :id_viaje";
+        $this->_db->execute($sql, array(":id_viaje" => $idviaje));
+    }
+
     public function finaizarViaje($idviaje) {
         $sql = "UPDATE viaje SET id_estado = 5 WHERE id = :id_viaje";
         $this->_db->execute($sql, array(":id_viaje" => $idviaje));

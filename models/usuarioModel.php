@@ -115,7 +115,7 @@ class usuarioModel extends Model {
      * @param type $valor
      */
     public function calificacionAutomatica($idUsuario, $valor) {
-        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`) VALUES (:idusuario, :valor)";
+        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`, fecha_crea, fecha_modi) VALUES (:idusuario, :valor, NOW(), NOW())";
         $this->_db->execute($sql, array(
             ':idusuario' => $idUsuario,
             ':valor' => $valor

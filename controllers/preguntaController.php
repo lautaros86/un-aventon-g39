@@ -12,7 +12,6 @@ class preguntaController extends Controller {
         
     }
     public function preguntar($idRequester, $idViaje) {
-        Session::set('autenticado', true);
         if (!Session::get('autenticado')) {            
             $this->redireccionar();
         }

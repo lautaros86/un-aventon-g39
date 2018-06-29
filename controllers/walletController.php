@@ -16,9 +16,13 @@ class walletController extends Controller {
 
     public function cobrar($monto) {
         $saldo = $this->_wallet->getSaldo(Session::get("id_usuario"));
+        if ($monto <= 0) {
+            Session::setMessage("Debe ingresar un salgo mayor a 0.", SessionMessageType::Error);
+            $this->redireccionar("perfil#wallet");
+        }
         if ($monto > $saldo) {
             Session::setMessage("Ud no cuenta con el saldo ingresado.", SessionMessageType::Error);
-        }else{
+        } else {
             $this->_wallet->extraer(Session::get("id_usuario"), $monto);
             Session::setMessage("Se tranfirieron $" . $monto . " a su cuenta bancaria.", SessionMessageType::Success);
         }

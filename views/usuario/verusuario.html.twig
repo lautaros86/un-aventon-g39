@@ -197,8 +197,12 @@
 
         }
         $("#confirmarExtraer").click(function () {
-            $("#formextraccion").attr("action", "/wallet/cobrar/" + $("#montoextraccion").val());
-            $("#formextraccion").submit();
+            if ($("#montoextraccion").val() <= 0) {
+                alert("El monto debe ser mayor a 0")
+            } else {
+                $("#formextraccion").attr("action", "/wallet/cobrar/" + $("#montoextraccion").val());
+                $("#formextraccion").submit();
+            }
         });
 
         $(window).keydown(function (event) {

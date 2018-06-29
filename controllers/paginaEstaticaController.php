@@ -1,6 +1,6 @@
 <?php
 
-class paginaEstaticaController extends Controller
+class paginaestaticaController extends Controller
 {
     public function __construct() {
         parent::__construct();

@@ -371,9 +371,8 @@ class viajeController extends Controller {
                 }
                 $this->_viaje->rechazarPostulacion($idPostu);
                 $lleno = $this->_viaje->getPostulacionesAceptadasCant($viaje["id"]) >= $viaje["asientos"];
-                if ($lleno) {
+                if (!$lleno) {
                     $this->_viaje->desllenarViaje($viaje["id"]);
-                    Session::setMessage("El viaje esta lleno.", SessionMessageType::Success);
                 }
                 $this->_viaje->commit();
                 Session::setMessage("La postulacion se rechazo correctamente.", SessionMessageType::Success);

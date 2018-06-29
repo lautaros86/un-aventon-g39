@@ -28,7 +28,9 @@ class vehiculoController extends Controller {
         }
         $form = Session::get("form");
         Session::destroy("form");
-        $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
+        $params = $this->cargardatos();
+        $params["form"] = $form;
+        $this->_view->renderizar('alta', 'vehiculo', $params);
     }
 
     public function validarPatente($form) {
@@ -44,8 +46,9 @@ class vehiculoController extends Controller {
 
     public function editar($id) {
         $form = $this->_vehiculo->getVehiculosById($id);
-        //$form['idvehiculo']= $id;
-        $this->_view->renderizar('modificar', 'vehiculo', array("vehiculo" => $form));
+        $params = $this->cargardatos();
+        $params["vehiculo"] = $form;
+        $this->_view->renderizar('modificar', 'vehiculo', $params);
     }
 
     public function modificar() {
@@ -57,33 +60,25 @@ class vehiculoController extends Controller {
         $form['baul'] = $this->getAlphaNum('baul'); //falta esto
         $form["baul"] = $form["baul"] == "on" ? 1 : 0;
         Session::set("form", $form);
-        $errors = $this->validarPatente($form);
-        if ($errors == true) {
-            Session::setFormErrors("patente", "Esa patente Ud. la tiene cargada.");
-        }
-        $this->validarAltaVehiculo();
+        $errors= $this->validarAltaVehiculo();
         if (!$errors) {
             try {
                 $this->_vehiculo->modificar($form);
                 Session::setMessage("Vehiculo Modificado", SessionMessageType::Success);
                 Session::destroy("form");
-                $this->redireccionar("perfil");
+                $this->redireccionar("perfil#misVehiculos");
             } catch (PDOException $e) {
                 Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
                 $this->redireccionar("vehiculo/modificar");
             }
         } else {
-//            $form['marca'] = $this->getAlphaNum('marca');
-//            $form['modelo'] = $this->getAlphaNum('modelo');
-//            $form['patente'] = $this->getPostParam('patente');
-//            $form['asientos'] = $this->getPostParam('asientos');
-//            $form['baul'] = $this->getAlphaNum('baul');
-//            $form["baul"] = $form["baul"] == "on" ? 1 : 0;
             Session::set("form", $form);
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
-            $this->redireccionar("vehiculo/modificar");
+            $this->redireccionar("vehiculo/editar/".$form['idVehiculo']);
         }
-        $this->_view->renderizar('modificar', 'vehiculo', array("form" => $form));
+        $params = $this->cargardatos();
+        $params["form"] = $form;
+        $this->_view->renderizar('modificar', 'vehiculo', $params);
     }
 
     public function eliminarVehiculo($id) {
@@ -167,7 +162,7 @@ class vehiculoController extends Controller {
                     Session::setMessage("Vehiculo Registrado", SessionMessageType::Success);
                     $this->_vehiculo->commit();
                 } catch (PDOException $e) {
-                                        echo $e->getMessage();
+                    echo $e->getMessage();
 
                     $this->_vehiculo->rollback();
                     Session::setMessage("Error al registrar el vehiculo", SessionMessageType::Error);
@@ -195,7 +190,9 @@ class vehiculoController extends Controller {
                 $this->redireccionar("vehiculo/alta");
             }
         }
-        $this->_view->renderizar('alta', 'vehiculo');
+        $params = $this->cargardatos();
+        $params["form"] = $form;
+        $this->_view->renderizar('alta', 'vehiculo', $params);
     }
 
     public function lista() {
@@ -228,6 +225,10 @@ class vehiculoController extends Controller {
 
         if ($this->getAlphaNum('modelo') == "") {
             Session::setFormErrors("modelo", "El modelo es obligatorio.");
+            $errors = true;
+        }
+        if (!is_int($this->verifInt('modelo'))) {
+            Session::setFormErrors("modelo", "El modelo es un año.");
             $errors = true;
         }
 

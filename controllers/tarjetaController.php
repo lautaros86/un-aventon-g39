@@ -16,12 +16,14 @@ class tarjetaController extends Controller {
     public function index() {
         $this->lista();
     }
+
     public function lista() {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
         $this->_view->renderizar('lista', 'tarjeta');
     }
+
     public function alta() {
         Session::set('autenticado', true);
         if (!Session::get('autenticado')) {
@@ -29,7 +31,10 @@ class tarjetaController extends Controller {
         }
         $form = Session::get("form");
         Session::destroy("form");
-        $this->_view->renderizar('alta', 'tarjeta', array("form" => $form));
+
+        $params = $this->cargardatos();
+        $params["form"] = $form;
+        $this->_view->renderizar('alta', 'tarjeta', $params);
     }
 
     /**
@@ -53,12 +58,12 @@ class tarjetaController extends Controller {
     public function darDeBajaTarjeta($idTarjeta) {
         $idUsuario = Session::get("id_usuario");
         try {
-            $this->_tarjeta->darDeBajaTarjeta($idTarjeta,$idUsuario);      
+            $this->_tarjeta->darDeBajaTarjeta($idTarjeta, $idUsuario);
             Session::setMessage("Tarjeta dada de baja", SessionMessageType::Success);
-            $this->redireccionar("perfil");   
+            $this->redireccionar("perfil");
         } catch (Exception $exc) {
             Session::setMessage("No se pudo dar de baja la tarjeta", SessionMessageType::Error);
-            $this->redireccionar("perfil");   
+            $this->redireccionar("perfil");
         }
     }
 
@@ -79,13 +84,13 @@ class tarjetaController extends Controller {
         $errors = $this->validarDatosFormulario();
         if (!$errors) {
             try {
-                
-                if (!($this->validarNumeroRepetido($form['numero'],$id))) {
+
+                if (!($this->validarNumeroRepetido($form['numero'], $id))) {
                     Session::setMessage("Esta tarjeta ya se encuentra cargada", SessionMessageType::Error);
                     $this->redireccionar("tarjeta/alta");
                 }
                 $this->_tarjeta->beginTransaction();
-                $this->_tarjeta->insertarTarjeta($form, (int)$id);
+                $this->_tarjeta->insertarTarjeta($form, (int) $id);
                 Session::setMessage("Tarjeta registrada correctamente", SessionMessageType::Success);
                 Session::destroy("form");
                 $this->_tarjeta->commit();
@@ -105,7 +110,9 @@ class tarjetaController extends Controller {
             Session::setMessage("Por favor corriga los errores del formulario que estan resaltados en rojo", SessionMessageType::Error);
             $this->redireccionar("tarjeta/alta");
         }
-        $this->_view->renderizar('alta', 'vehiculo', array("form" => $form));
+        $params = $this->cargardatos();
+        $params["form"] = $form;
+        $this->_view->renderizar('alta', 'vehiculo', $params);
     }
 
     public function validarDatosFormulario() {
@@ -113,7 +120,7 @@ class tarjetaController extends Controller {
         $numero = $this->getPostParam('numero');
         $mes = strlen($this->getPostParam('mesVencimiento'));
         $anio = strlen($this->getPostParam('anioVencimiento'));
-        $patron_1 ='/^((4[0-9]{12})|(4[0-9]{15})|(5[1-5][0-9]{14})|(3[47][0-9]{13})|(6011[0-9]{12}))$/';      
+        $patron_1 = '/^((4[0-9]{12})|(4[0-9]{15})|(5[1-5][0-9]{14})|(3[47][0-9]{13})|(6011[0-9]{12}))$/';
         if ($this->getPostParam('nombre') == "") {
             Session::setFormErrors("nombre", "El nombre es obligatorio.");
             $errors = true;
@@ -122,15 +129,15 @@ class tarjetaController extends Controller {
         if ($this->getPostParam('numero') == "") {
             Session::setFormErrors("numero", "El número es obligatorio.");
             $errors = true;
-        }elseif (!(preg_match($patron_1, $numero)) ){
+        } elseif (!(preg_match($patron_1, $numero))) {
             Session::setFormErrors("numero", "El número no pertenece a una entidad bancaria.");
-            $errors = true;            
-        }   
+            $errors = true;
+        }
         if ($this->getPostParam('mesVencimiento') == "") {
             Session::setFormErrors("mesVencimiento", "El mes de vencimiento es obligatorio.");
             $errors = true;
         }
-        if ($mes != 2  || $mes == 1) { //valido la longitud del campo
+        if ($mes != 2 || $mes == 1) { //valido la longitud del campo
             Session::setFormErrors("mesVencimiento", "Solo se aceptan dos digitos.");
             $errors = true;
         }
@@ -141,7 +148,7 @@ class tarjetaController extends Controller {
         if ($mes == 00) {//valida que no se ponga 00 como mes
             Session::setFormErrors("mesVencimiento", "Número del mes incorrecto.");
             $errors = true;
-        }        
+        }
         if (!(preg_match("/^[0-9]{2}$/", $this->getPostParam('mesVencimiento')))) {
             Session::setFormErrors("mesVencimiento", "Solo se aceptan caracteres numericos.");
             $errors = true;
@@ -160,4 +167,5 @@ class tarjetaController extends Controller {
         }
         return $errors;
     }
+
 }

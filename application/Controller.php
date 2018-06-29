@@ -4,11 +4,35 @@ abstract class Controller {
 
     protected $_view;
     protected $_notificacion;
+    private $_registro;
+    private $_usuario;
+    private $_viajes;
+    private $_tarjeta;
+    private $_facturas;
+    private $_calificacion;
+    private $_wallet;
+    private $_vehiculo;
 
     public function __construct() {
         $this->_view = new View(Router::getInstance());
         require_once ROOT . 'controllers' . DS . 'notificacionController.php';
         $this->_notificacion = new notificacionController();
+        require_once ROOT . 'models' . DS . 'registroModel.php';
+        require_once ROOT . 'models' . DS . 'usuarioModel.php';
+        require_once ROOT . 'models' . DS . 'viajeModel.php';
+        require_once ROOT . 'models' . DS . 'tarjetaModel.php';
+        require_once ROOT . 'models' . DS . 'facturaModel.php';
+        require_once ROOT . 'models' . DS . 'calificacionModel.php';
+        require_once ROOT . 'models' . DS . 'walletModel.php';
+        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
+        $this->_registro = new registroModel();
+        $this->_usuario = new usuarioModel();
+        $this->_viajes = new viajeModel();
+        $this->_tarjeta = new tarjetaModel();
+        $this->_facturas = new facturaModel();
+        $this->_calificacion = new calificacionModel();
+        $this->_wallet = new walletModel();
+        $this->_vehiculo = new vehiculoModel();
     }
 
     abstract public function index();
@@ -23,6 +47,28 @@ abstract class Controller {
         } else {
             throw new Exception('Error de modelo');
         }
+    }
+
+    protected function cargardatos() {
+        $params = array();
+        $params["usuario"] = $this->_usuario->getUsuario(Session::get("id_usuario"));
+        $params["vehiculos"] = $this->_vehiculo->getVehiculosActivosByUserId($params["usuario"]['id']);
+        $params["vehiculosInactivos"] = $this->_vehiculo->getVehiculosInactivosByUserId($params["usuario"]['id']);
+        $params["viajes"] = $this->_viajes->getViajesDe(Session::get("id_usuario"));
+        $params["viajesPostulados"] = $this->_viajes->getViajesPostuladosOf(Session::get("id_usuario"));
+        $params["viajesAbiertos"] = $this->_viajes->getViajesAbiertosDe(Session::get("id_usuario"));
+        $params["viajesIniciados"] = $this->_viajes->getViajesIniciadosDe(Session::get("id_usuario"));
+        $params["viajesCancelados"] = $this->_viajes->getViajesCanceladosDe(Session::get("id_usuario"));
+        $params["viajesFinalizados"] = $this->_viajes->getViajesFinalizadosDe(Session::get("id_usuario"));
+        $params["tarjetas"] = $this->_tarjeta->getTarjetasDeUnUsuario($params["usuario"]['id']);
+        $params["usuario"]['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($params["usuario"]['id']);
+        $params["usuario"]['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($params["usuario"]['id']);
+        $params["misNotificaciones"] = $this->_notificacion->getNotificacionesOf($params["usuario"]["id"]);
+        $params["facturas"] = $this->_facturas->getFacturasOf($params["usuario"]["id"]);
+        $params["calificaciones"] = $this->_usuario->getCalificacionesOf($params["usuario"]["id"]);
+        $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular($params["usuario"]["id"]);
+        $params["saldoWallet"] = $this->_wallet->getSaldo($params["usuario"]["id"]);
+        return $params;
     }
 
     /* Carga la librerias especificada. */

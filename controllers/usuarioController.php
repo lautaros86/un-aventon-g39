@@ -9,6 +9,7 @@ class usuarioController extends Controller {
     private $_facturas;
     private $_calificacion;
     private $_wallet;
+    private $_vehiculo;
 
     public function __construct() {
         parent::__construct();
@@ -19,6 +20,7 @@ class usuarioController extends Controller {
         require_once ROOT . 'models' . DS . 'facturaModel.php';
         require_once ROOT . 'models' . DS . 'calificacionModel.php';
         require_once ROOT . 'models' . DS . 'walletModel.php';
+        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
         $this->_registro = new registroModel();
         $this->_usuario = new usuarioModel();
         $this->_viajes = new viajeModel();
@@ -26,6 +28,7 @@ class usuarioController extends Controller {
         $this->_facturas = new facturaModel();
         $this->_calificacion = new calificacionModel();
         $this->_wallet = new walletModel();
+        $this->_vehiculo = new vehiculoModel();
     }
 
     public function index() {
@@ -96,11 +99,13 @@ class usuarioController extends Controller {
         $usuario = Session::get("usuario");
         $form = Session::get("form");
         Session::destroy("form");
+
         if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $usuario['fecha_nac'])) {
             $usuario['fecha_nac'] = date('d/m/Y', strtotime($usuario['fecha_nac']));
         }
-
-        $this->_view->renderizar('editar', 'usuario', array("form" => $usuario));
+        $params = $this->cargardatos();
+        $params["form"] = $usuario;
+        $this->_view->renderizar('editar', 'usuario', $params);
     }
 
     public function crear() {
@@ -312,31 +317,14 @@ class usuarioController extends Controller {
         $this->_view->renderizar('editar', 'usuario', array("form" => $form));
     }
 
-    public function verUsuario() {
+    
+
+    public function verusuario() {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $params = array();
-        require_once ROOT . 'models' . DS . 'vehiculoModel.php';
-        $vehiculoModel = new vehiculoModel();
-        $params["usuario"] = $this->_usuario->getUsuario(Session::get("id_usuario"));
-        $params["vehiculos"] = $vehiculoModel->getVehiculosActivosByUserId($params["usuario"]['id']);
-        $params["vehiculosInactivos"] = $vehiculoModel->getVehiculosInactivosByUserId($params["usuario"]['id']);
-        $params["viajes"] = $this->_viajes->getViajesDe(Session::get("id_usuario"));
-        $params["viajesPostulados"] = $this->_viajes->getViajesPostuladosOf(Session::get("id_usuario"));
-        $params["viajesAbiertos"] = $this->_viajes->getViajesAbiertosDe(Session::get("id_usuario"));
-        $params["viajesIniciados"] = $this->_viajes->getViajesIniciadosDe(Session::get("id_usuario"));
-        $params["viajesCancelados"] = $this->_viajes->getViajesCanceladosDe(Session::get("id_usuario"));
-        $params["viajesFinalizados"] = $this->_viajes->getViajesFinalizadosDe(Session::get("id_usuario"));
-        $params["tarjetas"] = $this->_tarjeta->getTarjetasDeUnUsuario($params["usuario"]['id']);
-        $params["usuario"]['cantViajesChofer'] = $this->_viajes->getCantViajesChofer($params["usuario"]['id']);
-        $params["usuario"]['cantViajesPasajero'] = $this->_viajes->getCantViajesPasajero($params["usuario"]['id']);
-        $params["misNotificaciones"] = $this->_notificacion->getNotificacionesOf($params["usuario"]["id"]);
-        $params["facturas"] = $this->_facturas->getFacturasOf($params["usuario"]["id"]);
-        $params["calificaciones"] = $this->_usuario->getCalificacionesOf($params["usuario"]["id"]);
-        $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular($params["usuario"]["id"]);
-        $params["saldoWallet"] = $this->_wallet->getSaldo($params["usuario"]["id"]);
-        $this->_view->renderizar('verUsuario', 'usuario', $params);
+        $params = $this->cargardatos();
+        $this->_view->renderizar('verusuario', 'usuario', $params);
     }
 
     public function verOtroUsuaurio($id_otroUsuario) {

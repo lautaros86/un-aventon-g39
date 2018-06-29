@@ -42,7 +42,7 @@ class vehiculoController extends Controller {
         }
     }
 
-    public function irModificar($id) {
+    public function editar($id) {
         $form = $this->_vehiculo->getVehiculosById($id);
         //$form['idvehiculo']= $id;
         $this->_view->renderizar('modificar', 'vehiculo', array("vehiculo" => $form));

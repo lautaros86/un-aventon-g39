@@ -29,7 +29,7 @@
             </div>
             <input type="hidden" id="custId" name="idVehiculo" value={{vehiculo.id}}>
             <div class="form-group {% if errors.patente is defined  %}has-error{% endif %}">
-                <input type="patente" class="form-control" name="patente" placeholder="Patente" {% if vehiculo is defined  %}value="{{vehiculo.patente}}"{% endif %}>
+                <input readonly="" type="patente" class="form-control" name="patente" placeholder="Patente" {% if vehiculo is defined  %}value="{{vehiculo.patente}}"{% endif %}>
                 {% if errors.patente is defined %}
                     {% for err_msg in errors.patente %}
                         <span class="help-block">{{err_msg}}</span>
@@ -37,7 +37,7 @@
                 {% endif %}
             </div>
             <div class="form-group {% if errors.asientos is defined  %}has-error{% endif %}">
-                <input type="text" class="form-control" name="asientos" id="asientos" {% if vehiculo is defined  %}value="{{vehiculo.asientos}}"{% endif %}
+                <input type="number" class="form-control" name="asientos" id="asientos" {% if vehiculo is defined  %}value="{{vehiculo.asientos}}"{% endif %}
                        placeholder="Ingrese cantidad de Asientos">
                 {% if errors.asientos is defined %}
                     {% for err_msg in errors.asientos %}

@@ -233,7 +233,7 @@
     <script src="../../bower_components/moment/moment.js"></script>
 
     <script src="../../bower_components/moment/locale/es.js"></script>
-    <script src="../../node_modules/moment-range/dist/moment-range.js"></script>
+    {#    <script src="../../node_modules/moment-range/dist/moment-range.js"></script>#}
 
     <script>
         var geocoder;
@@ -277,6 +277,7 @@
                 });
                 if (!superpuesta) {
                     fechas[i - 1] = {ini: fecha, fin: fin}
+                    console.log(fechas)
                     $("#fecha").val("");
                     var tr = $("<tr>").attr("id", "fecha-" + i);
                     var nFecha = $("<td>").text(i);
@@ -288,11 +289,13 @@
                             .addClass("btn btn-danger")
                             .text("X")
                             .on("click", function () {
-                                $("#fecha-" + $(this).data("idrow")).remove()
+                                $("#fecha-" + $(this).data("idrow")).remove();
                                 i--
                                 console.log(i)
                                 disable = (i > 1);
-                                fechas.splice([i])
+                                fechas.splice([i - 1])
+                                console.log(fechas)
+
                                 $("#hora").attr("readonly", disable);
                                 $("#origen").attr("readonly", disable);
                                 $("#destino").attr("readonly", disable);
@@ -315,9 +318,7 @@
                 var priceRound = document.getElementById("monto").value;
                 if (priceRound.trim().search(pPrice) == -1) {
                     alert("El precio es incorrecto! Solo se aceptan valores enteros.");
-                } else {
-                    var priceHack = parseFloat(priceRound).split();
-                    document.getElementById("monto").value = priceHack;
+                    document.getElementById("monto").value = "";
                 }
             });
 
@@ -381,8 +382,8 @@
                     return false;
                 }
             });
-        }
-        );
+        });
+        
         function initAutocomplete() {
             // servicios para dibujar la ruta
             var directionsService = new google.maps.DirectionsService;

@@ -16,18 +16,19 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="date">Origen:</label>
-                                    <div class="form-field">
-                                        <i class="icon icon-map3"></i>
-                                        <input type="text" id="origen" name="origen" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-map"></i> A</span>
+                                        <input type="text" class="form-control" name="origen" id="origen" placeholder="Origen" {% if form is defined  %}value="{{form.origen}}"{% endif %}>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="date">Destino:</label>
-                                    <div class="form-field">
-                                        <i class="icon icon-map3"></i>
-                                        <input type="text" id="destino" name="destino" class="form-control" placeholder="Argentina, Buenos Aires, La Plata">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-map"></i> B</span>
+                                        <input type="text" class="form-control" name="destino" id="destino"
+                                               placeholder="Destino" {% if form is defined  %}value="{{form.destino}}"{% endif %}>
                                     </div>
                                 </div>
                             </div>
@@ -84,8 +85,11 @@
                 </tbody>
             </table>
         </div>
+        <div id="map"></div> 
+        <div id="directions-panel"></div> 
     </div> 
 </div>
+
 {% endblock %}
 
 {% block script %}
@@ -102,6 +106,109 @@
                 maxViewMode: 0
             });
         });
+
+        var geocoder;
+        var map;
+        var verifRuta = false;
+        function initAutocomplete() {
+            // servicios para dibujar la ruta
+            var directionsService = new google.maps.DirectionsService;
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+            geocoder = new google.maps.Geocoder();
+            // inicializacion del mapa
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.920501, lng: -57.953572699999995},
+                zoom: 13,
+                mapTypeId: 'roadmap'
+            });
+            // obtengo los search boxes.
+            var origen = document.getElementById('origen');
+            var destino = document.getElementById('destino');
+            // convierte el texto en un lugar
+            searchBoxes = [];
+            searchBoxes.push(new google.maps.places.SearchBox(origen));
+            searchBoxes.push(new google.maps.places.SearchBox(destino));
+            // Sesgar los resultados del cuadro de búsqueda a la vista de mapas actuales.
+            $.each(searchBoxes, function (i, sb) {
+                map.addListener('bounds_changed', function () {
+                    sb.setBounds(map.getBounds());
+                });
+            });
+            $.each(searchBoxes, function (i, sb) {
+                sb.addListener('places_changed', function () {
+                    if (origen.value == "" || destino.value == "") {
+                        $("#add_row").attr("readonly", true);
+                        return;
+                    } else {
+                        calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
+                    }
+                });
+            });
+            directionsDisplay.setMap(map);
+            if (origen.value == "" || destino.value == "") {
+                $("#add_row").attr("readonly", true);
+                return;
+            } else {
+                calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
+            }
+
+        }
+
+        function geocodeAddress(geocoder, resultsMap, address, res) {
+            geocoder.geocode({'address': address}, function (results, status) {
+                if (status === 'OK') {
+                    res.resolve(true);
+                } else {
+                    res.resolve(false);
+                }
+            });
+            return res;
+        }
+
+        function calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino) {
+            {#directionsService.route({
+                origin: origen.value,
+                destination: destino.value,
+                optimizeWaypoints: true,
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    $("#add_row").attr("readonly", false);
+                    verifRuta = true;
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                    var summaryPanel = document.getElementById('directions-panel');
+                    summaryPanel.innerHTML = '';
+                    console.log(route)
+                    // For each route, display summary information.
+                    for (var i = 0; i < route.legs.length; i++) {
+                        var routeSegment = i + 1;#}
+        {#summaryPanel.innerHTML += '<b>Ruta elegida: </b><br> desde ';
+        summaryPanel.innerHTML += route.legs[i].start_address + ' hasta ';
+        summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+        summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].duration.text + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].start_location.lat() + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].start_location.lng() + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
+        summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';#}
+{#                            $("#duracion").val(route.legs[i].duration.value);
+                            $("#duracionIda").val(route.legs[i].duration.text);
+                            var retorno = moment.duration((route.legs[i].duration.value * 2), "seconds")
+                            $("#duracionVuelta").val(retorno.humanize());#}
+ {#                       }
+
+                    } else {
+                        $("#add_row").attr("readonly", true);
+                        verifRuta = false;
+                        alert("Disculpe, no podemos programar una ruta para su eleccion. Por favor verifique los campos.");
+                    }#}
+{#                });#}
+            }
+
     </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjPmpXtKE4ObWzFSEZ3PyTqHmHRohog6A&libraries=places&callback=initAutocomplete"
+    async defer></script>
 
 {% endblock %}

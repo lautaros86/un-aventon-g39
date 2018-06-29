@@ -446,8 +446,10 @@ class viajeController extends Controller {
         $param['origen'] = $this->getPostParam('origen');
         $param['destino'] = $this->getPostParam('destino');
         $date = $this->getPostParam('fecha');
-        $date = str_replace('/', '-', $date);
-        $param['fecha'] = date('Y-m-d', strtotime($date));
+        if ($date != "") {
+            $date = str_replace('/', '-', $date);
+            $param['fecha'] = date('Y-m-d', strtotime($date));
+        }
         $viajes = $this->_viaje->buscarViaje($param);
         //pregunto si el array no esta vacio 
         if (!empty($viajes)) {

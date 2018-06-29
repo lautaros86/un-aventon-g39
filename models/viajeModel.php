@@ -26,7 +26,6 @@ class viajeModel extends Model {
         return $viaje;
     }
 
-
     /**
      * Retorna la cantidad de viajes de un usuario.
      * @param type $id_chofer id de usuaario
@@ -60,7 +59,7 @@ class viajeModel extends Model {
         $this->_db->execute($sql, $params);
         return $this->_db->lastInsertId();
     }
-    
+
     public function setFechas($idviaje, $fecha, $hora) {
         $sql = "INSERT INTO viaje_fechas (id_viaje, fecha, hora) 
                 VALUES (:id_viaje, STR_TO_DATE(:fecha, '%d/%m/%Y'), :hora)";
@@ -369,17 +368,26 @@ class viajeModel extends Model {
     }
 
     public function buscarViaje($search) {
-        $sql = "select viaje.id, viaje.asientos,viaje.origen, viaje.destino, viaje.monto, usuarios.nombre, usuarios.apellido
-        from viaje 
-        inner join estado_viaje on viaje.id_estado = estado_viaje.id
-        inner join usuarios on viaje.id_chofer = usuarios.id
-        inner join viaje_fechas on viaje.id = viaje_fechas.id_viaje
-        where viaje.id_estado = 1 and viaje_fechas.fecha = :fecha and viaje.origen = :origen and viaje.destino = :destino";
-        $params = array(
-            ":fecha" => $search["fecha"],
-            ":origen" => $search["origen"],
-            ":destino" => $search["destino"]
-        );
+        $sql = "select v.id, v.asientos,v.origen, v.destino, v.monto, u.nombre, u.apellido
+        from viaje v
+        inner join estado_viaje ev on v.id_estado = ev.id
+        inner join usuarios u on v.id_chofer = u.id
+        inner join viaje_fechas vf on v.id = vf.id_viaje
+        where v.id_estado in (1, 4)";
+        $params = array();
+        if (isset($search["origen"]) && $search["origen"] != "") {
+            $sql .= " and v.origen like :origen";
+            $params["origen"] = "%".$search["origen"]."%";
+        }
+        if (isset($search["destino"]) && $search["destino"] != "") {
+            $sql .= " and v.destino like :destino";
+            $params["destino"] = "%".$search["destino"]."%";
+        }
+        if (isset($search["fecha"]) && $search["fecha"] != "") {
+            $sql .= " and vf.fecha = :fecha";
+            $params["fecha"] = $search["fecha"];
+        }
+        $sql .= " group by v.id";
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll();
     }

@@ -288,26 +288,26 @@
                 <!-- chat item -->
                 <div class="item">
                     </br>
-{#                    <img src="/img/anonimo.png" alt="user image" class="online">#}
+                    {#                    <img src="/img/anonimo.png" alt="user image" class="online">#}
                     {% if rp.pregunta is not empty and esChofer%}    
                         <button type="button" class="btn btn-danger btn-xs remove removeComentario"  data-idpregunta="{{rp.id_pregunta}}" data-idviaje="{{viaje.id}}">
-                                <i class="fa fa-times"></i>
+                            <i class="fa fa-times"></i>
                         </button>
                     {% endif %}            
                     <p class="message">
-{#                        <a href="#" class="name">
-
-                            Alex Velasquez
-                        </a>#}
+                        {#                        <a href="#" class="name">
+                        
+                                                    Alex Velasquez
+                                                </a>#}
                         {{rp.pregunta}}
                     </p>
-                   
-                    <div class="attachment item">
-{#                        <img src="/img/anonimo.png" alt="user image" class="online">
-                        <a href="#" class="name">
 
-                            Pedro Gonzalez
-                        </a>#}
+                    <div class="attachment item">
+                        {#                        <img src="/img/anonimo.png" alt="user image" class="online">
+                                                <a href="#" class="name">
+                        
+                                                    Pedro Gonzalez
+                                                </a>#}
                         <p> 
                             {{rp.respuesta}}
                         </p>
@@ -327,7 +327,7 @@
                 </div>
             </div>
         {% endfor %}
-        
+
     </div>
     <!-- /.box (chat box) -->
 </div>
@@ -398,21 +398,14 @@
                     return false;
                 }
             });
-            $(".removeComentario").click(function (event) {                                                             
-                ok = confirm("¿Esta seguro que desea eliminar este vehiculo?");
-                if (ok) {
-                    var elem = $(event.target);
-                    if (elem.is("i")) {
-                        elem = $(elem.parent());
-                    }
-                    alert(elem.data('idpregunta'));
-                    alert(elem.data('idviaje'));
-                    $(location).attr('href', '/pregunta/removeQuestion/' + elem.data('idpregunta') + '/' + elem.data('idviaje'));
-                } else {
-                    alert("Pedido cancelado");
+            $(".removeComentario").click(function (event) {
+                var elem = $(event.target);
+                if (elem.is("i")) {
+                    elem = $(elem.parent());
                 }
-                               
-            });            
+                $(location).attr('href', '/pregunta/removeQuestion/' + elem.data('idpregunta') + '/' + elem.data('idviaje'));
+
+            });
             $(".rechazarPostulacion").click(function () {
                 var ok = confirm("Seguro que desea rechazar esta postulación?");
                 if (!ok) {

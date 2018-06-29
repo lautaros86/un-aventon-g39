@@ -289,15 +289,19 @@
                 <div class="item">
                     </br>
 {#                    <img src="/img/anonimo.png" alt="user image" class="online">#}
-
+                    {% if rp.respuesta is not empty %}    
+                        <button type="button" class="btn btn-danger btn-xs remove removeComentario" id="bajaTarjeta" data-idtarjeta="{{pr.id_pregunta}}">
+                                <i class="fa fa-times"></i>
+                        </button>
+                    {% endif %}            
                     <p class="message">
 {#                        <a href="#" class="name">
 
                             Alex Velasquez
                         </a>#}
                         {{rp.pregunta}}
-
                     </p>
+                   
                     <div class="attachment item">
 {#                        <img src="/img/anonimo.png" alt="user image" class="online">
                         <a href="#" class="name">
@@ -305,9 +309,7 @@
                             Pedro Gonzalez
                         </a>#}
                         <p> 
-
                             {{rp.respuesta}}
-
                         </p>
                     </div>
                     {% if esChofer and viaje.id_estado in [1, 4] and rp.respuesta is empty  %}
@@ -396,6 +398,19 @@
                     return false;
                 }
             });
+            $(".removeComentario").click(function (event) {
+{#                ok = confirm("¿Esta seguro que desea eliminar este comentario?");
+                if (ok) {
+                    var elem = $(event.target);
+                    if (elem.is("i")) {
+                        elem = $(elem.parent());
+                    }
+                    debugger;#}
+                    $(location).attr('href', '/pregunta/removeQuestion/' + elem.data('idPregunta'));
+  {#              } else {
+                    alert("Pedido cancelado");#}
+                }
+        });            
             $(".rechazarPostulacion").click(function () {
                 var ok = confirm("Seguro que desea rechazar esta postulación?");
                 if (!ok) {

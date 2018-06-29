@@ -53,7 +53,7 @@ class preguntaController extends Controller {
             $this->redireccionar("/viaje/detalle/".$idViaje);
         }
     }
-    public function darDeBajaPregunta($idPregunta) {
+    public function removeQuestion($idPregunta) {
         $idPregunta;
 
     }

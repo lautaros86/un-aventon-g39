@@ -90,6 +90,7 @@ class viajeController extends Controller {
         $params["chofer"]["cantViajesPasajero"] = $this->_viaje->getCantViajesPasajero($params["viaje"]["id_chofer"]);
         $params["usuario"] = Session::get("usuario");
         $params["postulaciones"] = $this->_viaje->getPostulacionesViaje($params["viaje"]["id"]);
+        $params["postulacionesAceptadas"] = sizeof($postulacionesAceptadas);
         if ($params["chofer"]["id"] == $params["usuario"]["id"]) {
             $params["esChofer"] = true;
             $this->_view->renderizar('detalle', 'viaje', $params);
@@ -121,7 +122,8 @@ class viajeController extends Controller {
         }
         $form = array();
         $fechas = $this->getPostParam('fechas');
-        $form['fecha'] = $fechas[1][0];;
+        $form['fecha'] = $fechas[1][0];
+        ;
         $form['hora'] = $fechas[1][1];
         $form['monto'] = $this->getPostParam('monto');
         $form['duracion'] = $this->getPostParam('duracion');
@@ -137,34 +139,53 @@ class viajeController extends Controller {
         }
         if (!$errors) {
 
-            $date = str_replace('/', '-', $form['fecha']);
-            $datetime = date("Y-m-d", strtotime($date)) . ' ' . $form['hora'];
-            $viajesSuperpuestos = $this->_viaje->getViajesSupuerpuestos($datetime, $form['duracion']);
+            $viajesSuperpuestos = array();
+            foreach ($fechas as $key => $value) {
+                $date = str_replace('/', '-', $value[0]);
+                $datetime = date("Y-m-d", strtotime($date)) . ' ' . $value[1];
+                $tmpArray = $this->_viaje->getViajesSupuerpuestos($datetime, $form['duracion']);
+                $viajesSuperpuestos = array_merge($viajesSuperpuestos, $tmpArray);
+            }
             if (sizeof($viajesSuperpuestos) > 0) {
                 Session::setMessage("La fecha y hora se superponen con el viaje nº alguno .", SessionMessageType::Error);
                 $errors = true;
             }
-            $autoSuperpuestos = $this->_viaje->getAutosSupuerpuestos($datetime, $form['duracion'], $form['idVehiculo']);
+
+            $autoSuperpuestos = array();
+            foreach ($fechas as $key => $value) {
+                $date = str_replace('/', '-', $value[0]);
+                $datetime = date("Y-m-d", strtotime($date)) . ' ' . $value[1];
+                $tmpArray = $this->_viaje->getAutosSupuerpuestos($datetime, $form['duracion'], $form['idVehiculo']);
+                $autoSuperpuestos = array_merge($autoSuperpuestos, $tmpArray);
+            }
             if (sizeof($autoSuperpuestos) > 0) {
                 Session::setMessage("El vehiculo elegido esta asosciado a otro viaje en la fecha y hora elegidos.", SessionMessageType::Error);
                 $errors = true;
             }
-            $postulacionesSuperpuestas = $this->_viaje->getPostulacionesSupuerpuestos($datetime, $form['duracion'], Session::get("usuario")["id"]);
+
+            $postulacionesSuperpuestas = array();
+            foreach ($fechas as $key => $value) {
+                $date = str_replace('/', '-', $value[0]);
+                $datetime = date("Y-m-d", strtotime($date)) . ' ' . $value[1];
+                $tmpArray = $this->_viaje->getPostulacionesSupuerpuestos($datetime, $form['duracion'], Session::get("usuario")["id"]);
+                $postulacionesSuperpuestas = array_merge($postulacionesSuperpuestas, $tmpArray);
+            }
             if (sizeof($postulacionesSuperpuestas) > 0) {
                 Session::setMessage("Ud tiene una postulacion aceptada en un viaje que se superpone con la fecha y horas ingresadas.", SessionMessageType::Error);
                 $errors = true;
             }
+
             if (!$errors) {
                 try {
                     $this->_viaje->beginTransaction();
-                    $this->_viaje->insertarViaje($form, Session::get("usuario")["id"]);
-                    $idViajeInsertado = $this->_viaje->lastInsertId();
-                    require_once ROOT . 'models' . DS . 'facturaModel.php';
-                    $facturaModel = new facturaModel();
-                    $montoTotal = ($form['monto'] * $form['asientos']) * 0.05;
-                    $descripcion = "Derecho a publicación del viaje nº " . $idViajeInsertado . " con origen: " . $form['origen'] . " y destino: " . $form['destino'] . ". Con cantidad de asientos: " . $form["asientos"] . " y costo por cada uno de: $" . $form['monto'];
-                    $facturaModel->crearFactura(Session::get("id_usuario"), $idViajeInsertado, number_format((float) $montoTotal, 2, '.', ''), $descripcion, 1, 1);
-                    Session::setMessage("Viaje publicado", SessionMessageType::Success);
+                    $idviaje = $this->_viaje->insertarViaje($form, Session::get("usuario")["id"]);
+                    foreach ($fechas as $key => $value) {
+                        $this->_viaje->setFechas($idviaje, $value[0], $value[1]);
+                    }
+                    $montoTotal = ($form['monto'] * $form['asientos'] * sizeof($fechas)) * 0.05;
+                    $descripcion = "Derecho a publicación del aventon nº " . $idViajeInsertado . " con origen: " . $form['origen'] . " y destino: " . $form['destino'] . ". Con cantidad de asientos: " . $form["asientos"] . " y costo por cada uno de: $" . $form['monto'] . ". Y " . sizeof($fechas) . " repeticiones.";
+                    $this->_factura->crearFactura(Session::get("id_usuario"), $idviaje, number_format((float) $montoTotal, 2, '.', ''), $descripcion, 1, 1);
+                    Session::setMessage("Pool publicado", SessionMessageType::Success);
                     Session::destroy("form");
                     $this->_viaje->commit();
                     $this->redireccionar("perfil");
@@ -205,7 +226,10 @@ class viajeController extends Controller {
                     $this->_usuario->calificacionAutomatica($viaje["id_chofer"], $calificacion);
                     $this->_usuario->actualizarReputacion($viaje["id_chofer"], $calificacion);
                 }
-                $this->_factura->activarFacturaDeViaje($idViaje);
+                $factura = $this->_factura->getFacturasViaje($idViaje);
+                if ($factura["id_estado"] != 3) {
+                    $this->_factura->activarFacturaDeViaje($idViaje);
+                }
                 $this->_viaje->cancelarViaje($idViaje);
                 $this->_notificacion->crearNotificacionSimple("La factura del viaje nº " . $viaje["id"] . " esta lista para ser pagada.", $viaje["id_chofer"]);
                 Session::setMessage("El viaje se cancelo exitosamente.", SessionMessageType::Success);
@@ -225,7 +249,8 @@ class viajeController extends Controller {
             $this->redireccionar();
         }
         $viaje = $this->_viaje->getViaje($idViaje);
-        $fechaLlegadaEstimada = new DateTime($viaje["fecha"] . " " . $viaje["hora"]);
+        $ultimaFecha = end($viaje["fechas"]);
+        $fechaLlegadaEstimada = new DateTime($ultimaFecha["fecha"] . " " . $ultimaFecha["hora"]);
         $fechaLlegadaEstimada->add(new DateInterval('PT' . $viaje["duracion"] . 'S')); // adds 674165 secs
         $datenow = new DateTime();
         $tiempoAceptable = $fechaLlegadaEstimada < $datenow;

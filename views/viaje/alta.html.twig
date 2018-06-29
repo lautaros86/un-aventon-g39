@@ -56,6 +56,24 @@
                             {% endif %}
                         </div>
                         <input id="duracion" readonly="" name="duracion" hidden=""/>
+                        <div class="col-md-6 form-group">
+                            <label for="origen">Tiempo ida: </label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                <input readonly="" type="text" class="form-control" 
+                                       name="duracionIda" id="duracionIda" 
+                                       placeholder="Tiempo estimado">
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="origen">Tiempo vuelta: </label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                <input readonly="" type="text" class="form-control" 
+                                       name="duracionVuelta" id="duracionVuelta" 
+                                       placeholder="Tiempo estimado">
+                            </div>
+                        </div>
 
 
                         <div class="col-md-6 form-group {% if errors.vehiculo is defined  %}has-error{% endif %}">
@@ -235,8 +253,12 @@
             var hora;
             var fechas = Array();
             $("#add_row").click(function () {
+                if (origen.value == "" || destino.value == "") {
+                    alert("debe elegir un origen y destino")
+                    return;
+                }
                 fecha = moment($("#fecha").val() + " " + $("#hora").val(), 'DD/MM/YYYY H:mm:ms')
-                var duracion = $("#duracion").val();
+                var duracion = $("#duracion").val() * 2;
                 var fin = fecha.clone().add(duracion, 'seconds')
                 if (!fecha.isValid()) {
                     alert("la fecha es incorrecta.");
@@ -248,7 +270,7 @@
                 $("#destino").attr("readonly", disable);
                 var superpuesta = false;
                 $.each(fechas, function (i, elem) {
-                    if (fecha.isBetween(elem.ini, elem.fin)) {
+                    if (fecha.isBetween(elem.ini, elem.fin) || fecha.isSame(elem.ini)) {
                         alert("Se detecto una superposicion de horarios");
                         superpuesta = true;
                     }
@@ -443,6 +465,9 @@
         summaryPanel.innerHTML += route.legs[i].end_location.lat() + '<br><br>';
         summaryPanel.innerHTML += route.legs[i].end_location.lng() + '<br><br>';#}
                             $("#duracion").val(route.legs[i].duration.value);
+                            $("#duracionIda").val(route.legs[i].duration.text);
+                            var retorno = moment.duration((route.legs[i].duration.value * 2), "seconds")
+                            $("#duracionVuelta").val(retorno.humanize());
                         }
 
                     } else {

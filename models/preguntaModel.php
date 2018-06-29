@@ -25,20 +25,12 @@ class preguntaModel extends Model {
     }
 
     public function getPreguntasYRespuestas($idViaje) {
-        $sql = "SELECT 
-            respuesta.id as idRespuesta,
-            respuesta.id_pregunta,
-            respuesta.mensaje as respuesta,
-            respuesta.fecha_crea as fechaRespuesta,
-            preguntas.id as idPregunta,
-            preguntas.estado,
-            preguntas.mensaje as pregunta,
-            preguntas.id_requester,
-            preguntas.id_viaje,
-            preguntas.fecha_crea as fechaPregunta
-            FROM preguntas 
-            INNER JOIN respuesta ON respuesta.id_pregunta = preguntas.id
-            WHERE preguntas.id_viaje = :id";
+        $sql = "SELECT  r.id as id_respuesta, r.mensaje as respuesta, 
+            r.fecha_crea as fechaRespuesta, p.id as id_pregunta, p.estado, p.mensaje as pregunta, 
+            p.id_requester, p.id_viaje, p.fecha_crea as fechaPregunta
+            FROM preguntas p
+            left JOIN respuesta r ON p.id = r.id_pregunta
+            WHERE p.id_viaje = :id";
             $params = array(":id" => $idViaje);
             $this->_db->execute($sql, $params);
             return $this->_db->fetchAll(PDO::FETCH_ASSOC);

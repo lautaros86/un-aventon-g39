@@ -363,16 +363,38 @@ class usuarioController extends Controller {
         if (!in_array($viaje["id_estado"], [1, 4])) {
             echo json_encode(array("ok" => false, "mensaje" => "solo pueden postularse a un viaje que este ABIERTO o LLENO"));
         } else {
-            try {
-                $this->_usuario->beginTransaction();
-                $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " se postulo a tu viaje con nº " . $idViaje, $idChofer);
-                $this->_usuario->postular($usuario["id"], $idViaje);
-                $this->_usuario->commit();
-                Session::setMessage("Ud. se postulo exitosamente.", SessionMessageType::Success);
-                echo json_encode(array("ok" => true));
-            } catch (PDOException $e) {
-                $this->_usuario->rollback();
-                echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
+            $viajesSuperpuestos = array();
+            foreach ($viaje["fechas"] as $key => $value) {
+                $date = str_replace('/', '-', $value["fecha"]);
+                $datetime = date("Y-m-d", strtotime($date)) . ' ' . $value["hora"];
+                $tmpArray = $this->_viajes->getViajesSupuerpuestos($datetime, $viaje['duracion']);
+                $viajesSuperpuestos = array_merge($viajesSuperpuestos, $tmpArray);
+            }
+            if (sizeof($viajesSuperpuestos) > 0) {
+                echo json_encode(array("ok" => false, "mensaje" => "Se detecto que tiene publicaciones superpuestas a este viaje."));
+                exit();
+            }
+            $postulacionesSuperpuestas = array();
+            foreach ($viaje["fechas"] as $key => $value) {
+                $date = str_replace('/', '-', $value["fecha"]);
+                $datetime = date("Y-m-d", strtotime($date)) . ' ' . $value["hora"];
+                $tmpArray = $this->_viajes->getPostulacionesSupuerpuestos($datetime, $viaje['duracion'], Session::get("usuario")["id"]);
+                $postulacionesSuperpuestas = array_merge($postulacionesSuperpuestas, $tmpArray);
+            }
+            if (sizeof($postulacionesSuperpuestas) > 0) {
+                echo json_encode(array("ok" => false, "mensaje" => "Se detecto que tiene postulaciones superpuestas a este viaje."));
+            } else {
+                try {
+                    $this->_usuario->beginTransaction();
+                    $this->_notificacion->crearNotificacionSimple("El usuario " . $usuario["nombre"] . " " . $usuario["apellido"] . " se postulo a tu viaje con nº " . $idViaje, $idChofer);
+                    $this->_usuario->postular($usuario["id"], $idViaje);
+                    $this->_usuario->commit();
+                    Session::setMessage("Ud. se postulo exitosamente.", SessionMessageType::Success);
+                    echo json_encode(array("ok" => true));
+                } catch (PDOException $e) {
+                    $this->_usuario->rollback();
+                    echo json_encode(array("ok" => false, "mensaje" => $e->getMessage()));
+                }
             }
         }
     }

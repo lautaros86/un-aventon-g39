@@ -192,13 +192,10 @@
                         <b>Duración: </b>
                     </li>
                     <li class="list-group-item">
-                        <b>Fecha:</b> {{viaje.fecha|date("d/m/Y")}}
-                    </li>
-                    <li class="list-group-item">
-                        <b>hora:</b> {{viaje.hora|date("H:i")}}
-                    </li>
-                    <li class="list-group-item">
                         <b>Usuarios postulados:</b> {{postulaciones|length}}
+                    </li>
+                    <li class="list-group-item">
+                        <b>Usuarios Aceptados:</b> {{postulacionesAceptadas}}
                     </li>
                 </ul>
             </div>
@@ -222,13 +219,39 @@
                         <b>Asientos:</b> {{viaje.asientos}}
                     </li>
                     <li class="list-group-item">
-                        <b>Usuarios Aceptados:</b> {{postulacionesAceptadas}}
-                    </li>
-                    <li class="list-group-item">
                         <b>Asientos Disponibles:</b> {{viaje.asientos - postulacionesAceptadas}}
                     </li>
                 </ul>
             </div>
+        </div>
+    </div>
+    <div class="box box-info">
+        <div class="box-body">
+            <h3 class="profile-username text-center">Fecha/s</h3>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-body">
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Listo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fecha in viaje.fechas %}
+                        <tr>
+                            <th>{{fecha.fecha|date("d/m/Y")}}</th>
+                            <th>{{fecha.hora|date("H:i")}}</th>
+                            <th>{%if fecha.realizado == 0 %}NO{% else%}SI{% endif %}</th>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
         </div>
     </div>
     <div class="box box-info">

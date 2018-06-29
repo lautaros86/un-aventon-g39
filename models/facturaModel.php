@@ -136,6 +136,14 @@ class facturaModel extends Model {
         );
         $this->_db->execute($sql, $params);
     }
+    public function getFacturasViaje($idViaje) {
+        $sql = "select * from facturas where id_viaje = :id_viaje";
+        $params = array(
+            ":id_viaje" => $idViaje
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetch();
+    }
     
     
     

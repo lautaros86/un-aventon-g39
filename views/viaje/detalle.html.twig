@@ -104,7 +104,7 @@
                         <tbody>
                             {% for postu in postulaciones %}
                                 <tr>
-                                    <td>{{postu.nombre}}, {{postu.apellido}}</td>
+                                    <td> <a href="/usuario/verOtroUsuaurio/{{postu.id}}">{{postu.nombre}}, {{postu.apellido}}</a></td>
                                     <td>{{postu.reputacion}}</td>
                                     {% if viaje.id_estado not in [2, 3, 5] %}
                                         <td>

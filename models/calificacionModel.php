@@ -51,6 +51,7 @@ class calificacionModel extends Model {
             ":id_viaje" => $idviaje,
             ":id_calificante" => $calificante,
             ":id_calificado"  => $calificado
+     
         );
         $this->_db->execute($sql, $params);
     }

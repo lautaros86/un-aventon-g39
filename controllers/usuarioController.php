@@ -486,6 +486,7 @@ class usuarioController extends Controller {
     }
 
     public function calificar($idCalificacion, $tipo) {
+        $comentario = $this->getPostParam('comentario'); //esta parte puede ser modificada
         $calificacion = $this->_calificacion->getCalificacion($idCalificacion);
         if ($calificacion["calificacion"] == 0) {
             if ($tipo == "positivo") {
@@ -495,19 +496,17 @@ class usuarioController extends Controller {
             }
             try {
                 $this->_usuario->beginTransaction();
-                $this->_usuario->calificar($idCalificacion, $puntaje);
+                $this->_usuario->calificar($idCalificacion, $puntaje, $comentario);
                 $this->_usuario->actualizarReputacion($calificacion["id_calificado"], $puntaje);
                 $this->_usuario->commit();
-                Session::setMessage("La calificación se puntuo correctamente con " . $puntaje . " punto", SessionMessageType::Success);
+                echo json_encode(array("mensaje" => "La calificación se puntuo correctamente con " . $puntaje . " punto", "ok" => true));
             } catch (PDOException $e) {
                 $this->_usuario->rollback();
-                Session::setMessage("Hubo un error al calificar al usuario. Por favor intente de nuevo mas tarde.", SessionMessageType::Success);
+                echo json_encode(array("", "ok" => false));
             }
         } else {
-            Session::setMessage("La calificación ya fue puntuada", SessionMessageType::Error);
+                echo json_encode(array("", "ok" => false));
         }
-
-        $this->redireccionar("perfil#calificaciones");
     }
 
 }

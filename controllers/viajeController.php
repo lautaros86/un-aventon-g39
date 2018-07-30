@@ -248,6 +248,7 @@ class viajeController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
+        //$comentario = $this->getPostParam('comentario');
         $viaje = $this->_viaje->getViaje($idViaje);
         $ultimaFecha = end($viaje["fechas"]);
         $fechaLlegadaEstimada = new DateTime($ultimaFecha["fecha"] . " " . $ultimaFecha["hora"]);

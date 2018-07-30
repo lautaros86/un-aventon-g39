@@ -162,14 +162,14 @@
             if (elem.is("i")) {
                 elem = $(elem.parent());
             }
-            $(location).attr('href', 'factura/pagarTarjeta/' + elem.data('idfactura'));
+            $(location).attr('href', '/factura/pagarTarjeta/' + elem.data('idfactura'));
         });
         $("#pagoWallet").click(function (event) {
             var elem = $(event.target);
             if (elem.is("i")) {
                 elem = $(elem.parent());
             }
-            $(location).attr('href', 'factura/pagarWallet/' + elem.data('idfactura'));
+            $(location).attr('href', '/factura/pagarWallet/' + elem.data('idfactura'));
         });
         $(".close").click(function () {
             $('#pagoModal').hide();
@@ -204,7 +204,53 @@
                 $("#formextraccion").submit();
             }
         });
-
+        
+        $(".calificarBien").click(function (event){
+            var elem = $(event.target);
+            var ruta = elem.data("calificacion");
+            var tr = elem.parent().parent();
+            var comentario = $(tr.find('input')[0]).val();
+            if (comentario == ""){
+                alert("el cometario no puede estar vacio");
+            }else{
+                $.ajax({
+                    url: ruta,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {comentario: comentario},
+                    success: function (data, textStatus, jqXHR) {
+                       console.log("todo bien")
+                       location.reload();
+                    },
+                    error: function () {
+                       console.log("el calificar mal, no se llevo a cabo");
+                    }
+                });
+                }
+        });    
+        $(".calificarMal").click(function (event){
+            var elem = $(event.target);
+            var ruta = elem.data("calificacion");
+            var tr = elem.parent().parent();
+            var comentario = $(tr.find('input')[0]).val();
+            if (comentario == ""){
+                alert("el cometario no puede estar vacio");
+            }else{
+                $.ajax({
+                    url: ruta,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {comentario: comentario},
+                    success: function (data, textStatus, jqXHR) {
+                       console.log("todo bien")
+                       location.reload();
+                    },
+                    error: function () {
+                       console.log("el calificar mal, no se llevo a cabo");
+                    }
+                });
+                }
+        });    
         $(window).keydown(function (event) {
             if (event.keyCode == 13) {
                 event.preventDefault();

@@ -248,7 +248,7 @@ class viajeController extends Controller {
         if (!Session::get('autenticado')) {
             $this->redireccionar();
         }
-        $comentario = $this->getPostParam('comentario');
+        //$comentario = $this->getPostParam('comentario');
         $viaje = $this->_viaje->getViaje($idViaje);
         $ultimaFecha = end($viaje["fechas"]);
         $fechaLlegadaEstimada = new DateTime($ultimaFecha["fecha"] . " " . $ultimaFecha["hora"]);
@@ -367,7 +367,7 @@ class viajeController extends Controller {
                 $this->_viaje->beginTransaction();
                 $this->_notificacion->crearNotificacionSimple("El usuario " . $chofer["nombre"] . " " . $chofer["apellido"] . " rechazo tu postulacion al viaje nº " . $postulacion["id_viaje"], $pasajero["id"]);
                 if ($postulacion["id_estado"] == 2) {
-                    $this->_usuario->calificacionAutomatica(Session::get("id_usuario"), -1,$comentario);
+                    $this->_usuario->calificacionAutomatica(Session::get("id_usuario"), -1);
                     $this->_usuario->actualizarReputacion(Session::get("id_usuario"), -1);
                 }
                 $this->_viaje->rechazarPostulacion($idPostu);

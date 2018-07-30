@@ -44,13 +44,14 @@ class calificacionModel extends Model {
      * @param type $idUsusario
      * @return type
      */
-    public function crearCalificacion($idviaje, $calificante = null, $calificado = null){
-        $sql = "insert INTO calificaciones (id_viaje, id_calificante, id_calificado, fecha_crea, fecha_modi)
-            VALUES (:id_viaje, :id_calificante, :id_calificado, NOW(), NOW())";
+    public function crearCalificacion($idviaje, $calificante = null, $calificado = null, $comentario){
+        $sql = "insert INTO calificaciones (id_viaje, id_calificante, id_calificado, fecha_crea, fecha_modi, comentarios)
+            VALUES (:id_viaje, :id_calificante, :id_calificado, NOW(), NOW(), :comentarios)";
         $params = array(
             ":id_viaje" => $idviaje,
             ":id_calificante" => $calificante,
-            ":id_calificado"  => $calificado
+            ":id_calificado"  => $calificado,
+            ":comentarios" => $comentario
         );
         $this->_db->execute($sql, $params);
     }

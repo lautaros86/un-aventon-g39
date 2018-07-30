@@ -115,11 +115,11 @@ class usuarioModel extends Model {
      * @param type $valor
      */
     public function calificacionAutomatica($idUsuario, $valor) {
-        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`, fecha_crea, fecha_modi) VALUES (:idusuario, :valor, NOW(), NOW())";
+        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`, fecha_crea, fecha_modi, comentario) VALUES (:idusuario, :valor, NOW(), NOW())";
         $this->_db->execute($sql, array(
             ':idusuario' => $idUsuario,
             ':valor' => $valor
-                )
+                ) 
         );
     }
 
@@ -193,9 +193,9 @@ class usuarioModel extends Model {
         $this->_db->execute($sql, $params);
     }
 
-    public function calificar($idCali, $value) {
-        $sql = "UPDATE calificaciones SET calificacion = :value WHERE id = :id";
-        $this->_db->execute($sql, array(':id' => $idCali, ':value' => $value));
+    public function calificar($idCali, $value, $comentario) {
+        $sql = "UPDATE calificaciones SET calificacion = :value, comentario = :comentario WHERE id = :id";
+        $this->_db->execute($sql, array(':id' => $idCali, ':value' => $value, ':comentario'=> $comentario ));
     }
 
     /**

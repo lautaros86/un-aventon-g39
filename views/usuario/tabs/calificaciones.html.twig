@@ -10,6 +10,7 @@
                     <th>Viaje</th>
                     <th>Calificado</th>
                     <th>Acciones</th>
+                    <th>Comentarios</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,15 +21,27 @@
                         <td>{{calificacion.id_calificado}}</td>
                         <td>
                             {% if calificacion.calificacion == 0 %}
-                                <a class="btn btn-success calificarBien" href="/usuario/calificar/{{calificacion.id}}/positivo">+1</a>
-                                <a class="btn btn-danger calificarMal" href="/usuario/calificar/{{calificacion.id}}/negativo">-1</a>
+                                <button class="btn btn-success calificarBien"  data-calificacion="/usuario/calificar/{{calificacion.id}}/positivo">+1</button>
+                                <button class="btn btn-danger calificarMal"  data-calificacion="/usuario/calificar/{{calificacion.id}}/negativo">-1</button>
                             {% else%}
                                 {{calificacion.calificacion}}
                             {% endif %}
                         </td>
+                        <td>
+                            {% if calificacion.calificacion == 0 %}
+                            <input type="textarea" class="form-control" name="comentario" placeholder="Comentario">
+                            {% if errors.nombre is defined %}
+                                {% for err_msg in errors.nombre %}
+                                    <span class="help-block">{{err_msg}}</span>
+                                {% endfor %}
+                            {% endif %}
+                            {% else%}
+                                {{calificacion.comentario}}                            
+                            {% endif %}                            
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
-        </table>
+        </table>            
     </div>
 </div>

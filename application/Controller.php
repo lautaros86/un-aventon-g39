@@ -66,6 +66,7 @@ abstract class Controller {
         $params["misNotificaciones"] = $this->_notificacion->getNotificacionesOf($params["usuario"]["id"]);
         $params["facturas"] = $this->_facturas->getFacturasOf($params["usuario"]["id"]);
         $params["calificaciones"] = $this->_usuario->getCalificacionesOf($params["usuario"]["id"]);
+        $params["misCalificaciones"] = $this->_calificacion->getAllCalificacionesRecibidas($params["usuario"]["id"]);
         $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular($params["usuario"]["id"]);
         $params["saldoWallet"] = $this->_wallet->getSaldo($params["usuario"]["id"]);
         return $params;

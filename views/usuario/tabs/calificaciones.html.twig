@@ -1,6 +1,6 @@
 <!-- Post -->
 <div class="notificaciones">
-    <h3>Calificaciones pendientes</h3>
+    <h3>Calificaciones pendientes y/o realizadas</h3>
     <hr>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -18,7 +18,7 @@
                     <tr>
                         <td>{{calificacion.id}}</td>
                         <td>{{calificacion.id_viaje}}</td>
-                        <td>{{calificacion.id_calificado}}</td>
+                        <td>{{calificacion.nombre}}</td>
                         <td>
                             {% if calificacion.calificacion == 0 %}
                                 <button class="btn btn-success calificarBien"  data-calificacion="/usuario/calificar/{{calificacion.id}}/positivo">+1</button>
@@ -44,4 +44,30 @@
             </tbody>
         </table>            
     </div>
+ <h3>Calificaciones Recibidas</h3>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Viaje</th>
+                    <th>Calificante</th>
+                    <th>Puntación</th>
+                    <th>Comentario</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for miCalificacion in misCalificaciones %}
+                    <tr>
+                        <td>{{miCalificacion.id}}</td>
+                        <td>{{miCalificacion.id_viaje}}</td>
+                        <td>{{miCalificacion.id_calificante}}</td>
+                        <td>{{miCalificacion.calificacion}}</td>
+                        <td>{{miCalificacion.comentario}}</td>                                                                                   
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>            
+    </div>            
 </div>

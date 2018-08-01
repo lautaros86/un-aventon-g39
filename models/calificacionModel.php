@@ -22,7 +22,22 @@ class calificacionModel extends Model {
         $this->_db->execute($sql, $params);
         return $this->_db->fetchAll();
     }
-
+    /**
+     * Retorna todas las calificaciones recibidas de un usuario
+     * @param type $yoMismo
+     * @return array
+     */
+    public function getAllCalificacionesRecibidas($yoMismo){
+        $sql = "select * 
+            from calificaciones 
+            where id_calificado = :yoMismo
+            order by fecha_crea";
+        $params = array(
+            ":yoMismo" => $yoMismo
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->fetchAll();
+    }
     /**
      * Retorna una calificacion
      * @param type $idUsusario

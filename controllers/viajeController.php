@@ -238,9 +238,11 @@ class viajeController extends Controller {
             } catch (PDOException $e) {
                 $this->_viaje->rollback();
                 Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+                $this->redireccionar("perfil");
             }
         } else {
             Session::setMessage("Intento de acceso incorrecto a la funcion.", SessionMessageType::Error);
+            $this->redireccionar("perfil");
         }
     }
 

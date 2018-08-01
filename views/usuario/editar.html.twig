@@ -121,9 +121,18 @@
             <hr/>
 
             <h3>Eliminar cuenta</h3>
-            <button class="btn btn-danger btn-block" id="cerrarCuenta" href= "/usuario/eliminarCuenta">
-                <i class="fa fa-trash-o"></i> Eliminar Cuenta
-            </button>
+            {% if puedePublicarPostular > 0 %}
+                <div>
+                    <span>No se puede dar de baja la cuenta si se deben facturas y/o calificaciones </span>
+                    <button class="btn btn-danger btn-block" id="cerrarCuenta" href= "/usuario/eliminarCuenta" disabled>
+                        <i class="fa fa-trash-o"></i> Eliminar Cuenta
+                    </button>
+                </div>
+            {% else %}
+                <button class="btn btn-danger btn-block" id="cerrarCuenta" href= "/usuario/eliminarCuenta" >
+                    <i class="fa fa-trash-o"></i> Eliminar Cuenta
+                </button>
+            {% endif %}    
         </div>
 
     </div>          
@@ -265,7 +274,10 @@
                     alert("La imagen es muy grande");
                 }
             })
-
+            $('[data-toggle="popover"]').popover()
         });
+        
+
+
     </script>
 {% endblock %}  

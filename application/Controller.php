@@ -68,6 +68,7 @@ abstract class Controller {
         $params["calificaciones"] = $this->_usuario->getCalificacionesOf($params["usuario"]["id"]);
         $params["misCalificaciones"] = $this->_calificacion->getAllCalificacionesRecibidas($params["usuario"]["id"]);
         $params["puedePublicarPostular"] = $this->_usuario->calcularPuedePublicarPostular($params["usuario"]["id"]);
+        $params["verificarEliminar"] = $this->_usuario->verificarEliminar($params["usuario"]["id"]);
         $params["saldoWallet"] = $this->_wallet->getSaldo($params["usuario"]["id"]);
         return $params;
     }

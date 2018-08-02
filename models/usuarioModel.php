@@ -115,7 +115,7 @@ class usuarioModel extends Model {
      * @param type $valor
      */
     public function calificacionAutomatica($idUsuario, $valor) {
-        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`, fecha_crea, fecha_modi, comentario) VALUES (:idusuario, :valor, NOW(), NOW())";
+        $sql = "INSERT INTO `calificaciones`( `id_calificado`, `calificacion`, fecha_crea, fecha_modi) VALUES (:idusuario, :valor, NOW(), NOW())";
         $this->_db->execute($sql, array(
             ':idusuario' => $idUsuario,
             ':valor' => $valor
@@ -159,7 +159,22 @@ class usuarioModel extends Model {
         $this->_db->execute($sql, $params);
         return $this->_db->rowCount();
     }
-
+     public function verificarEliminar($idUsusario) {
+        $sql = "select *
+        from usuarios u
+        left join facturas f on f.id_usuario = u.id
+        left join calificaciones c on u.id = c.id_calificante 
+        left JOIN viaje v on u.id = v.id_chofer
+        left JOIN postulacion p on p.id_pasajero = u.id
+        where u.id = :id_usuario
+        and (f.id_estado = 2 or c.calificacion = 0 or v.id_estado in (1,2,4) or p.id_estado in (1,2))";
+        $params = array(
+            ":id_usuario" => $idUsusario
+        );
+        $this->_db->execute($sql, $params);
+        return $this->_db->rowCount();
+    }
+    
     /**
      * Retorna todas las calificaciones hechas a un usuario
      * @param type $idUsusario

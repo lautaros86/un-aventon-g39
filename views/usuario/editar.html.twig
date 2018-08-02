@@ -121,9 +121,9 @@
             <hr/>
 
             <h3>Eliminar cuenta</h3>
-            {% if puedePublicarPostular > 0 %}
+            {% if (verificarEliminar > 0) and (verificarEliminar > 0) %}
                 <div>
-                    <span>No se puede dar de baja la cuenta si se deben facturas y/o calificaciones </span>
+                    <span>No se puede dar de baja la cuenta si se deben facturas y/o calificaciones o tiene viajes pendientes. </span>
                     <button class="btn btn-danger btn-block" id="cerrarCuenta" href= "/usuario/eliminarCuenta" disabled>
                         <i class="fa fa-trash-o"></i> Eliminar Cuenta
                     </button>

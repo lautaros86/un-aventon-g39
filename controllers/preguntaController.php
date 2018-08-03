@@ -30,7 +30,7 @@ class preguntaController extends Controller {
                 $this->redireccionar("perfil");
             }
         }else {
-            Session::setMessage("Por favor ingrese un mensaje", SessionMessageType::Error);
+            Session::setMessage("Por favor ingrese un pregunta", SessionMessageType::Error);
             $this->redireccionar("/viaje/detalle/".$idViaje);
         }        
     }
@@ -48,7 +48,10 @@ class preguntaController extends Controller {
                 Session::setMessage("Lo sentimos ocurrio un error vuelva intentarlo", SessionMessageType::Error);
                 $this->redireccionar("/viaje/detalle/".$idViaje);
             }
-            Session::setMessage("Por favor ingrese un mensaje", SessionMessageType::Error);
+            Session::setMessage("Por favor ingrese un mensaje de respuesta", SessionMessageType::Error);
+            $this->redireccionar("/viaje/detalle/".$idViaje);
+        }else {
+            Session::setMessage("Por favor ingrese un mensaje de respuesta", SessionMessageType::Error);
             $this->redireccionar("/viaje/detalle/".$idViaje);
         }
     }
